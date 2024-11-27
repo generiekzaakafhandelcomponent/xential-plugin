@@ -1,0 +1,17 @@
+[
+    {
+        "id": "6e034748-8ed5-43de-a5f2-f80e1a4b60dd",
+        "title": "Xential",
+        "properties": {
+            "applicationName": "${ROTTERDAM_XENTIAL_ACCOUNT_NAME}",
+            "applicationPassword": "${ROTTERDAM_XENTIAL_ACCOUNT_PASSWORD}",
+            "baseUrl": "http://localhost:1080",
+            "documentenApiPluginConfiguration": "5474fe57-532a-4050-8d89-32e62ca3e895",
+            "zakenApiPluginConfiguration": "3079d6fe-42e3-4f8f-a9db-52ce2507b7ee",
+            "serverCertificateFilename": "${ROTTERDAM_ESB_SERVER_CERTIFICATE_FILENAME}",
+            "clientPrivateKeyFilename": "${ROTTERDAM_ESB_CLIENT_PRIVATE_KEY_FILENAME}",
+            "clientCertificateFilename": "${ROTTERDAM_ESB_CLIENT_CERTIFICATE_FILENAME}"
+        },
+        "pluginDefinitionKey": "xential"
+    }
+]
