@@ -1,0 +1,43 @@
+<v-form
+        (valueChange)="formValueChange($event)"
+        *ngIf="{
+        disabled: disabled$ | async,
+        prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null,
+        fileFormats: fileFormats$ | async,
+    } as obs"
+>
+  <v-input
+          name="templateId"
+          [title]="'templateId' | pluginTranslate: pluginId | async"
+          [margin]="true"
+          [defaultValue]="obs.prefill?.templateId"
+          [disabled]="obs.disabled"
+          [required]="true"
+  />
+  <v-select
+          name="fileFormat"
+          [title]="'fileFormat' | pluginTranslate: pluginId | async"
+          [margin]="true"
+          [defaultSelectionId]="obs.prefill?.fileFormat"
+          [disabled]="obs.disabled"
+          [required]="true"
+          [items]="obs.fileFormats"
+  />
+  <v-input
+          name="documentId"
+          [title]="'documentId' | pluginTranslate: pluginId | async"
+          [margin]="true"
+          [defaultValue]="obs.prefill?.documentId"
+          [disabled]="obs.disabled"
+          [required]="true"
+  />
+  <valtimo-carbon-multi-input
+          name="templateData"
+          [title]="'templateData' | pluginTranslate: pluginId | async"
+          type="keyValue"
+          [disabled]="obs.disabled"
+          [defaultValues]="obs.prefill?.templateData"
+          [margin]="true"
+          [required]="false"
+  ></valtimo-carbon-multi-input>
+</v-form>
