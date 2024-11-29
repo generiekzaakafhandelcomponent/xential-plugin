@@ -16,7 +16,6 @@
 
 package com.ritense.valtimoplugins.xential.autoconfiguration
 
-import com.ritense.documentenapi.client.DocumentenApiClient
 import com.ritense.plugin.service.PluginService
 import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimo.contract.authentication.UserManagementService
@@ -27,13 +26,10 @@ import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
 import com.ritense.valtimoplugins.xential.service.HttpClientConfig
 import com.ritense.valueresolver.ValueResolverService
-import com.ritense.zakenapi.ZaakUrlProvider
-import com.ritense.zakenapi.client.ZakenApiClient
 import org.camunda.bpm.engine.RuntimeService
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.domain.EntityScan
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.core.annotation.Order
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories

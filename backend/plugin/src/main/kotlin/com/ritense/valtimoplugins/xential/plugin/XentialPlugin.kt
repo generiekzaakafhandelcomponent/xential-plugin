@@ -16,7 +16,6 @@
 
 package com.ritense.valtimoplugins.xential.plugin
 
-import com.ritense.documentenapi.DocumentenApiPlugin
 import com.ritense.plugin.annotation.Plugin
 import com.ritense.plugin.annotation.PluginAction
 import com.ritense.plugin.annotation.PluginActionProperty
@@ -27,7 +26,6 @@ import com.ritense.valtimoplugins.xential.domain.FileFormat
 import com.ritense.valtimoplugins.xential.domain.GenerateDocumentProperties
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin.Companion.PLUGIN_KEY
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
-import com.ritense.zakenapi.ZakenApiPlugin
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import java.io.File
 import java.net.URI
