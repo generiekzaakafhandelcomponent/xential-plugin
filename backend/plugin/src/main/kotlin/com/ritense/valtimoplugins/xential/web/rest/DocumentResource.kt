@@ -25,21 +25,10 @@ class DocumentResource(
     val documentGenerationService: DocumentGenerationService
 ) {
 
-    @GetMapping("/xential/v1/hi")
-    fun hello(
-
-    ) {
-        com.ritense.valtimoplugins.xential.web.rest.DocumentResource.Companion.logger.info { "en ha!!!!!" }
-    }
-
     @PostMapping("/xential/v1/document")
     fun handleSubmission(
         @RequestBody message: DocumentCreatedMessage
     ) {
         documentGenerationService.onDocumentGenerated(message)
-    }
-
-    companion object{
-        private val logger = KotlinLogging.logger {  }
     }
 }

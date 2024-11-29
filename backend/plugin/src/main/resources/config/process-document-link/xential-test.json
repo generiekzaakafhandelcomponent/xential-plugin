@@ -1,7 +1,0 @@
-[
-  {
-    "processDefinitionKey": "xential-test",
-    "canInitializeDocument": true,
-    "startableByUser": false
-  }
-]

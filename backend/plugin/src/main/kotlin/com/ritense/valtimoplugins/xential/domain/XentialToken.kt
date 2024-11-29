@@ -38,5 +38,5 @@ class XentialToken (
     @Column(name = "message_name", nullable = false, updatable = false)
     val messageName: String,
     @Column(name = "resume_url", nullable = true, updatable = false)
-    val resumeUrl: URI?
+    val resumeUrl: String?
 )

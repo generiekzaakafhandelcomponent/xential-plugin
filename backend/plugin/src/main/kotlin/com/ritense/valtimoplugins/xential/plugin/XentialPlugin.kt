@@ -52,12 +52,6 @@ class XentialPlugin(
     @PluginProperty(key = "baseUrl", secret = false, required = true)
     lateinit var baseUrl: URI
 
-    @PluginProperty(key = "documentenApiPluginConfiguration", secret = false)
-    lateinit var documentenApiPluginConfiguration: DocumentenApiPlugin
-
-    @PluginProperty(key = "zakenApiPluginConfiguration", secret = false)
-    lateinit var zakenApiPluginConfiguration: ZakenApiPlugin
-
     @PluginProperty(key = "serverCertificateFilename", secret = false, required = true)
     private lateinit var serverCertificateFilename: String
 
@@ -75,7 +69,7 @@ class XentialPlugin(
     )
     fun generateDocument(
         @PluginActionProperty templateId: UUID,
-        @PluginActionProperty fileFormat: com.ritense.valtimoplugins.xential.domain.FileFormat,
+        @PluginActionProperty fileFormat: FileFormat,
         @PluginActionProperty documentId: String,
         @PluginActionProperty messageName: String,
         @PluginActionProperty templateData: Array<TemplateDataEntry>,

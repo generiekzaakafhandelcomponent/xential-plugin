@@ -18,25 +18,18 @@ package com.ritense.valtimoplugins.xential.security.config
 
 import com.ritense.valtimo.contract.security.config.HttpConfigurerConfigurationException
 import com.ritense.valtimo.contract.security.config.HttpSecurityConfigurer
-import mu.KotlinLogging
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher
 
 class XentialApiHttpSecurityConfigurer : HttpSecurityConfigurer {
     override fun configure(http: HttpSecurity) {
-        com.ritense.valtimoplugins.xential.security.config.XentialApiHttpSecurityConfigurer.Companion.logger.info { "blijkbaar configure" }
         try {
             http.authorizeHttpRequests { requests ->
-                requests.requestMatchers(antMatcher("/api/xential/v1/hi")).permitAll()
                 requests.requestMatchers(antMatcher(HttpMethod.POST,"/api/xential/v1/document")).permitAll()
             }
         } catch (e: Exception) {
             throw HttpConfigurerConfigurationException(e)
         }
-    }
-
-    companion object{
-        val logger = KotlinLogging.logger {  }
     }
 }

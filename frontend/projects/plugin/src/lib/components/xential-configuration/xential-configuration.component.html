@@ -90,32 +90,4 @@
             [required]="false"
     >
     </v-input>
-    <hr/>
-    <ng-container
-            *ngIf="{
-            zakenApiPluginSelectItems: zakenApiPluginSelectItems$ | async,
-            documentenApiPluginSelectItems: documentenApiPluginSelectItems$ | async
-            } as authObs"
-    >
-        <v-select
-                [loading]="!authObs.zakenApiPluginSelectItems"
-                [items]="authObs.zakenApiPluginSelectItems"
-                [margin]="true"
-                name="zakenApiPluginConfiguration"
-                [title]="'zakenApiPluginConfiguration' | pluginTranslate: pluginId | async"
-                [disabled]="obs.disabled"
-                [defaultSelectionId]="obs.prefill?.zakenApiPluginConfiguration"
-                [required]="true"
-        ></v-select>
-        <v-select
-                [loading]="!authObs.documentenApiPluginSelectItems"
-                [items]="authObs.documentenApiPluginSelectItems"
-                [margin]="true"
-                name="documentenApiPluginConfiguration"
-                [title]="'documentenApiPluginConfiguration' | pluginTranslate: pluginId | async"
-                [disabled]="obs.disabled"
-                [defaultSelectionId]="obs.prefill?.documentenApiPluginConfiguration"
-                [required]="true"
-        ></v-select>
-    </ng-container>
 </v-form>

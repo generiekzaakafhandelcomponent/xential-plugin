@@ -42,39 +42,6 @@ export class XentialConfigurationComponent
     private readonly formValue$ = new BehaviorSubject<XentialConfig | null>(null);
     private readonly valid$ = new BehaviorSubject<boolean>(false);
 
-    readonly zakenApiPluginSelectItems$: Observable<Array<{ id: string; text: string }>> =
-        combineLatest([
-            this.pluginManagementService.getPluginConfigurationsByPluginDefinitionKey('zakenapi'),
-            this.translateService.stream('key'),
-        ]).pipe(
-            map(([configurations]) =>
-                configurations.map(configuration => ({
-                    id: configuration.id,
-                    text: `${configuration.title} - ${this.pluginTranslationService.instant(
-                        'title',
-                        configuration.pluginDefinition.key
-                    )}`,
-                }))
-            )
-        );
-
-
-    readonly documentenApiPluginSelectItems$: Observable<Array<{ id: string; text: string }>> =
-        combineLatest([
-            this.pluginManagementService.getPluginConfigurationsByPluginDefinitionKey('documentenapi'),
-            this.translateService.stream('key'),
-        ]).pipe(
-            map(([configurations]) =>
-                configurations.map(configuration => ({
-                    id: configuration.id,
-                    text: `${configuration.title} - ${this.pluginTranslationService.instant(
-                        'title',
-                        configuration.pluginDefinition.key
-                    )}`,
-                }))
-            )
-        );
-
     constructor(
         private readonly pluginManagementService: PluginManagementService,
         private readonly translateService: TranslateService,
@@ -101,9 +68,7 @@ export class XentialConfigurationComponent
             formValue.applicationName &&
             formValue.applicationPassword &&
             formValue.baseUrl &&
-            formValue.serverCertificateFilename &&
-            formValue.zakenApiPluginConfiguration &&
-            formValue.documentenApiPluginConfiguration
+            formValue.serverCertificateFilename
         );
 
         this.valid$.next(valid);

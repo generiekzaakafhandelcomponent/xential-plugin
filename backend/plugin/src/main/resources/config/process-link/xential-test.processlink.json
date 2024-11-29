@@ -1,8 +1,0 @@
-[
-    {
-        "activityId": "XentialTestStartEvent",
-        "activityType": "bpmn:StartEvent:start",
-        "processLinkType": "form",
-        "formDefinitionName": "xential-test.start"
-    }
-]

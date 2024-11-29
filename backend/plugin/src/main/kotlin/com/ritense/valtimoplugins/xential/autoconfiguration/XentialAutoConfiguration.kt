@@ -18,12 +18,14 @@ package com.ritense.valtimoplugins.xential.autoconfiguration
 
 import com.ritense.documentenapi.client.DocumentenApiClient
 import com.ritense.plugin.service.PluginService
+import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimo.contract.authentication.UserManagementService
 import com.ritense.valtimo.contract.config.LiquibaseMasterChangeLogLocation
 import com.ritense.valtimoplugins.xential.domain.XentialToken
 import com.ritense.valtimoplugins.xential.plugin.XentialPluginFactory
 import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
+import com.ritense.valtimoplugins.xential.service.HttpClientConfig
 import com.ritense.valueresolver.ValueResolverService
 import com.ritense.zakenapi.ZaakUrlProvider
 import com.ritense.zakenapi.client.ZakenApiClient
@@ -60,28 +62,30 @@ class XentialAutoConfiguration {
         return LiquibaseMasterChangeLogLocation("config/liquibase/xential-plugin-master.xml")
     }
 
+
+    @Bean
+    fun xentialHttpClientConfig(): HttpClientConfig {
+        return HttpClientConfig()
+    }
+
     @Bean
     @ConditionalOnMissingBean
     fun documentGenerationService(
         xentialTokenRepository: XentialTokenRepository,
+        temporaryResourceStorageService: TemporaryResourceStorageService,
         pluginService: PluginService,
-        documentenApiClient: DocumentenApiClient,
-        applicationEventPublisher: ApplicationEventPublisher,
-        zaakUrlProvider: ZaakUrlProvider,
-        zakenApiClient: ZakenApiClient,
         runtimeService: RuntimeService,
         valueResolverService: ValueResolverService,
-        userManagementService: UserManagementService
+        userManagementService: UserManagementService,
+        httpClientConfig: HttpClientConfig
     ) = DocumentGenerationService(
         xentialTokenRepository,
+        temporaryResourceStorageService,
         pluginService,
-        documentenApiClient,
-        applicationEventPublisher,
-        zaakUrlProvider,
-        zakenApiClient,
         runtimeService,
         valueResolverService,
-        userManagementService
+        userManagementService,
+        httpClientConfig
     )
 
     @Bean

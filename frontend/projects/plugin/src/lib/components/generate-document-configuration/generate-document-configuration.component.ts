@@ -50,6 +50,7 @@ export class GenerateDocumentConfigurationComponent implements FunctionConfigura
             formValue.templateId &&
             formValue.documentId &&
             formValue.fileFormat &&
+            formValue.messageName &&
             !formValue.templateData.find((entry) => !(entry.key && entry.value))
         );
 

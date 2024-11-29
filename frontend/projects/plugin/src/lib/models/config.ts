@@ -23,8 +23,6 @@ interface XentialConfig extends PluginConfigurationData {
     serverCertificateFilename: string;
     clientPrivateKeyFilename: string;
     clientCertFile: string;
-    zakenApiPluginConfiguration: string;
-    documentenApiPluginConfiguration: string
 }
 
 export {XentialConfig};
