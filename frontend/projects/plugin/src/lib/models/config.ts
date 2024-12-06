@@ -22,7 +22,7 @@ interface XentialConfig extends PluginConfigurationData {
     baseUrl: string;
     serverCertificateFilename: string;
     clientPrivateKeyFilename: string;
-    clientCertFile: string;
+    clientCertificateFilename: string;
 }
 
 export {XentialConfig};

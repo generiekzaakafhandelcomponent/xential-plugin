@@ -21,6 +21,16 @@
     prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null
   } as obs"
 >
+        <div>
+            <v-input-label
+                [title]="'val1'"
+            ></v-input-label>
+            <valtimo-value-path-selector
+                    formControlName="path"
+                    [documentDefinitionName]=documentDefinitionName
+                    [prefixes]="[ValuePathSelectorPrefix.DOC, ValuePathSelectorPrefix.CASE]"
+            ></valtimo-value-path-selector>
+        </div>
     <v-input
             name="configurationTitle"
             [title]="'configurationTitle' | pluginTranslate: pluginId | async"
@@ -85,7 +95,7 @@
             [title]="'clientCertFile' | pluginTranslate: pluginId | async"
             [margin]="true"
             [fullWidth]="true"
-            [defaultValue]="obs.prefill?.clientCertFile"
+            [defaultValue]="obs.prefill?.clientCertificateFilename"
             [disabled]="obs.disabled"
             [required]="false"
     >

@@ -1,12 +1,18 @@
 package com.ritense.valtimo.xential.service
 
+import com.ritense.plugin.service.PluginService
+import com.ritense.resource.service.TemporaryResourceStorageService
+import com.ritense.valtimo.contract.authentication.UserManagementService
 import com.ritense.valtimoplugins.xential.domain.GenerateDocumentProperties
 import com.ritense.valtimoplugins.xential.domain.HttpClientProperties
 import com.ritense.valtimoplugins.xential.domain.XentialToken
 import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
+import com.ritense.valtimoplugins.xential.service.HttpClientConfig
+import com.ritense.valueresolver.ValueResolverService
 import com.rotterdam.xential.api.DefaultApi
 import com.rotterdam.xential.model.DocumentCreatieResultaat
+import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,8 +36,33 @@ class DocumentGenerationServiceTest {
     @Mock
     lateinit var xentialTokenRepository: XentialTokenRepository
 
+    @Mock
+    lateinit var temporaryResourceStorageService: TemporaryResourceStorageService
+
+    @Mock
+    lateinit var pluginService: PluginService
+
+    @Mock
+    lateinit var runtimeService: RuntimeService
+
+    @Mock
+    lateinit var valueResolverService: ValueResolverService
+
+    @Mock
+    lateinit var userManagementService: UserManagementService
+
+    @Mock
+    lateinit var httpClientConfig: HttpClientConfig
+
+    /*
+    private val runtimeService: RuntimeService,
+    private val valueResolverService: ValueResolverService,
+    private val userManagementService: UserManagementService,
+    private val httpClientConfig: HttpClientConfig
+*/
     @InjectMocks
     lateinit var documentGenerationService: DocumentGenerationService
+
 
     @BeforeEach
     fun setup() {
@@ -75,17 +106,9 @@ class DocumentGenerationServiceTest {
             generateDocumentProperties,
             execution,
         )
-/*
-    val token: UUID = UUID.randomUUID(),
-    val externalToken: String = "",
-    val processId: UUID = UUID.randomUUID(),
-    val messageName: String = "",
-    val resumeUrl: String = ""
- */
         verify(xentialTokenRepository).save(
             XentialToken(
                 token = UUID.randomUUID(),
-                externalToken = creatieResultaat.documentCreatieSessieId,
                 processId = executionId,
                 messageName = "messageName",
                 resumeUrl = null

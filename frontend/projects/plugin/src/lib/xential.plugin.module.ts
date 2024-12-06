@@ -18,7 +18,13 @@ import {NgModule} from '@angular/core';
 import {XentialConfigurationComponent} from './components/xential-configuration/xential-configuration.component';
 import {CommonModule} from '@angular/common';
 import {PluginTranslatePipeModule} from '@valtimo/plugin';
-import {CarbonMultiInputModule, FormModule, InputModule, SelectModule} from '@valtimo/components';
+import {
+    CarbonMultiInputModule,
+    FormModule, InputLabelModule,
+    InputModule,
+    SelectModule,
+    ValuePathSelectorComponent
+} from '@valtimo/components';
 import {
   GenerateDocumentConfigurationComponent
 } from "./components/generate-document-configuration/generate-document-configuration.component";
@@ -29,7 +35,17 @@ import {DropdownModule} from "carbon-components-angular";
     XentialConfigurationComponent,
     GenerateDocumentConfigurationComponent,
   ],
-  imports: [CommonModule, PluginTranslatePipeModule, FormModule, InputModule, SelectModule, DropdownModule, CarbonMultiInputModule],
+    imports: [
+        CommonModule,
+        PluginTranslatePipeModule,
+        FormModule,
+        InputModule,
+        SelectModule,
+        DropdownModule,
+        CarbonMultiInputModule,
+        ValuePathSelectorComponent,
+        InputLabelModule
+    ],
   exports: [
     XentialConfigurationComponent,
     GenerateDocumentConfigurationComponent,

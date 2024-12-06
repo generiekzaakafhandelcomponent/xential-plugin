@@ -3,7 +3,23 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Xential Test",
     "type": "object",
-    "properties": {},
+    "properties": {
+        "persoon": {
+            "type": "object",
+            "properties": {
+                "voornaam": {
+                    "type": "string"
+                },
+                "achternaam": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "kvkNummer": {
+            "type": "string"
+        }
+    },
     "additionalProperties": false,
     "definitions": {}
 }
