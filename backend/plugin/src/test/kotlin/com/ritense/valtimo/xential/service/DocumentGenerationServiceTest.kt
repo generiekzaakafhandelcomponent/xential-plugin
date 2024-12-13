@@ -54,12 +54,6 @@ class DocumentGenerationServiceTest {
     @Mock
     lateinit var httpClientConfig: HttpClientConfig
 
-    /*
-    private val runtimeService: RuntimeService,
-    private val valueResolverService: ValueResolverService,
-    private val userManagementService: UserManagementService,
-    private val httpClientConfig: HttpClientConfig
-*/
     @InjectMocks
     lateinit var documentGenerationService: DocumentGenerationService
 
