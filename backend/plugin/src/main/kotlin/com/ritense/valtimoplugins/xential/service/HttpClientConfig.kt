@@ -74,17 +74,6 @@ class HttpClientConfig {
         }
 
         val credentials = Credentials.basic(properties.applicationName, properties.applicationPassword)
-        val customDns = object : Dns {
-            override fun lookup(hostname: String): List<InetAddress> {
-                logger.info { "Resolving hostname: $hostname" }
-                return try {
-                    InetAddress.getAllByName("127.0.0.1").toList()
-                } catch (e: UnknownHostException) {
-                    logger.error("Failed to resolve hostname: $hostname")
-                    throw e
-                }
-            }
-        }
         val customClient = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
@@ -93,7 +82,6 @@ class HttpClientConfig {
                 chain.proceed(request)
             }
             .sslSocketFactory(sslContext.socketFactory, trustManagerFactory.trustManagers[0] as X509TrustManager)
-            .dns(customDns)
             .build()
 
         return DefaultApi(properties.baseUrl.toString(), customClient)
