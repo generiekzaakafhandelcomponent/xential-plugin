@@ -72,7 +72,7 @@ class DocumentGenerationServiceTest {
             fileFormat = com.ritense.valtimoplugins.xential.domain.FileFormat.PDF,
             documentId = "mijn-kenmerk",
             messageName = "messageName",
-            templateData = emptyArray()
+            creatieData = emptyArray()
         )
 
 

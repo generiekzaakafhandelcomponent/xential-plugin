@@ -30,18 +30,31 @@ class DocumentGenerationService(
     private val userManagementService: UserManagementService,
     private val httpClientConfig: HttpClientConfig
 ) {
+    fun generateContent(
+        creatieData: Array<TemplateDataEntry>,
+        colofonData: Array<TemplateDataEntry>,
+        verzendAdresData: Array<TemplateDataEntry>,
+        execution: DelegateExecution,
+    ): MutableMap<String, Any> {
+        val map: MutableMap<String, Any> = HashMap()
+        map.put("creatieData", resolveTemplateData(creatieData, execution))
+        map.put("colofon", resolveTemplateData(colofonData, execution))
+        map.put("verzendAdres", resolveTemplateData(verzendAdresData, execution))
+        return map
+    }
 
     fun generateDocument(
         httpClientProperties: HttpClientProperties,
         processId: UUID,
         generateDocumentProperties: GenerateDocumentProperties,
+        contentProcessVariable: String,
         execution: DelegateExecution,
     ) {
         logger.info { "current userid: ${userManagementService.currentUserId}" }
 
         val api = httpClientConfig.configureClient(httpClientProperties)
-        val resolvedMap = resolveTemplateData(generateDocumentProperties.templateData, execution)
-        val sjabloonVulData = resolvedMap.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()
+        val sjabloonVulData = generateXml(contentProcessVariable, execution)
+
         val result = api.creeerDocument(
             gebruikersId = userManagementService.currentUserId,
             accepteerOnbekend = false,
@@ -49,7 +62,7 @@ class DocumentGenerationService(
                 sjabloonId = generateDocumentProperties.templateId.toString(),
                 bestandsFormaat = Sjabloondata.BestandsFormaat.valueOf(generateDocumentProperties.fileFormat.name),
                 documentkenmerk = generateDocumentProperties.documentId,
-                sjabloonVulData = "<root>$sjabloonVulData</root>"
+                sjabloonVulData = sjabloonVulData
             )
         )
         logger.info { "found something: $result" }
@@ -66,12 +79,12 @@ class DocumentGenerationService(
         logger.info { "token: ${xentialToken.token}" }
         xentialTokenRepository.save(xentialToken)
 
-        val toWizard = if( execution.hasVariable("testWizard") ) {
+        val toWizard = if (execution.hasVariable("testWizard")) {
             execution.getVariable("testWizard")
         } else null
 
 
-        if( toWizard?.equals("JA") == true ) {
+        if (toWizard?.equals("JA") == true) {
             execution.setVariable("xentialStatus", "ONVOLTOOID")
         } else {
             execution.setVariable("xentialStatus", result.status)
@@ -82,6 +95,19 @@ class DocumentGenerationService(
         logger.info { "ready" }
     }
 
+    private fun generateXml(
+        contentVariableKey: String,
+        execution: DelegateExecution
+    ): String {
+
+        val map = execution.getVariable(contentVariableKey) as Map<String, Map<String, *>>
+        return "<root>" +
+                    "<verzendAdres>${map["verzendAdres"]!!.map{ "<${it.key}>${it.value}</${it.key}>" }.joinToString()}</verzendAdres>" +
+                    "<colofon>${map["colofon"]!!.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}</colofon>" +
+                    "<creatieData>${map["creatieData"]!!.map{ "<${it.key}>${it.value}</${it.key}>" }.joinToString()}</creatieData>" +
+                "</root>"
+    }
+
     fun onDocumentGenerated(message: DocumentCreatedMessage) {
 
         val bytes = Base64.getDecoder().decode(message.data)
@@ -90,7 +116,8 @@ class DocumentGenerationService(
             .orElseThrow { NoSuchElementException("Could not find Xential Token ${message.documentCreatieSessieId}") }
 
         ByteArrayInputStream(bytes).use { inputStream ->
-            val metadata = mapOf(MetadataType.FILE_NAME.key to "${xentialToken.processId}-${xentialToken.messageName}.tmp")
+            val metadata =
+                mapOf(MetadataType.FILE_NAME.key to "${xentialToken.processId}-${xentialToken.messageName}.tmp")
             val resourceId = temporaryResourceStorageService.store(inputStream, metadata)
             val resourceIdMap = mapOf("resourceId" to resourceId)
             runtimeService.createMessageCorrelation(xentialToken.messageName)

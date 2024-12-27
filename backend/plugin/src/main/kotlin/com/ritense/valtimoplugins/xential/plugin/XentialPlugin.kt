@@ -26,6 +26,7 @@ import com.ritense.valtimoplugins.xential.domain.FileFormat
 import com.ritense.valtimoplugins.xential.domain.GenerateDocumentProperties
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin.Companion.PLUGIN_KEY
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
+import mu.KotlinLogging
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import java.io.File
 import java.net.URI
@@ -70,15 +71,14 @@ class XentialPlugin(
         @PluginActionProperty fileFormat: FileFormat,
         @PluginActionProperty documentId: String,
         @PluginActionProperty messageName: String,
-        @PluginActionProperty templateData: Array<TemplateDataEntry>,
+        @PluginActionProperty contentProcessVariable: String,
         execution: DelegateExecution
     ) {
         val generateDocumentProperties = GenerateDocumentProperties(
             templateId,
             fileFormat,
             documentId,
-            messageName,
-            templateData
+            messageName
         )
 
         val httpClientProperties = HttpClientProperties(
@@ -94,11 +94,43 @@ class XentialPlugin(
             httpClientProperties,
             UUID.fromString(execution.processInstanceId),
             generateDocumentProperties,
+            contentProcessVariable,
             execution
         )
     }
 
+    @PluginAction(
+        key = "prepare-content",
+        title = "Prepare content",
+        description = "Prepare content for xential.",
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
+    )
+    fun prepareContent(
+        @PluginActionProperty resultProcessVariableName: String,
+        @PluginActionProperty verzendAdresData: Array<TemplateDataEntry>,
+        @PluginActionProperty colofonData: Array<TemplateDataEntry>,
+        @PluginActionProperty creatieData: Array<TemplateDataEntry>,
+        execution: DelegateExecution
+    ) {
+        try {
+            documentGenerationService.generateContent(
+                creatieData,
+                colofonData,
+                verzendAdresData,
+                execution
+            ).let{
+                execution.processInstance.setVariable(
+                    resultProcessVariableName, it
+                )
+            }
+        } catch (e: Exception) {
+            logger.info("Exiting scope due to nested error.", e)
+            return
+        }
+    }
+
     companion object {
+        private val logger = KotlinLogging.logger { }
         const val PLUGIN_KEY = "xential"
     }
 
