@@ -23,3 +23,4 @@ export * from './lib/xential.plugin.module';
 export * from './lib/xential.plugin.specification';
 export * from './lib/components/xential-configuration/xential-configuration.component';
 export * from './lib/components/generate-document-configuration/generate-document-configuration.component';
+export * from './lib/components/prepare-content-configuration/prepare-content-configuration.component';

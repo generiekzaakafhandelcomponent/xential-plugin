@@ -21,7 +21,13 @@
     prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null
   } as obs"
 >
-        <div>
+    <div>
+        <v-input-label
+                [title]="'maak plugin'"
+        ></v-input-label>
+    </div>
+
+    <div>
             <v-input-label
                 [title]="'val1'"
             ></v-input-label>

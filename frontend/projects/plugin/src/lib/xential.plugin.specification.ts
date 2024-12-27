@@ -20,13 +20,17 @@ import {XENTIAL_PLUGIN_LOGO_BASE64} from './assets';
 import {
     GenerateDocumentConfigurationComponent
 } from "./components/generate-document-configuration/generate-document-configuration.component";
+import {
+    PrepareContentConfigurationComponent
+} from "./components/prepare-content-configuration/prepare-content-configuration.component";
 
 const XentialPluginSpecification: PluginSpecification = {
     pluginId: 'xential',
     pluginConfigurationComponent: XentialConfigurationComponent,
     pluginLogoBase64: XENTIAL_PLUGIN_LOGO_BASE64,
     functionConfigurationComponents: {
-        'generate-document': GenerateDocumentConfigurationComponent
+        'generate-document': GenerateDocumentConfigurationComponent,
+        'prepare-content': PrepareContentConfigurationComponent
     },
     pluginTranslations: {
         nl: {

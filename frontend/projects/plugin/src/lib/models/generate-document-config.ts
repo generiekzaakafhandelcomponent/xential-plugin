@@ -2,8 +2,8 @@ interface GenerateDocumentConfig {
     templateId: string;
     fileFormat: FileFormat;
     documentId: string;
-    messageName: "sfsefef"
-    templateData: Array<{key: string; value: string}>
+    messageName: string;
+    contentProcessVariable: string;
 }
 
 type FileFormat = 'WORD' | 'PDF';

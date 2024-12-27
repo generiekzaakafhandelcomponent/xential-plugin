@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {FunctionConfigurationComponent} from '@valtimo/plugin';
 import {BehaviorSubject, combineLatest, Observable, Subscription, take} from 'rxjs';
 import {FileFormat, GenerateDocumentConfig} from "../../models";
-import {SelectItem} from "@valtimo/components";
+import {SelectItem, ValuePathSelectorPrefix} from "@valtimo/components";
 
 @Component({
     selector: 'xential-generate-document-configuration',
@@ -51,7 +51,7 @@ export class GenerateDocumentConfigurationComponent implements FunctionConfigura
             formValue.documentId &&
             formValue.fileFormat &&
             formValue.messageName &&
-            !formValue.templateData.find((entry) => !(entry.key && entry.value))
+            formValue.contentProcessVariable
         );
 
         this.valid$.next(valid);
@@ -69,4 +69,6 @@ export class GenerateDocumentConfigurationComponent implements FunctionConfigura
                 });
         });
     }
+
+    protected readonly ValuePathSelectorPrefix = ValuePathSelectorPrefix;
 }

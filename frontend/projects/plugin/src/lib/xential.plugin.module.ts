@@ -26,15 +26,19 @@ import {
     ValuePathSelectorComponent
 } from '@valtimo/components';
 import {
-  GenerateDocumentConfigurationComponent
+    GenerateDocumentConfigurationComponent
 } from "./components/generate-document-configuration/generate-document-configuration.component";
+import {
+    PrepareContentConfigurationComponent
+} from "./components/prepare-content-configuration/prepare-content-configuration.component";
 import {DropdownModule} from "carbon-components-angular";
 
 @NgModule({
-  declarations: [
-    XentialConfigurationComponent,
-    GenerateDocumentConfigurationComponent,
-  ],
+    declarations: [
+        XentialConfigurationComponent,
+        GenerateDocumentConfigurationComponent,
+        PrepareContentConfigurationComponent
+    ],
     imports: [
         CommonModule,
         PluginTranslatePipeModule,
@@ -46,9 +50,11 @@ import {DropdownModule} from "carbon-components-angular";
         ValuePathSelectorComponent,
         InputLabelModule
     ],
-  exports: [
-    XentialConfigurationComponent,
-    GenerateDocumentConfigurationComponent,
-  ],
+    exports: [
+        XentialConfigurationComponent,
+        GenerateDocumentConfigurationComponent,
+        PrepareContentConfigurationComponent
+    ],
 })
-export class XentialPluginModule {}
+export class XentialPluginModule {
+}

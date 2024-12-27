@@ -16,7 +16,7 @@
 
 import {PluginConfigurationData} from '@valtimo/plugin';
 
-interface XentialConfig extends PluginConfigurationData {
+export interface XentialConfig extends PluginConfigurationData {
     applicationName: string;
     applicationPassword: string;
     baseUrl: string;
@@ -25,4 +25,14 @@ interface XentialConfig extends PluginConfigurationData {
     clientCertificateFilename: string;
 }
 
-export {XentialConfig};
+export interface PrepareContentTemplate extends PluginConfigurationData {
+    resultProcessVariableName: string;
+    verzendAdresData: Array<{key: string; value: string}>;
+    colofonData: Array<{key: string; value: string}>;
+    creatieData: Array<{key: string; value: string}>;
+}
+
+// export {
+//     XentialConfig,
+//     PrepareContentTemplate
+// };
