@@ -9,7 +9,6 @@ import com.ritense.valtimoplugins.xential.domain.DocumentCreatedMessage
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.domain.XentialToken
 import com.ritense.valtimoplugins.xential.plugin.TemplateDataEntry
-import com.ritense.valtimoplugins.xential.plugin.XentialPlugin
 import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
 import com.ritense.valueresolver.ValueResolverService
 import com.rotterdam.xential.model.Sjabloondata
@@ -17,8 +16,8 @@ import mu.KotlinLogging
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import java.io.ByteArrayInputStream
-import java.util.*
-
+import java.util.UUID
+import java.util.Base64
 
 class DocumentGenerationService(
 
@@ -141,13 +140,6 @@ class DocumentGenerationService(
             templateData.map { it.value }.toList()
         )
         return templateData.associate { it.key to placeHolderValueMap.getOrDefault(it.value, null) }
-    }
-
-    private fun getXentialPlugin(message: DocumentCreatedMessage): XentialPlugin {
-        //FIXME needs a way of determining the right plugin
-        val pluginConfig = pluginService.findPluginConfiguration(XentialPlugin.PLUGIN_KEY) { _ -> true }
-            ?: throw NoSuchElementException("Could not find Xential plugin")
-        return pluginService.createInstance(pluginConfig) as XentialPlugin
     }
 
     companion object {
