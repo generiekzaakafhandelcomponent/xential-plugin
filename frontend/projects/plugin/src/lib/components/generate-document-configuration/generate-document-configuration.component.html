@@ -2,8 +2,7 @@
         (valueChange)="formValueChange($event)"
         *ngIf="{
         disabled: disabled$ | async,
-        prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null,
-        fileFormats: fileFormats$ | async,
+        prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null
     } as obs"
 >
 
@@ -14,51 +13,10 @@
     </div>
 
     <v-input
-            name="templateId"
-            [title]="'templateId' | pluginTranslate: pluginId | async"
+            name="documentProperties"
+            [title]="'documentProperties' | pluginTranslate: pluginId | async"
             [margin]="true"
-            [defaultValue]="obs.prefill?.templateId"
-            [disabled]="obs.disabled"
-            [required]="true"
-    />
-    <v-input
-            name="templateId"
-            [title]="'templateId' | pluginTranslate: pluginId | async"
-            [margin]="true"
-            [defaultValue]="obs.prefill?.templateId"
-            [disabled]="obs.disabled"
-            [required]="true"
-    />
-    <v-select
-            name="fileFormat"
-            [title]="'fileFormat' | pluginTranslate: pluginId | async"
-            [margin]="true"
-            [defaultSelectionId]="obs.prefill?.fileFormat"
-            [disabled]="obs.disabled"
-            [required]="true"
-            [items]="obs.fileFormats"
-    />
-    <v-input
-            name="documentId"
-            [title]="'documentId' | pluginTranslate: pluginId | async"
-            [margin]="true"
-            [defaultValue]="obs.prefill?.documentId"
-            [disabled]="obs.disabled"
-            [required]="true"
-    />
-    <v-input
-            name="messageName"
-            [title]="'messageName' | pluginTranslate: pluginId | async"
-            [margin]="true"
-            [defaultValue]="obs.prefill?.messageName"
-            [disabled]="obs.disabled"
-            [required]="true"
-    />
-    <v-input
-            name="contentProcessVariable"
-            [title]="'contentProcessVariable' | pluginTranslate: pluginId | async"
-            [margin]="true"
-            [defaultValue]="obs.prefill?.contentProcessVariable"
+            [defaultValue]="obs.prefill?.documentProperties"
             [disabled]="obs.disabled"
             [required]="true"
     />

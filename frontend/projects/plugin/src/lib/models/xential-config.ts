@@ -24,15 +24,3 @@ export interface XentialConfig extends PluginConfigurationData {
     clientPrivateKeyFilename: string;
     clientCertificateFilename: string;
 }
-
-export interface PrepareContentTemplate extends PluginConfigurationData {
-    resultProcessVariableName: string;
-    verzendAdresData: Array<{key: string; value: string}>;
-    colofonData: Array<{key: string; value: string}>;
-    creatieData: Array<{key: string; value: string}>;
-}
-
-// export {
-//     XentialConfig,
-//     PrepareContentTemplate
-// };

@@ -14,5 +14,6 @@
  * limitations under the License.
  */
 
-export * from './config';
+export * from './xential-config';
 export * from './generate-document-config'
+export * from './prepare-content-config'

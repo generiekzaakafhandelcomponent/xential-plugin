@@ -16,6 +16,8 @@
 
 package com.ritense.valtimoplugins.xential.plugin
 
+import com.fasterxml.jackson.module.kotlin.convertValue
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ritense.plugin.annotation.Plugin
 import com.ritense.plugin.annotation.PluginAction
 import com.ritense.plugin.annotation.PluginActionProperty
@@ -23,7 +25,7 @@ import com.ritense.plugin.annotation.PluginProperty
 import com.ritense.processlink.domain.ActivityTypeWithEventName
 import com.ritense.valtimoplugins.xential.domain.HttpClientProperties
 import com.ritense.valtimoplugins.xential.domain.FileFormat
-import com.ritense.valtimoplugins.xential.domain.GenerateDocumentProperties
+import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin.Companion.PLUGIN_KEY
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
 import mu.KotlinLogging
@@ -67,34 +69,25 @@ class XentialPlugin(
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
     )
     fun generateDocument(
-        @PluginActionProperty templateId: UUID,
-        @PluginActionProperty fileFormat: FileFormat,
-        @PluginActionProperty documentId: String,
-        @PluginActionProperty messageName: String,
-        @PluginActionProperty contentProcessVariable: String,
+        @PluginActionProperty documentProperties: Map<String,Any>,
         execution: DelegateExecution
     ) {
-        val generateDocumentProperties = GenerateDocumentProperties(
-            templateId,
-            fileFormat,
-            documentId,
-            messageName
-        )
+
+        val xentialDocumentProperties: XentialDocumentProperties = objectMapper.convertValue(documentProperties)
 
         val httpClientProperties = HttpClientProperties(
             applicationName,
             applicationPassword,
             baseUrl,
             File(serverCertificateFilename),
-            clientPrivateKeyFilename?.let{File(it)},
-            clientCertificateFilename?.let {File(it)}
+            clientPrivateKeyFilename?.let { File(it) },
+            clientCertificateFilename?.let { File(it) }
         )
 
         documentGenerationService.generateDocument(
             httpClientProperties,
             UUID.fromString(execution.processInstanceId),
-            generateDocumentProperties,
-            contentProcessVariable,
+            xentialDocumentProperties,
             execution
         )
     }
@@ -106,21 +99,32 @@ class XentialPlugin(
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
     )
     fun prepareContent(
-        @PluginActionProperty resultProcessVariableName: String,
+        @PluginActionProperty templateId: UUID,
+        @PluginActionProperty fileFormat: FileFormat,
+        @PluginActionProperty documentId: String,
+        @PluginActionProperty eventMessageName: String,
+        @PluginActionProperty documentProcessVariable: String,
         @PluginActionProperty verzendAdresData: Array<TemplateDataEntry>,
         @PluginActionProperty colofonData: Array<TemplateDataEntry>,
-        @PluginActionProperty creatieData: Array<TemplateDataEntry>,
+        @PluginActionProperty documentDetailsData: Array<TemplateDataEntry>,
         execution: DelegateExecution
     ) {
         try {
             documentGenerationService.generateContent(
-                creatieData,
+                documentDetailsData,
                 colofonData,
                 verzendAdresData,
                 execution
-            ).let{
+            ).let {
+                val xentialDocumentProperties = XentialDocumentProperties(
+                    templateId,
+                    fileFormat,
+                    documentId,
+                    eventMessageName,
+                    it
+                )
                 execution.processInstance.setVariable(
-                    resultProcessVariableName, it
+                    documentProcessVariable, objectMapper.convertValue(xentialDocumentProperties)
                 )
             }
         } catch (e: Exception) {
@@ -131,6 +135,7 @@ class XentialPlugin(
 
     companion object {
         private val logger = KotlinLogging.logger { }
+        private val objectMapper = jacksonObjectMapper().findAndRegisterModules()
         const val PLUGIN_KEY = "xential"
     }
 

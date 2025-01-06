@@ -2,21 +2,55 @@
         (valueChange)="formValueChange($event)"
         *ngIf="{
         disabled: disabled$ | async,
-        prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null
+        prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null,
+        fileFormats: fileFormats$ | async,
     } as obs"
 >
 
     <div>
         <v-input-label
-                [title]="'prepare it'"
+                [title]="'preparing doc creation'"
         ></v-input-label>
     </div>
 
     <v-input
-            name="resultProcessVariableName"
-            [title]="'resultProcessVariableName' | pluginTranslate: pluginId | async"
+            name="documentProcessVariable"
+            [title]="'documentProcessVariable' | pluginTranslate: pluginId | async"
             [margin]="true"
-            [defaultValue]="obs.prefill?.resultProcessVariableName"
+            [defaultValue]="obs.prefill?.documentProcessVariable"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="templateId"
+            [title]="'templateId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.templateId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-select
+            name="fileFormat"
+            [title]="'fileFormat' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultSelectionId]="obs.prefill?.fileFormat"
+            [disabled]="obs.disabled"
+            [required]="true"
+            [items]="obs.fileFormats"
+    />
+    <v-input
+            name="documentId"
+            [title]="'documentId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.documentId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="eventMessageName"
+            [title]="'eventMessageName' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.eventMessageName"
             [disabled]="obs.disabled"
             [required]="true"
     />
@@ -45,14 +79,14 @@
             [initialAmountOfRows]="0"
     ></valtimo-carbon-multi-input>
     <valtimo-carbon-multi-input
-            name="creatieData"
-            [title]="'creatieData' | pluginTranslate: pluginId | async"
+            name="documentDetailsData"
+            [title]="'documentDetailsData' | pluginTranslate: pluginId | async"
             type="keyValue"
             [disabled]="obs.disabled"
-            [defaultValues]="obs.prefill?.creatieData"
+            [defaultValues]="obs.prefill?.documentDetailsData"
             [margin]="true"
             [required]="false"
-            [tooltip]="'creatieDataTooltip' | pluginTranslate: pluginId | async"
+            [tooltip]="'documentDetailsDataTooltip' | pluginTranslate: pluginId | async"
             [minimumAmountOfRows]="0"
             [initialAmountOfRows]="0"
     ></valtimo-carbon-multi-input>

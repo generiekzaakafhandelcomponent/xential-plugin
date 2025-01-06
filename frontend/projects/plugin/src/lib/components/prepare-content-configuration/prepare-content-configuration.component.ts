@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {FunctionConfigurationComponent} from '@valtimo/plugin';
 import {BehaviorSubject, combineLatest, Observable, Subscription, take} from 'rxjs';
 import {PrepareContentTemplate} from "../../models";
+import {SelectItem} from "@valtimo/components";
 
 @Component({
     selector: 'xential-prepare-content-configuration',
@@ -15,6 +16,16 @@ export class PrepareContentConfigurationComponent implements FunctionConfigurati
     @Output() valid: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() configuration: EventEmitter<PrepareContentTemplate> =
         new EventEmitter<PrepareContentTemplate>();
+
+    public fileFormats$ = new BehaviorSubject<SelectItem[]>(
+        ['WORD', 'PDF']
+            .map(format => {
+                return {
+                    id: format,
+                    text: format
+                }
+            })
+    );
 
     private saveSubscription!: Subscription;
 
@@ -36,8 +47,12 @@ export class PrepareContentConfigurationComponent implements FunctionConfigurati
 
     private handleValid(formValue: PrepareContentTemplate): void {
         const valid = !!(
-            formValue.resultProcessVariableName &&
-            !formValue.creatieData.find((entry) => !(entry.key && entry.value)) &&
+            formValue.documentProcessVariable &&
+            formValue.templateId &&
+            formValue.fileFormat &&
+            formValue.documentId &&
+            formValue.eventMessageName &&
+            !formValue.documentDetailsData.find((entry) => !(entry.key && entry.value)) &&
             !formValue.colofonData.find((entry) => !(entry.key && entry.value)) &&
             !formValue.verzendAdresData.find((entry) => !(entry.key && entry.value))
         );

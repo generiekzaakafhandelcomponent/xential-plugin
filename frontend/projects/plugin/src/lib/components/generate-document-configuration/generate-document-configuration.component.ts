@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FunctionConfigurationComponent} from '@valtimo/plugin';
 import {BehaviorSubject, combineLatest, Observable, Subscription, take} from 'rxjs';
-import {FileFormat, GenerateDocumentConfig} from "../../models";
+import {GenerateDocumentConfig} from "../../models";
 import {SelectItem, ValuePathSelectorPrefix} from "@valtimo/components";
 
 @Component({
@@ -16,16 +16,6 @@ export class GenerateDocumentConfigurationComponent implements FunctionConfigura
     @Output() valid: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() configuration: EventEmitter<GenerateDocumentConfig> =
         new EventEmitter<GenerateDocumentConfig>();
-
-    public fileFormats$ = new BehaviorSubject<SelectItem[]>(
-        ['WORD', 'PDF']
-            .map(format => {
-                return {
-                    id: format,
-                    text: format
-                }
-            })
-    );
 
     private saveSubscription!: Subscription;
 
@@ -47,11 +37,7 @@ export class GenerateDocumentConfigurationComponent implements FunctionConfigura
 
     private handleValid(formValue: GenerateDocumentConfig): void {
         const valid = !!(
-            formValue.templateId &&
-            formValue.documentId &&
-            formValue.fileFormat &&
-            formValue.messageName &&
-            formValue.contentProcessVariable
+            formValue.documentProperties
         );
 
         this.valid$.next(valid);
