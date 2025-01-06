@@ -33,8 +33,6 @@ By gradle script:
 
 `Plugins -> backend -> app -> Tasks -> application -> bootRun`
 
-Or use commend line:
-
 #### Keycloak users
 
 The example application has a few test users that are preconfigured.
