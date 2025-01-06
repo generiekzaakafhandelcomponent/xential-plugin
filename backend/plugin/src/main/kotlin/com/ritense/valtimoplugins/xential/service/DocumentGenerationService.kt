@@ -1,6 +1,5 @@
 package com.ritense.valtimoplugins.xential.service
 
-import com.ritense.plugin.service.PluginService
 import com.ritense.resource.domain.MetadataType
 import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimo.contract.authentication.UserManagementService
@@ -23,7 +22,6 @@ class DocumentGenerationService(
 
     private val xentialTokenRepository: XentialTokenRepository,
     private val temporaryResourceStorageService: TemporaryResourceStorageService,
-    private val pluginService: PluginService,
     private val runtimeService: RuntimeService,
     private val valueResolverService: ValueResolverService,
     private val userManagementService: UserManagementService,

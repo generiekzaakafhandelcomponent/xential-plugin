@@ -69,7 +69,6 @@ class XentialAutoConfiguration {
     fun documentGenerationService(
         xentialTokenRepository: XentialTokenRepository,
         temporaryResourceStorageService: TemporaryResourceStorageService,
-        pluginService: PluginService,
         runtimeService: RuntimeService,
         valueResolverService: ValueResolverService,
         userManagementService: UserManagementService,
@@ -77,7 +76,6 @@ class XentialAutoConfiguration {
     ) = DocumentGenerationService(
         xentialTokenRepository,
         temporaryResourceStorageService,
-        pluginService,
         runtimeService,
         valueResolverService,
         userManagementService,
