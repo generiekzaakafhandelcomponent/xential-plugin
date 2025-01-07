@@ -1,6 +1,5 @@
 package com.ritense.valtimo.xential.service
 
-import com.ritense.plugin.service.PluginService
 import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimo.contract.authentication.UserManagementService
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
@@ -51,9 +50,6 @@ class DocumentGenerationServiceTest {
     @Mock
     lateinit var httpClientConfig: HttpClientConfig
 
-    @Mock
-    lateinit var httpClientProperties: HttpClientProperties
-
     @InjectMocks
     lateinit var documentGenerationService: DocumentGenerationService
 
@@ -65,7 +61,6 @@ class DocumentGenerationServiceTest {
 
     @Test
     fun shouldGenerateDocument() {
-        val executionId = UUID.randomUUID()
         whenever(userManagementService.currentUserId).thenReturn("123445")
         whenever(httpClientConfig.configureClient(any())).thenReturn(defaultApi)
 
@@ -101,21 +96,14 @@ class DocumentGenerationServiceTest {
             null
         )
 
-
         documentGenerationService.generateDocument(
             httpClientProperties,
             UUID.randomUUID(),
             xentialDocumentProperties,
             execution,
         )
-//        verify(xentialTokenRepository).save(
-//            XentialToken(
-//                token = UUID.randomUUID(),
-//                processId = executionId,
-//                messageName = "messageName",
-//                resumeUrl = null
-//            )
-//        )
+
+        verify(xentialTokenRepository).save(any<XentialToken>())
     }
 
 }

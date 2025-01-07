@@ -21,11 +21,6 @@
 
 
     <changeSet id="create_table_xential_tokens_4" author="Ritense">
-<!--        <preConditions onFail="CONTINUE">-->
-<!--            <and>-->
-<!--                <tableExists tableName="xential_tokens" />-->
-<!--            </and>-->
-<!--        </preConditions>-->
         <createTable tableName="xential_tokens">
             <column name="token" type="uuid"/>
             <column name="process_id" type="uuid"/>

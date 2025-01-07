@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2022 Ritense BV, the Netherlands.
+ * Copyright 2015-2025 Ritense BV, the Netherlands.
  *
  * Licensed under EUPL, Version 1.2 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,24 +45,19 @@ class XentialAutoConfiguration {
     fun xentialPluginFactory(
         pluginService: PluginService,
         documentGenerationService: DocumentGenerationService
-    ): XentialPluginFactory {
-        return XentialPluginFactory(
+    ) = XentialPluginFactory(
             pluginService,
             documentGenerationService,
         )
-    }
 
     @Bean
     @ConditionalOnMissingBean(name = ["xentialLiquibaseMasterChangeLogLocation"])
-    fun xentialLiquibaseMasterChangeLogLocation(): LiquibaseMasterChangeLogLocation {
-        return LiquibaseMasterChangeLogLocation("config/liquibase/xential-plugin-master.xml")
-    }
-
+    fun xentialLiquibaseMasterChangeLogLocation() =
+        LiquibaseMasterChangeLogLocation("config/liquibase/xential-plugin-master.xml")
 
     @Bean
-    fun xentialHttpClientConfig(): HttpClientConfig {
-        return HttpClientConfig()
-    }
+    fun xentialHttpClientConfig() = HttpClientConfig()
+
 
     @Bean
     @ConditionalOnMissingBean
@@ -84,14 +79,13 @@ class XentialAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(com.ritense.valtimoplugins.xential.web.rest.DocumentResource::class)
-    fun xentialDocumentResource(documentGenerationService: DocumentGenerationService): com.ritense.valtimoplugins.xential.web.rest.DocumentResource {
-        return com.ritense.valtimoplugins.xential.web.rest.DocumentResource(documentGenerationService)
-    }
+    fun xentialDocumentResource(documentGenerationService: DocumentGenerationService) =
+        com.ritense.valtimoplugins.xential.web.rest.DocumentResource(documentGenerationService)
+
 
     @Bean
     @Order(270)
     @ConditionalOnMissingBean
-    fun xentialApiHttpSecurityConfigurer(): com.ritense.valtimoplugins.xential.security.config.XentialApiHttpSecurityConfigurer {
-        return com.ritense.valtimoplugins.xential.security.config.XentialApiHttpSecurityConfigurer()
-    }
+    fun xentialApiHttpSecurityConfigurer() =
+        com.ritense.valtimoplugins.xential.security.config.XentialApiHttpSecurityConfigurer()
 }

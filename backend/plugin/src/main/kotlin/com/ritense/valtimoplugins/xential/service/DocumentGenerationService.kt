@@ -106,7 +106,6 @@ class DocumentGenerationService(
                     documentDetails.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()
                 }</documentDetails>" +
                 "</root>"
-
     }
 
     fun onDocumentGenerated(message: DocumentCreatedMessage) {

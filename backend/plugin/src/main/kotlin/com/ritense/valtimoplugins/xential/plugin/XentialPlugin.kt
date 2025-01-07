@@ -43,7 +43,6 @@ import java.util.UUID
 class XentialPlugin(
     private val documentGenerationService: DocumentGenerationService
 ) {
-
     @PluginProperty(key = "applicationName", secret = false, required = true)
     private lateinit var applicationName: String
 
@@ -128,7 +127,7 @@ class XentialPlugin(
                 )
             }
         } catch (e: Exception) {
-            logger.info("Exiting scope due to nested error.", e)
+            logger.error("Exiting scope due to nested error.", e)
             return
         }
     }

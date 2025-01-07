@@ -35,10 +35,6 @@ dependencies {
     implementation("com.ritense.valtimo:plugin-valtimo")
     implementation("com.ritense.valtimo:temporary-resource-storage")
     implementation("com.ritense.valtimo:value-resolver")
-////    implementation("com.ritense.valtimo:openzaak-plugin-authentication")
-////    implementation("com.ritense.valtimo:zaken-api")
-////    implementation("com.ritense.valtimo:documenten-api")
-//    implementation("com.ritense.valtimo:zgw")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
@@ -76,7 +72,6 @@ dependencies {
 }
 
 apply(from = "gradle/publishing.gradle")
-//apply plugin: 'org.openapi.generator'
 
 openApiGenerate {
     inputSpec.set("$rootDir/backend/xential/src/main/resources/dcsg_xential.yaml")

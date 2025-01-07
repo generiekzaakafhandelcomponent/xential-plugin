@@ -1,6 +1,5 @@
 package com.ritense.valtimoplugins.xential.web.rest
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.ritense.valtimo.contract.annotation.SkipComponentScan
 import com.ritense.valtimo.contract.domain.ValtimoMediaType
 import com.ritense.valtimoplugins.xential.domain.DocumentCreatedMessage
@@ -17,7 +16,7 @@ class DocumentResource(
     val documentGenerationService: DocumentGenerationService
 ) {
 
-    @PostMapping("/xential/v1/document")
+    @PostMapping("/v1/xential/document")
     fun handleSubmission(
         @RequestBody message: DocumentCreatedMessage
     ) {
