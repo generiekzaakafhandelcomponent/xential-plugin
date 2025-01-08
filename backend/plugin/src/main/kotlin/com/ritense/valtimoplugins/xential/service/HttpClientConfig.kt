@@ -20,12 +20,9 @@ import com.ritense.valtimoplugins.xential.domain.HttpClientProperties
 import com.rotterdam.xential.api.DefaultApi
 import mu.KotlinLogging
 import okhttp3.Credentials
-import okhttp3.Dns
 import okhttp3.OkHttpClient
 import java.io.File
 import java.io.FileInputStream
-import java.net.InetAddress
-import java.net.UnknownHostException
 import java.security.KeyFactory
 import java.security.KeyStore
 import java.security.cert.CertificateFactory
