@@ -18,7 +18,6 @@ package com.ritense.valtimoplugins.xential.service
 
 import com.ritense.resource.domain.MetadataType
 import com.ritense.resource.service.TemporaryResourceStorageService
-import com.ritense.valtimo.contract.authentication.UserManagementService
 import com.ritense.valtimoplugins.xential.domain.HttpClientProperties
 import com.ritense.valtimoplugins.xential.domain.DocumentCreatedMessage
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
