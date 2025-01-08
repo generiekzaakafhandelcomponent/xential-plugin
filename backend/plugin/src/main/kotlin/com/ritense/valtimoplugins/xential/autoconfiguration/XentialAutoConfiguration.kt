@@ -18,13 +18,14 @@ package com.ritense.valtimoplugins.xential.autoconfiguration
 
 import com.ritense.plugin.service.PluginService
 import com.ritense.resource.service.TemporaryResourceStorageService
-import com.ritense.valtimo.contract.authentication.UserManagementService
 import com.ritense.valtimo.contract.config.LiquibaseMasterChangeLogLocation
 import com.ritense.valtimoplugins.xential.domain.XentialToken
 import com.ritense.valtimoplugins.xential.plugin.XentialPluginFactory
 import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
+import com.ritense.valtimoplugins.xential.security.config.XentialApiHttpSecurityConfigurer
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
 import com.ritense.valtimoplugins.xential.service.HttpClientConfig
+import com.ritense.valtimoplugins.xential.web.rest.DocumentResource
 import com.ritense.valueresolver.ValueResolverService
 import org.camunda.bpm.engine.RuntimeService
 import org.springframework.boot.autoconfigure.AutoConfiguration
@@ -66,26 +67,23 @@ class XentialAutoConfiguration {
         temporaryResourceStorageService: TemporaryResourceStorageService,
         runtimeService: RuntimeService,
         valueResolverService: ValueResolverService,
-        userManagementService: UserManagementService,
         httpClientConfig: HttpClientConfig
     ) = DocumentGenerationService(
         xentialTokenRepository,
         temporaryResourceStorageService,
         runtimeService,
         valueResolverService,
-        userManagementService,
         httpClientConfig
     )
 
     @Bean
-    @ConditionalOnMissingBean(com.ritense.valtimoplugins.xential.web.rest.DocumentResource::class)
+    @ConditionalOnMissingBean(DocumentResource::class)
     fun xentialDocumentResource(documentGenerationService: DocumentGenerationService) =
-        com.ritense.valtimoplugins.xential.web.rest.DocumentResource(documentGenerationService)
+        DocumentResource(documentGenerationService)
 
 
     @Bean
     @Order(270)
     @ConditionalOnMissingBean
-    fun xentialApiHttpSecurityConfigurer() =
-        com.ritense.valtimoplugins.xential.security.config.XentialApiHttpSecurityConfigurer()
+    fun xentialApiHttpSecurityConfigurer() = XentialApiHttpSecurityConfigurer()
 }
