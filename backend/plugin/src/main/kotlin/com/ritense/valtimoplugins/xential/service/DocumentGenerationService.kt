@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015-2025 Ritense BV, the Netherlands.
+ *
+ * Licensed under EUPL, Version 1.2 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.ritense.valtimoplugins.xential.service
 
 import com.ritense.resource.domain.MetadataType
@@ -19,12 +35,10 @@ import java.util.UUID
 import java.util.Base64
 
 class DocumentGenerationService(
-
     private val xentialTokenRepository: XentialTokenRepository,
     private val temporaryResourceStorageService: TemporaryResourceStorageService,
     private val runtimeService: RuntimeService,
     private val valueResolverService: ValueResolverService,
-    private val userManagementService: UserManagementService,
     private val httpClientConfig: HttpClientConfig
 ) {
     fun generateContent(
@@ -32,13 +46,11 @@ class DocumentGenerationService(
         colofonData: Array<TemplateDataEntry>,
         verzendAdresData: Array<TemplateDataEntry>,
         execution: DelegateExecution,
-    ): MutableMap<String, Any> {
-        val map: MutableMap<String, Any> = HashMap()
-        map.put("documentDetails", resolveTemplateData(documentDetailsData, execution))
-        map.put("colofon", resolveTemplateData(colofonData, execution))
-        map.put("verzendAdres", resolveTemplateData(verzendAdresData, execution))
-        return map
-    }
+    ) = mutableMapOf(
+        "documentDetails" to resolveTemplateData(documentDetailsData, execution),
+        "colofon" to resolveTemplateData(colofonData, execution),
+        "verzendAdres" to resolveTemplateData(verzendAdresData, execution)
+    ) as MutableMap<String, Any>
 
     fun generateDocument(
         httpClientProperties: HttpClientProperties,
@@ -46,13 +58,12 @@ class DocumentGenerationService(
         xentialDocumentProperties: XentialDocumentProperties,
         execution: DelegateExecution,
     ) {
-        logger.info { "current userid: ${userManagementService.currentUserId}" }
+        logger.info { "generating xential document with gebruikersId: ${httpClientProperties.applicationName}" }
 
         val api = httpClientConfig.configureClient(httpClientProperties)
         val sjabloonVulData = generateXml(xentialDocumentProperties.content)
-
         val result = api.creeerDocument(
-            gebruikersId = userManagementService.currentUserId,
+            gebruikersId = httpClientProperties.applicationName,
             accepteerOnbekend = false,
             sjabloondata = Sjabloondata(
                 sjabloonId = xentialDocumentProperties.templateId.toString(),
@@ -76,7 +87,6 @@ class DocumentGenerationService(
             execution.getVariable("testWizard")
         } else null
 
-
         if (toWizard?.equals("JA") == true) {
             execution.setVariable("xentialStatus", "ONVOLTOOID")
         } else {
@@ -91,21 +101,36 @@ class DocumentGenerationService(
     private fun generateXml(
         map: MutableMap<String, Any>
     ): String {
-        val mapVerzendadres = map["verzendAdres"] as Map<*, *>
+        val verzendadres = map["verzendAdres"] as Map<*, *>
         val colofon = map["verzendAdres"] as Map<*, *>
         val documentDetails = map["verzendAdres"] as Map<*, *>
-        return "<root>" +
-                "<verzendAdres>${
-                    mapVerzendadres.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()
-                }</verzendAdres>" +
-                "<colofon>${
-                    colofon.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()
-                }" +
-                "</colofon>" +
-                "<documentDetails>${
-                    documentDetails.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()
-                }</documentDetails>" +
-                "</root>"
+
+        return """
+                <root>
+                    <verzendAdres>
+                        ${verzendadres.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
+                    </verzendAdres>
+                    <colofon>
+                        ${colofon.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
+                    </colofon>
+                    <documentDetails>
+                        ${documentDetails.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
+                    </documentDetails>
+                </root>
+                """
+
+//        return "<root>" +
+//                "<verzendAdres>${
+//                    mapVerzendadres.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()
+//                }</verzendAdres>" +
+//                "<colofon>${
+//                    colofon.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()
+//                }" +
+//                "</colofon>" +
+//                "<documentDetails>${
+//                    documentDetails.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()
+//                }</documentDetails>" +
+//                "</root>"
     }
 
     fun onDocumentGenerated(message: DocumentCreatedMessage) {
