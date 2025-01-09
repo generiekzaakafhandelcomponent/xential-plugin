@@ -76,7 +76,7 @@ apply(from = "gradle/publishing.gradle")
 openApiGenerate {
     inputSpec.set("$rootDir/backend/xential/src/main/resources/dcsg_xential.yaml")
     generatorName.set("kotlin")
-    outputDir.set("${getLayout().getBuildDirectory().get()}/generated")
+    outputDir.set("${getLayout().buildDirectory.get()}/generated")
     apiPackage.set("com.rotterdam.xential.api")
     invokerPackage.set("com.rotterdam.xential.invoker")
     modelPackage.set("com.rotterdam.xential.model")
@@ -85,11 +85,10 @@ openApiGenerate {
 sourceSets {
     main {
         java {
-            srcDir("${buildDir}/generated/src/main")
+            srcDir("${getLayout().buildDirectory.get()}/generated/src/main")
         }
     }
 }
-
 tasks.named("compileKotlin") {
     dependsOn(
         "openApiGenerate",
