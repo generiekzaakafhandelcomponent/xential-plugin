@@ -75,24 +75,6 @@ dependencies {
 
 apply(from = "gradle/publishing.gradle")
 
-//tasks.register<OpenApiGenerate>("openApiGenerate") {
-//    toolOptions {
-//        inputSpec.set("$rootDir/backend/xential/src/main/resources/dcsg_xential.yaml")
-//        generatorName.set("kotlin")
-//        outputDir.set("${getLayout().buildDirectory.get()}/generated")
-//        apiPackage.set("com.rotterdam.xential.api")
-//        invokerPackage.set("com.rotterdam.xential.invoker")
-//        modelPackage.set("com.rotterdam.xential.model")
-//    }
-//        wsdl = "src/main/resources/soap/suwinet/Diensten/BRPDossierPersoonGSD/v0200-b02/Impl/BKWI.wsdl"
-//        outputDir.set(layout.buildDirectory.dir("generated-sources/cxf").get().asFile)
-//        markGenerated.set(true)
-//        packageNames.set(mutableListOf("com.ritense.valtimo.implementation.dkd.BRPDossierPersoonGSD"))
-//        extendedSoapHeaders.set(true)
-//    }
-//    allJvmArgs = listOf("-Duser.language=en", "-Duser.country=NL")
-//}
-
 openApiGenerate {
     inputSpec.set("$rootDir/backend/xential/src/main/resources/dcsg_xential.yaml")
     generatorName.set("kotlin")
