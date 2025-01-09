@@ -89,3 +89,9 @@ sourceSets {
         }
     }
 }
+
+tasks.named("compileKotlin") {
+    dependsOn(
+        "openApiGenerate",
+    )
+}
