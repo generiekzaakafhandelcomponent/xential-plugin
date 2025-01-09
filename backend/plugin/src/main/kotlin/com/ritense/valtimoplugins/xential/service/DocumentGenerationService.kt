@@ -117,19 +117,6 @@ class DocumentGenerationService(
                     </documentDetails>
                 </root>
                 """
-
-//        return "<root>" +
-//                "<verzendAdres>${
-//                    mapVerzendadres.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()
-//                }</verzendAdres>" +
-//                "<colofon>${
-//                    colofon.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()
-//                }" +
-//                "</colofon>" +
-//                "<documentDetails>${
-//                    documentDetails.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()
-//                }</documentDetails>" +
-//                "</root>"
     }
 
     fun onDocumentGenerated(message: DocumentCreatedMessage) {
