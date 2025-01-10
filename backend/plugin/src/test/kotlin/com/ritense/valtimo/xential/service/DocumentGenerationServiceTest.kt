@@ -61,7 +61,7 @@ class DocumentGenerationServiceTest {
 
     @Test
     fun shouldGenerateDocument() {
-        whenever(userManagementService.currentUserId).thenReturn("123445")
+        whenever(userManagementService.currentUserId).thenReturn("1234456")
         whenever(httpClientConfig.configureClient(any())).thenReturn(defaultApi)
 
         val verzendAdres: MutableMap<String, Any> = HashMap()
