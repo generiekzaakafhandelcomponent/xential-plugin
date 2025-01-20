@@ -31,7 +31,6 @@ import com.ritense.valtimoplugins.xential.plugin.XentialPlugin.Companion.PLUGIN_
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
 import mu.KotlinLogging
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import java.io.File
 import java.net.URI
 import java.util.UUID
 

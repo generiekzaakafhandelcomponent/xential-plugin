@@ -23,7 +23,6 @@ import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.io.FileInputStream
 import java.security.KeyFactory
 import java.security.KeyStore
 import java.security.cert.CertificateFactory
@@ -82,33 +81,9 @@ class HttpClientConfig {
         } else null
     }
 
-    private fun keyManagerFactory2(privateKeyFile: File?, clientCertFile: File?): KeyManagerFactory? {
-        return if (privateKeyFile != null && clientCertFile != null) {
-            val certificateFactory = CertificateFactory.getInstance("X.509")
-            logger.info { "keyManagerFactory: clientCert file: $clientCertFile" }
-            val clientCert = certificateFactory.generateCertificate(FileInputStream(clientCertFile))
-
-            logger.info { "keyManagerFactory: privateKey file: ---$privateKeyFile---" }
-            val privateKey = loadPrivateKey(privateKeyFile)
-
-            // Create a KeyStore with the client certificate and private key
-            val keyStore = KeyStore.getInstance(KeyStore.getDefaultType()).apply {
-                load(null, null)
-                setKeyEntry("client", privateKey, null, arrayOf(clientCert))
-            }
-
-            KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).apply {
-                init(keyStore, null)
-            }
-        } else null
-    }
-
     fun configureClient(properties: HttpClientProperties): DefaultApi {
         // clientCertFile = fullchain
         val trustManagerFactory = trustManagerFactory(properties.serverCertificate)
-
-        // clientPrivateKeyFilename = private.key
-        // serverCertificateFilename = test.gemeente-rotterdam.gzac.cloud_20241023.pem
 
         val keyManagerFactory = keyManagerFactory(
             properties.clientPrivateKey,

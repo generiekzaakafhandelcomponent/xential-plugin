@@ -16,7 +16,6 @@
 
 package com.ritense.valtimoplugins.xential.domain
 
-import java.io.File
 import java.net.URI
 
 data class HttpClientProperties(
