@@ -77,31 +77,34 @@
     </v-input>
     <hr/>
     <v-input
-            name="serverCertificateFilename"
-            [title]="'serverCertificateFilename' | pluginTranslate: pluginId | async"
+            name="serverCertificate"
+            type="textarea"
+            [title]="'serverCertificate' | pluginTranslate: pluginId | async"
             [margin]="true"
             [fullWidth]="true"
-            [defaultValue]="obs.prefill?.serverCertificateFilename"
-            [disabled]="obs.disabled"
-            [required]="true"
-    >
-    </v-input>
-    <v-input
-            name="clientPrivateKeyFilename"
-            [title]="'clientPrivateKeyFilename' | pluginTranslate: pluginId | async"
-            [margin]="true"
-            [fullWidth]="true"
-            [defaultValue]="obs.prefill?.clientPrivateKeyFilename"
+            [defaultValue]="obs.prefill?.serverCertificate"
             [disabled]="obs.disabled"
             [required]="false"
     >
     </v-input>
     <v-input
-            name="clientCertFile"
-            [title]="'clientCertFile' | pluginTranslate: pluginId | async"
+            name="clientPrivateKey"
+            type="textarea"
+            [title]="'clientPrivateKey' | pluginTranslate: pluginId | async"
             [margin]="true"
             [fullWidth]="true"
-            [defaultValue]="obs.prefill?.clientCertificateFilename"
+            [defaultValue]="obs.prefill?.clientPrivateKey"
+            [disabled]="obs.disabled"
+            [required]="false"
+    >
+    </v-input>
+    <v-input
+            name="clientCertificate"
+            type="textarea"
+            [title]="'clientCertificate' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [fullWidth]="true"
+            [defaultValue]="obs.prefill?.clientCertificate"
             [disabled]="obs.disabled"
             [required]="false"
     >

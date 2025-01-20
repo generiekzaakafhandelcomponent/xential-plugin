@@ -23,7 +23,7 @@ data class HttpClientProperties(
     val applicationName: String,
     val applicationPassword: String,
     val baseUrl: URI,
-    val serverCertificateFilename: File,
-    val clientPrivateKeyFilename: File? = null,
-    val clientCertFile: File? = null
+    val serverCertificate: String,
+    val clientPrivateKey: String? = null,
+    val clientCertificate: String? = null,
 )

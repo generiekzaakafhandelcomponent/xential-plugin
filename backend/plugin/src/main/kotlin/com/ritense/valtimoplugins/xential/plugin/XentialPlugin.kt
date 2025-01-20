@@ -53,14 +53,14 @@ class XentialPlugin(
     @PluginProperty(key = "baseUrl", secret = false, required = true)
     lateinit var baseUrl: URI
 
-    @PluginProperty(key = "serverCertificateFilename", secret = false, required = true)
-    private lateinit var serverCertificateFilename: String
+    @PluginProperty(key = "serverCertificate", secret = false, required = true)
+    private lateinit var serverCertificate: String
 
-    @PluginProperty(key = "clientPrivateKeyFilename", secret = false, required = false)
-    var clientPrivateKeyFilename: String? = null
+    @PluginProperty(key = "clientPrivateKey", secret = false, required = false)
+    var clientPrivateKey: String? = null
 
-    @PluginProperty(key = "clientCertificateFilename", secret = false, required = false)
-    var clientCertificateFilename: String? = null
+    @PluginProperty(key = "clientCertificate", secret = false, required = false)
+    var clientCertificate: String? = null
 
     @PluginAction(
         key = "generate-document",
@@ -79,9 +79,9 @@ class XentialPlugin(
             applicationName,
             applicationPassword,
             baseUrl,
-            File(serverCertificateFilename),
-            clientPrivateKeyFilename?.let { File(it) },
-            clientCertificateFilename?.let { File(it) }
+            serverCertificate,
+            clientPrivateKey,
+            clientCertificate
         )
 
         documentGenerationService.generateDocument(

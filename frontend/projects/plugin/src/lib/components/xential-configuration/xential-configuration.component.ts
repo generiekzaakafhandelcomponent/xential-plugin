@@ -67,8 +67,7 @@ export class XentialConfigurationComponent
         const valid = !!(
             formValue.applicationName &&
             formValue.applicationPassword &&
-            formValue.baseUrl &&
-            formValue.serverCertificateFilename
+            formValue.baseUrl
         );
 
         this.valid$.next(valid);

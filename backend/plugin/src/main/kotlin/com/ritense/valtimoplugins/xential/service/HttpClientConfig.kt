@@ -21,6 +21,7 @@ import com.rotterdam.xential.api.DefaultApi
 import mu.KotlinLogging
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.security.KeyFactory
@@ -35,17 +36,24 @@ import javax.net.ssl.X509TrustManager
 
 class HttpClientConfig {
 
-    private fun trustManagerFactory(certFile: File): TrustManagerFactory {
+    private fun base64ToInputStream(base64String: String): ByteArrayInputStream {
+        // Decode the base64 encoded string to bytes
+        val decodedBytes = Base64.getDecoder().decode(base64String)
+
+        // Convert the decoded bytes array to ByteArrayInputStream
+        return ByteArrayInputStream(decodedBytes)
+    }
+
+    private fun trustManagerFactory(serverCertificate: String): TrustManagerFactory {
 
         // Load the server certificate
         val certificateFactory = CertificateFactory.getInstance("X.509")
-        logger.info { "trustManagerFactory: Certificate file: $certFile" }
-        val serverCert = certificateFactory.generateCertificate(FileInputStream(certFile))
+        val clientCertificateDecoded = certificateFactory.generateCertificate(base64ToInputStream(serverCertificate))
 
         // Create a KeyStore with the server certificate
         val trustStore = KeyStore.getInstance(KeyStore.getDefaultType()).apply {
             load(null, null)
-            setCertificateEntry("server", serverCert)
+            setCertificateEntry("server", clientCertificateDecoded)
         }
 
         // Configure the TrustManager
@@ -54,7 +62,27 @@ class HttpClientConfig {
         return trustManagerFactory
     }
 
-    private fun keyManagerFactory(privateKeyFile: File?, clientCertFile: File?): KeyManagerFactory? {
+    private fun keyManagerFactory(clientPrivateKey: String?, clientCertificate: String?): KeyManagerFactory? {
+        return if (clientPrivateKey != null && clientCertificate != null) {
+            val certificateFactory = CertificateFactory.getInstance("X.509")
+
+            val clientCert = certificateFactory.generateCertificate(base64ToInputStream(clientCertificate))
+
+            val privateKey = loadPrivateKeyFromString(clientPrivateKey)
+
+            // Create a KeyStore with the client certificate and private key
+            val keyStore = KeyStore.getInstance(KeyStore.getDefaultType()).apply {
+                load(null, null)
+                setKeyEntry("client", privateKey, null, arrayOf(clientCert))
+            }
+
+            KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).apply {
+                init(keyStore, null)
+            }
+        } else null
+    }
+
+    private fun keyManagerFactory2(privateKeyFile: File?, clientCertFile: File?): KeyManagerFactory? {
         return if (privateKeyFile != null && clientCertFile != null) {
             val certificateFactory = CertificateFactory.getInstance("X.509")
             logger.info { "keyManagerFactory: clientCert file: $clientCertFile" }
@@ -76,10 +104,15 @@ class HttpClientConfig {
     }
 
     fun configureClient(properties: HttpClientProperties): DefaultApi {
-        val trustManagerFactory = trustManagerFactory(properties.clientCertFile!!)
+        // clientCertFile = fullchain
+        val trustManagerFactory = trustManagerFactory(properties.serverCertificate)
+
+        // clientPrivateKeyFilename = private.key
+        // serverCertificateFilename = test.gemeente-rotterdam.gzac.cloud_20241023.pem
+
         val keyManagerFactory = keyManagerFactory(
-            properties.clientPrivateKeyFilename,
-            properties.serverCertificateFilename
+            properties.clientPrivateKey,
+            properties.clientCertificate
         )
 
         val sslContext = SSLContext.getInstance("TLS").apply {
@@ -98,6 +131,19 @@ class HttpClientConfig {
             .build()
 
         return DefaultApi(properties.baseUrl.toString(), customClient)
+    }
+
+    private fun loadPrivateKeyFromString(input: String): java.security.PrivateKey {
+        val decodedBytes = Base64.getDecoder().decode(input)
+
+        val keyBytes = String(decodedBytes)
+            .replace("-----BEGIN PRIVATE KEY-----", "")
+            .replace("-----END PRIVATE KEY-----", "")
+            .replace("\\s".toRegex(), "")
+            .let { Base64.getDecoder().decode(it) }
+
+        val keySpec = PKCS8EncodedKeySpec(keyBytes)
+        return KeyFactory.getInstance("RSA").generatePrivate(keySpec)
     }
 
     private fun loadPrivateKey(file: File): java.security.PrivateKey {
