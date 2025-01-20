@@ -18,11 +18,9 @@ package com.ritense.valtimoplugins.xential.service
 
 import com.ritense.valtimoplugins.xential.domain.HttpClientProperties
 import com.rotterdam.xential.api.DefaultApi
-import mu.KotlinLogging
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import java.io.ByteArrayInputStream
-import java.io.File
 import java.security.KeyFactory
 import java.security.KeyStore
 import java.security.cert.CertificateFactory
@@ -119,20 +117,5 @@ class HttpClientConfig {
 
         val keySpec = PKCS8EncodedKeySpec(keyBytes)
         return KeyFactory.getInstance("RSA").generatePrivate(keySpec)
-    }
-
-    private fun loadPrivateKey(file: File): java.security.PrivateKey {
-        val keyBytes = file.readText()
-            .replace("-----BEGIN PRIVATE KEY-----", "")
-            .replace("-----END PRIVATE KEY-----", "")
-            .replace("\\s".toRegex(), "")
-            .let { Base64.getDecoder().decode(it) }
-
-        val keySpec = PKCS8EncodedKeySpec(keyBytes)
-        return KeyFactory.getInstance("RSA").generatePrivate(keySpec)
-    }
-
-    companion object {
-        private val logger = KotlinLogging.logger {}
     }
 }
