@@ -41,22 +41,25 @@ class HttpClientConfig {
         return ByteArrayInputStream(decodedBytes)
     }
 
-    private fun trustManagerFactory(serverCertificate: String): TrustManagerFactory {
+    private fun trustManagerFactory(serverCertificate: String?): TrustManagerFactory? {
 
         // Load the server certificate
-        val certificateFactory = CertificateFactory.getInstance("X.509")
-        val clientCertificateDecoded = certificateFactory.generateCertificate(base64ToInputStream(serverCertificate))
+        if (serverCertificate != null) {
+            val certificateFactory = CertificateFactory.getInstance("X.509")
+            val clientCertificateDecoded = certificateFactory.generateCertificate(base64ToInputStream(serverCertificate))
 
-        // Create a KeyStore with the server certificate
-        val trustStore = KeyStore.getInstance(KeyStore.getDefaultType()).apply {
-            load(null, null)
-            setCertificateEntry("server", clientCertificateDecoded)
+            // Create a KeyStore with the server certificate
+            val trustStore = KeyStore.getInstance(KeyStore.getDefaultType()).apply {
+                load(null, null)
+                setCertificateEntry("server", clientCertificateDecoded)
+            }
+
+            // Configure the TrustManager
+            val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+            trustManagerFactory.init(trustStore)
+            return trustManagerFactory
         }
-
-        // Configure the TrustManager
-        val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-        trustManagerFactory.init(trustStore)
-        return trustManagerFactory
+        return null
     }
 
     private fun keyManagerFactory(clientPrivateKey: String?, clientCertificate: String?): KeyManagerFactory? {
@@ -89,7 +92,7 @@ class HttpClientConfig {
         )
 
         val sslContext = SSLContext.getInstance("TLS").apply {
-            init(keyManagerFactory?.keyManagers, trustManagerFactory.trustManagers, null)
+            init(keyManagerFactory?.keyManagers, trustManagerFactory?.trustManagers, null)
         }
 
         val credentials = Credentials.basic(properties.applicationName, properties.applicationPassword)
@@ -100,10 +103,12 @@ class HttpClientConfig {
                     .build()
                 chain.proceed(request)
             }
-            .sslSocketFactory(sslContext.socketFactory, trustManagerFactory.trustManagers[0] as X509TrustManager)
-            .build()
+        if(trustManagerFactory!=null) {
+            customClient.sslSocketFactory(sslContext.socketFactory, trustManagerFactory.trustManagers[0] as X509TrustManager)
+        }
+        customClient.build()
 
-        return DefaultApi(properties.baseUrl.toString(), customClient)
+        return DefaultApi(properties.baseUrl.toString(), customClient.build())
     }
 
     private fun loadPrivateKeyFromString(input: String): java.security.PrivateKey {

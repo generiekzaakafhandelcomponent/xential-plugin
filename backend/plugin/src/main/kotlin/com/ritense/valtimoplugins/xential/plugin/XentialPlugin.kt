@@ -52,13 +52,13 @@ class XentialPlugin(
     @PluginProperty(key = "baseUrl", secret = false, required = true)
     lateinit var baseUrl: URI
 
-    @PluginProperty(key = "serverCertificate", secret = false, required = true)
-    private lateinit var serverCertificate: String
+    @PluginProperty(key = "serverCertificate", secret = true, required = true)
+    var serverCertificate: String?= null
 
-    @PluginProperty(key = "clientPrivateKey", secret = false, required = false)
+    @PluginProperty(key = "clientPrivateKey", secret = true, required = false)
     var clientPrivateKey: String? = null
 
-    @PluginProperty(key = "clientCertificate", secret = false, required = false)
+    @PluginProperty(key = "clientCertificate", secret = true, required = false)
     var clientCertificate: String? = null
 
     @PluginAction(
