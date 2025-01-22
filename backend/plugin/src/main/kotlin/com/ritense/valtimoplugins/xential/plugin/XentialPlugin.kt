@@ -53,7 +53,7 @@ class XentialPlugin(
     lateinit var baseUrl: URI
 
     @PluginProperty(key = "serverCertificate", secret = true, required = true)
-    var serverCertificate: String?= null
+    var serverCertificate: String? = null
 
     @PluginProperty(key = "clientPrivateKey", secret = true, required = false)
     var clientPrivateKey: String? = null

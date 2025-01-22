@@ -55,29 +55,29 @@ class HttpClientConfig {
             }
 
             // Configure the TrustManager
-            val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-            trustManagerFactory.init(trustStore)
-            return trustManagerFactory
+            return TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply {
+                init(trustStore)
+            }
         }
         return null
     }
 
     private fun keyManagerFactory(clientPrivateKey: String?, clientCertificate: String?): KeyManagerFactory? {
         return if (clientPrivateKey != null && clientCertificate != null) {
-            val certificateFactory = CertificateFactory.getInstance("X.509")
+            CertificateFactory.getInstance("X.509").let { certificateFactory ->
+                val clientCert = certificateFactory.generateCertificate(base64ToInputStream(clientCertificate))
 
-            val clientCert = certificateFactory.generateCertificate(base64ToInputStream(clientCertificate))
-
-            val privateKey = loadPrivateKeyFromString(clientPrivateKey)
-
-            // Create a KeyStore with the client certificate and private key
-            val keyStore = KeyStore.getInstance(KeyStore.getDefaultType()).apply {
-                load(null, null)
-                setKeyEntry("client", privateKey, null, arrayOf(clientCert))
-            }
-
-            KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).apply {
-                init(keyStore, null)
+                loadPrivateKeyFromString(clientPrivateKey).let { privateKey ->
+                    // Create a KeyStore with the client certificate and private key
+                    KeyStore.getInstance(KeyStore.getDefaultType()).apply {
+                        load(null, null)
+                        setKeyEntry("client", privateKey, null, arrayOf(clientCert))
+                    }.let { keyStore ->
+                        KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).apply {
+                            init(keyStore, null)
+                        }
+                    }
+                }
             }
         } else null
     }
@@ -103,7 +103,7 @@ class HttpClientConfig {
                     .build()
                 chain.proceed(request)
             }
-        if(trustManagerFactory!=null) {
+        if (trustManagerFactory!=null) {
             customClient.sslSocketFactory(sslContext.socketFactory, trustManagerFactory.trustManagers[0] as X509TrustManager)
         }
         customClient.build()
