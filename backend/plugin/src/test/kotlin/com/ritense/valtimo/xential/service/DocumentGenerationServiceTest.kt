@@ -91,7 +91,7 @@ class DocumentGenerationServiceTest {
             "applicationName",
             "applicationPassword",
             URI("baseUrl"),
-            file,
+            "base64EncodedString",
             null,
             null
         )
