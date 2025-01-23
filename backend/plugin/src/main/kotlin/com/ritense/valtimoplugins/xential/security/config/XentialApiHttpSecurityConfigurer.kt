@@ -26,7 +26,7 @@ class XentialApiHttpSecurityConfigurer : HttpSecurityConfigurer {
     override fun configure(http: HttpSecurity) {
         try {
             http.authorizeHttpRequests { requests ->
-                requests.requestMatchers(antMatcher(HttpMethod.POST,"/api/xential/v1/document")).permitAll()
+                requests.requestMatchers(antMatcher(HttpMethod.POST,"/api/v1/xential/document")).permitAll()
             }
         } catch (e: Exception) {
             throw HttpConfigurerConfigurationException(e)
