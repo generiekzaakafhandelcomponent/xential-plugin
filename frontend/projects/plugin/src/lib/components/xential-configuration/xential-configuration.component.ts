@@ -86,6 +86,6 @@ export class XentialConfigurationComponent
         });
     }
 
-    protected readonly ValuePathSelectorPrefix = ValuePathSelectorPrefix;
-    documentDefinitionName: string = "xential-test";
+    // protected readonly ValuePathSelectorPrefix = ValuePathSelectorPrefix;
+    // documentDefinitionName: string = "xential-test";
 }

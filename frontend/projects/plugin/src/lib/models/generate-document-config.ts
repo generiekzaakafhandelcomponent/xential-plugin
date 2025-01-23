@@ -1,3 +1,3 @@
 export interface GenerateDocumentConfig {
-    documentProperties: string;
+    xentialContentId: string;
 }

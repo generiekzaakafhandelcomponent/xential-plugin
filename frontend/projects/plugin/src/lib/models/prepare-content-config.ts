@@ -1,7 +1,7 @@
 import {PluginConfigurationData} from "@valtimo/plugin";
 
 export interface PrepareContentTemplate extends PluginConfigurationData {
-    documentProcessVariable: string;
+    xentialContentId: string;
     templateId: string;
     fileFormat: FileFormat;
     documentId: string;

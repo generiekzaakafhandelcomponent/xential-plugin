@@ -35,7 +35,7 @@ const XentialPluginSpecification: PluginSpecification = {
     pluginTranslations: {
         nl: {
             title: 'Xential',
-            description: 'Xential plugin',
+            description: 'Met de Xential plugin worden documenten gegenereerd',
             contentProcessVariable: 'Document content process variable',
             eventMessageName: 'bpmn event naam als document is ontvangen',
             verzendAdresData: 'geadresseerde data',
@@ -50,10 +50,17 @@ const XentialPluginSpecification: PluginSpecification = {
             fileFormat: 'Bestandsformaat',
             documentId: 'Document kenmerk',
             templateData: 'Sjabloon vuldata',
+            applicationName: 'Xential Taakapplicatie naam',
+            applicationPassword: 'Xential Taakapplicatie wachtwoord',
+            baseUrl: 'Base url naar Xential via ESB',
+            serverCertificate: 'Server certificaat als Base64 encoded string',
+            clientPrivateKey: 'Client private key als Base64 encoded string',
+            clientCertificate: 'Client certificaat als Base64 encoded string',
+            xentialContentId: 'document content proces variabele'
         },
         en: {
             title: 'Xential',
-            description: 'Xential plugin',
+            description: 'With the Xential plugin documents are generated',
             contentProcessVariable: 'Document content process variable',
             eventMessageName: 'bpmn event name when document arrives',
             verzendAdresData: 'addressee data',
@@ -68,10 +75,17 @@ const XentialPluginSpecification: PluginSpecification = {
             fileFormat: 'File format',
             documentId: 'Document ID',
             templateData: 'Template data',
+            applicationName: 'Xential Taakapplicatie name',
+            applicationPassword: 'Xential Taakapplicatie password',
+            baseUrl: 'Base url to ESB Xential',
+            serverCertificate: 'Server certificate as Base64 encoded string',
+            clientPrivateKey: 'Client private key as Base64 encoded string',
+            clientCertificate: 'Client certificate as Base64 encoded string',
+            xentialContentId: 'document content process variable'
         },
         de: {
             title: 'Xential',
-            description: 'Xential plugin',
+            description: 'Con il plugin Xential vengono generati i documenti',
             configurationTitle: 'Konfigurationsname',
             clientId: 'Kunden-ID',
             clientPassword: 'Kundenpasswort',
@@ -80,6 +94,13 @@ const XentialPluginSpecification: PluginSpecification = {
             fileFormat: 'Dateiformat',
             documentId: 'Dokument-ID',
             templateData: 'Vorlagendaten',
+            applicationName: 'Xential Taakapplicatie Name',
+            applicationPassword: 'Xential Taakapplicatie Passwort',
+            baseUrl: 'Base url nach Xential via ESB',
+            serverCertificate: 'Server Zertifikat als Base64 kodierter String',
+            clientPrivateKey: 'Client private key als Base64 kodierter String',
+            clientCertificate: 'Client Zertifikat als Base64 kodierter String',
+            xentialContentId: 'Dokumentinhalt verarbeitet Variablen'
         },
     },
 };

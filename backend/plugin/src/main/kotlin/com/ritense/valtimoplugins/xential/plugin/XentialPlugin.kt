@@ -52,7 +52,7 @@ class XentialPlugin(
     @PluginProperty(key = "baseUrl", secret = false, required = true)
     lateinit var baseUrl: URI
 
-    @PluginProperty(key = "serverCertificate", secret = true, required = true)
+    @PluginProperty(key = "serverCertificate", secret = true, required = false)
     var serverCertificate: String? = null
 
     @PluginProperty(key = "clientPrivateKey", secret = true, required = false)
@@ -68,11 +68,11 @@ class XentialPlugin(
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
     )
     fun generateDocument(
-        @PluginActionProperty documentProperties: Map<String,Any>,
+        @PluginActionProperty xentialContentId: Map<String,Any>,
         execution: DelegateExecution
     ) {
 
-        val xentialDocumentProperties: XentialDocumentProperties = objectMapper.convertValue(documentProperties)
+        val xentialDocumentProperties: XentialDocumentProperties = objectMapper.convertValue(xentialContentId)
 
         val httpClientProperties = HttpClientProperties(
             applicationName,
@@ -102,7 +102,7 @@ class XentialPlugin(
         @PluginActionProperty fileFormat: FileFormat,
         @PluginActionProperty documentId: String,
         @PluginActionProperty eventMessageName: String,
-        @PluginActionProperty documentProcessVariable: String,
+        @PluginActionProperty xentialContentId: String,
         @PluginActionProperty verzendAdresData: Array<TemplateDataEntry>,
         @PluginActionProperty colofonData: Array<TemplateDataEntry>,
         @PluginActionProperty documentDetailsData: Array<TemplateDataEntry>,
@@ -123,7 +123,7 @@ class XentialPlugin(
                     it
                 )
                 execution.processInstance.setVariable(
-                    documentProcessVariable, objectMapper.convertValue(xentialDocumentProperties)
+                    xentialContentId, objectMapper.convertValue(xentialDocumentProperties)
                 )
             }
         } catch (e: Exception) {

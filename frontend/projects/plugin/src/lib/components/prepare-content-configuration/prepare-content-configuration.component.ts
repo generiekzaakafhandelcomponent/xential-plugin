@@ -47,7 +47,7 @@ export class PrepareContentConfigurationComponent implements FunctionConfigurati
 
     private handleValid(formValue: PrepareContentTemplate): void {
         const valid = !!(
-            formValue.documentProcessVariable &&
+            formValue.xentialContentId &&
             formValue.templateId &&
             formValue.fileFormat &&
             formValue.documentId &&
