@@ -40,6 +40,7 @@ class DocumentGenerationService(
     private val valueResolverService: ValueResolverService,
     private val httpClientConfig: HttpClientConfig
 ) {
+    @Suppress("UNCHECKED_CAST")
     fun generateContent(
         documentDetailsData: Array<TemplateDataEntry>,
         colofonData: Array<TemplateDataEntry>,
