@@ -126,14 +126,15 @@ class DocumentGenerationService(
         val xentialToken = xentialTokenRepository.findById(UUID.fromString(message.documentCreatieSessieId))
             .orElseThrow { NoSuchElementException("Could not find Xential Token ${message.documentCreatieSessieId}") }
 
+        logger.info { "Retrieved content from Xential Callback, token: ${xentialToken.token}" }
+
         ByteArrayInputStream(bytes).use { inputStream ->
             val metadata =
                 mapOf(MetadataType.FILE_NAME.key to "${xentialToken.processId}-${xentialToken.messageName}.tmp")
             val resourceId = temporaryResourceStorageService.store(inputStream, metadata)
-            val resourceIdMap = mapOf("resourceId" to resourceId)
             runtimeService.createMessageCorrelation(xentialToken.messageName)
                 .processInstanceId(xentialToken.processId.toString())
-                .setVariables(resourceIdMap)
+                .setVariable("xentialResourceId", resourceId)
                 .correlate()
         }
     }
