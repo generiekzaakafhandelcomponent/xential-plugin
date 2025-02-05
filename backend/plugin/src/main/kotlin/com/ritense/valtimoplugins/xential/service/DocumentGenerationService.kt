@@ -102,17 +102,15 @@ class DocumentGenerationService(
         map: MutableMap<String, Any>
     ): String {
         val verzendadres = map["verzendAdres"] as Map<*, *>
-        val colofon = map["verzendAdres"] as Map<*, *>
-        val documentDetails = map["verzendAdres"] as Map<*, *>
+        val colofon = map["colofon"] as Map<*, *>
+        val documentDetails = map["documentDetails"] as Map<*, *>
 
         return """
                 <root>
                     <verzendAdres>
                         ${verzendadres.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
                     </verzendAdres>
-                    <colofon>
-                        ${colofon.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
-                    </colofon>
+                    ${colofon.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
                     <documentDetails>
                         ${documentDetails.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
                     </documentDetails>
