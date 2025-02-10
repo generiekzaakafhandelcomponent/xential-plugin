@@ -32,12 +32,16 @@ import {
     PrepareContentConfigurationComponent
 } from "./components/prepare-content-configuration/prepare-content-configuration.component";
 import {DropdownModule} from "carbon-components-angular";
+import {
+    PrepareContentWithTemplateConfigurationComponent
+} from "./components/prepare-content-configuration-with-template/prepare-content-with-template-configuration.component";
 
 @NgModule({
     declarations: [
         XentialConfigurationComponent,
         GenerateDocumentConfigurationComponent,
-        PrepareContentConfigurationComponent
+        PrepareContentConfigurationComponent,
+        PrepareContentWithTemplateConfigurationComponent
     ],
     imports: [
         CommonModule,
@@ -53,7 +57,8 @@ import {DropdownModule} from "carbon-components-angular";
     exports: [
         XentialConfigurationComponent,
         GenerateDocumentConfigurationComponent,
-        PrepareContentConfigurationComponent
+        PrepareContentConfigurationComponent,
+        PrepareContentWithTemplateConfigurationComponent
     ],
 })
 export class XentialPluginModule {

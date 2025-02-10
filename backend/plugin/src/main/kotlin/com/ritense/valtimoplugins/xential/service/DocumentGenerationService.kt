@@ -52,6 +52,7 @@ class DocumentGenerationService(
         "verzendAdres" to resolveTemplateData(verzendAdresData, execution)
     ) as MutableMap<String, Any>
 
+    @Suppress("UNCHECKED_CAST")
     fun generateDocument(
         httpClientProperties: HttpClientProperties,
         processId: UUID,
@@ -61,7 +62,7 @@ class DocumentGenerationService(
         logger.info { "generating xential document with gebruikersId: ${httpClientProperties.applicationName}" }
 
         val api = httpClientConfig.configureClient(httpClientProperties)
-        val sjabloonVulData = generateXml(xentialDocumentProperties.content)
+
         val result = api.creeerDocument(
             gebruikersId = xentialDocumentProperties.gebruikersId,
             accepteerOnbekend = false,
@@ -69,7 +70,11 @@ class DocumentGenerationService(
                 sjabloonId = xentialDocumentProperties.templateId.toString(),
                 bestandsFormaat = Sjabloondata.BestandsFormaat.valueOf(xentialDocumentProperties.fileFormat.name),
                 documentkenmerk = xentialDocumentProperties.documentId,
-                sjabloonVulData = sjabloonVulData
+                sjabloonVulData = if ( xentialDocumentProperties.content is String ) {
+                    xentialDocumentProperties.content
+                } else {
+                    generateXml(xentialDocumentProperties.content as MutableMap<String, Any>)
+                }
             )
         )
         logger.info { "found something: $result" }
@@ -111,9 +116,9 @@ class DocumentGenerationService(
                         ${verzendadres.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
                     </verzendAdres>
                     ${colofon.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
-                    <documentDetails>
+                    <creatieData>
                         ${documentDetails.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
-                    </documentDetails>
+                    </creatieData>
                 </root>
                 """
     }

@@ -1,0 +1,73 @@
+<v-form
+        (valueChange)="formValueChange($event)"
+        *ngIf="{
+        disabled: disabled$ | async,
+        prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null,
+        fileFormats: fileFormats$ | async,
+    } as obs"
+>
+
+    <div>
+        <v-input-label
+                [title]="'preparing doc creation with template'"
+        ></v-input-label>
+    </div>
+
+    <v-input
+            name="xentialContentId"
+            [title]="'xentialContentId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.xentialContentId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="gebruikersId"
+            [title]="'gebruikersId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.gebruikersId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="templateId"
+            [title]="'templateId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.templateId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-select
+            name="fileFormat"
+            [title]="'fileFormat' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultSelectionId]="obs.prefill?.fileFormat"
+            [disabled]="obs.disabled"
+            [required]="true"
+            [items]="obs.fileFormats"
+    />
+    <v-input
+            name="documentId"
+            [title]="'documentId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.documentId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="eventMessageName"
+            [title]="'eventMessageName' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.eventMessageName"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="textTemplateId"
+            [title]="'textTemplateId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.textTemplateId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+</v-form>
