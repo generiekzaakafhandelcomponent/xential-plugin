@@ -63,14 +63,6 @@ class DocumentGenerationService(
 
         val api = httpClientConfig.configureClient(httpClientProperties)
 
-        val sjabloonVulData = if ( xentialDocumentProperties.content is String ) {
-            xentialDocumentProperties.content
-        } else {
-            generateXml(xentialDocumentProperties.content as MutableMap<String, Any>)
-        }
-
-        logger.debug { "xential xml data: $sjabloonVulData" }
-
         val result = api.creeerDocument(
             gebruikersId = xentialDocumentProperties.gebruikersId,
             accepteerOnbekend = false,
