@@ -23,6 +23,9 @@ import {
 import {
     PrepareContentConfigurationComponent
 } from "./components/prepare-content-configuration/prepare-content-configuration.component";
+import {
+    PrepareContentWithTemplateConfigurationComponent
+} from "./components/prepare-content-configuration-with-template/prepare-content-with-template-configuration.component";
 
 const XentialPluginSpecification: PluginSpecification = {
     pluginId: 'xential',
@@ -30,7 +33,9 @@ const XentialPluginSpecification: PluginSpecification = {
     pluginLogoBase64: XENTIAL_PLUGIN_LOGO_BASE64,
     functionConfigurationComponents: {
         'generate-document': GenerateDocumentConfigurationComponent,
-        'prepare-content': PrepareContentConfigurationComponent
+        'prepare-content': PrepareContentConfigurationComponent,
+        'prepare-content-with-template': PrepareContentWithTemplateConfigurationComponent
+
     },
     pluginTranslations: {
         nl: {

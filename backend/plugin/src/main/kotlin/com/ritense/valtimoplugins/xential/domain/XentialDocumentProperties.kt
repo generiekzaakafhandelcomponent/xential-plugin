@@ -18,11 +18,13 @@ package com.ritense.valtimoplugins.xential.domain
 
 import java.util.UUID
 
+// val content: MutableMap<String, Any>
+
 data class XentialDocumentProperties(
     val templateId: UUID,
     val gebruikersId: String,
     val fileFormat: FileFormat,
     val documentId: String,
     val messageName: String,
-    val content: MutableMap<String, Any>
+    val content: Any
 )

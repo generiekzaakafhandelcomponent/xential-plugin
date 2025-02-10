@@ -68,9 +68,11 @@ class XentialPlugin(
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
     )
     fun generateDocument(
-        @PluginActionProperty xentialContentId: Map<String,Any>,
+        @PluginActionProperty xentialContentId: Map<String, Any>,
         execution: DelegateExecution
     ) {
+
+        logger.info { "xentialContentId: $xentialContentId" }
 
         val xentialDocumentProperties: XentialDocumentProperties = objectMapper.convertValue(xentialContentId)
 
@@ -128,6 +130,40 @@ class XentialPlugin(
                     xentialContentId, objectMapper.convertValue(xentialDocumentProperties)
                 )
             }
+        } catch (e: Exception) {
+            logger.error("Exiting scope due to nested error.", e)
+            return
+        }
+    }
+
+    @PluginAction(
+        key = "prepare-content-with-template",
+        title = "Prepare content with template",
+        description = "Prepare content for xential with template.",
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
+    )
+    fun prepareContentWithTemplate(
+        @PluginActionProperty templateId: UUID,
+        @PluginActionProperty fileFormat: FileFormat,
+        @PluginActionProperty documentId: String,
+        @PluginActionProperty gebruikersId: String,
+        @PluginActionProperty eventMessageName: String,
+        @PluginActionProperty xentialContentId: String,
+        @PluginActionProperty textTemplateId: String,
+        execution: DelegateExecution
+    ) {
+        try {
+            val xentialDocumentProperties = XentialDocumentProperties(
+                templateId,
+                gebruikersId,
+                fileFormat,
+                documentId,
+                eventMessageName,
+                textTemplateId
+            )
+            execution.processInstance.setVariable(
+                xentialContentId, objectMapper.convertValue(xentialDocumentProperties)
+            )
         } catch (e: Exception) {
             logger.error("Exiting scope due to nested error.", e)
             return
