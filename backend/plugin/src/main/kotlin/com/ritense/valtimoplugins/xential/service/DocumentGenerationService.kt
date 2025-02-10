@@ -52,6 +52,7 @@ class DocumentGenerationService(
         "verzendAdres" to resolveTemplateData(verzendAdresData, execution)
     ) as MutableMap<String, Any>
 
+    @Suppress("UNCHECKED_CAST")
     fun generateDocument(
         httpClientProperties: HttpClientProperties,
         processId: UUID,
