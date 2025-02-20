@@ -47,6 +47,9 @@ dependencies {
     implementation("com.squareup.moshi:moshi:1.15.1")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
 
+    implementation("org.apache.httpcomponents.core5:httpcore5")
+    implementation("org.apache.httpcomponents.client5:httpclient5")
+
     implementation("org.openapitools:openapi-generator-gradle-plugin:7.10.0")
 
     // Testing
@@ -74,12 +77,24 @@ dependencies {
 apply(from = "gradle/publishing.gradle")
 
 openApiGenerate {
-    inputSpec.set("$rootDir/backend/xential/src/main/resources/dcsg_xential.yaml")
-    generatorName.set("kotlin")
-    outputDir.set("${getLayout().buildDirectory.get()}/generated")
-    apiPackage.set("com.rotterdam.xential.api")
-    invokerPackage.set("com.rotterdam.xential.invoker")
-    modelPackage.set("com.rotterdam.xential.model")
+    generatorName = "kotlin"
+    inputSpec = "$rootDir/backend/xential/src/main/resources/dcsg_xential.yaml"
+    outputDir = "${getLayout().buildDirectory.get()}/generated"
+    generateApiDocumentation = false
+    generateApiTests = false
+    generateModelDocumentation = false
+    generateModelTests = false
+    apiPackage = "com.rotterdam.esb.xential.api"
+    invokerPackage = "com.rotterdam.esb.xential.invoker"
+    modelPackage = "com.rotterdam.esb.xential.model"
+//    apiPackage = "com.rotterdam.xential.api"
+//    invokerPackage = "com.rotterdam.xential.invoker"
+//    modelPackage = "com.rotterdam.xential.model"
+    configOptions = mapOf(
+        "useSpringBoot3" to "true",
+        "library" to "jvm-spring-restclient",
+        "serializationLibrary" to "jackson"
+    )
 }
 
 sourceSets {

@@ -3,14 +3,13 @@ package com.ritense.valtimo.xential.service
 import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimo.contract.authentication.UserManagementService
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
-import com.ritense.valtimoplugins.xential.domain.HttpClientProperties
 import com.ritense.valtimoplugins.xential.domain.XentialToken
 import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
-import com.ritense.valtimoplugins.xential.service.HttpClientConfig
+import com.ritense.valtimoplugins.xential.service.OpentunnelEsbClient
 import com.ritense.valueresolver.ValueResolverService
-import com.rotterdam.xential.api.DefaultApi
-import com.rotterdam.xential.model.DocumentCreatieResultaat
+import com.rotterdam.esb.xential.api.DefaultApi
+import com.rotterdam.esb.xential.model.DocumentCreatieResultaat
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.jupiter.api.BeforeEach
@@ -21,6 +20,7 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.springframework.web.client.RestClient
 import java.net.URI
 import java.util.UUID
 
@@ -31,6 +31,9 @@ class DocumentGenerationServiceTest {
 
     @Mock
     lateinit var defaultApi: DefaultApi
+
+    @Mock
+    lateinit var esbClient: OpentunnelEsbClient
 
     @Mock
     lateinit var xentialTokenRepository: XentialTokenRepository
@@ -47,9 +50,6 @@ class DocumentGenerationServiceTest {
     @Mock
     lateinit var userManagementService: UserManagementService
 
-    @Mock
-    lateinit var httpClientConfig: HttpClientConfig
-
     @InjectMocks
     lateinit var documentGenerationService: DocumentGenerationService
 
@@ -62,7 +62,8 @@ class DocumentGenerationServiceTest {
     @Test
     fun shouldGenerateDocument() {
         whenever(userManagementService.currentUserId).thenReturn("1234456")
-        whenever(httpClientConfig.configureClient(any())).thenReturn(defaultApi)
+
+        whenever(esbClient.documentApi(any<RestClient>())).thenReturn(defaultApi)
 
         val verzendAdres: MutableMap<String, Any> = HashMap()
         val colofon: MutableMap<String, Any> = HashMap()
@@ -74,6 +75,7 @@ class DocumentGenerationServiceTest {
 
         val xentialDocumentProperties = XentialDocumentProperties(
             templateId = UUID.randomUUID(),
+            gebruikersId = "123",
             fileFormat = com.ritense.valtimoplugins.xential.domain.FileFormat.PDF,
             documentId = "mijn-kenmerk",
             messageName = "messageName",
@@ -86,18 +88,9 @@ class DocumentGenerationServiceTest {
             resumeUrl = null
         )
         whenever(defaultApi.creeerDocument(any(), any(), any())).thenReturn(creatieResultaat)
-        val file = kotlin.io.path.createTempFile().toFile()
-        val httpClientProperties = HttpClientProperties(
-            "applicationName",
-            "applicationPassword",
-            URI("baseUrl"),
-            "base64EncodedString",
-            null,
-            null
-        )
 
         documentGenerationService.generateDocument(
-            httpClientProperties,
+            defaultApi,
             UUID.randomUUID(),
             xentialDocumentProperties,
             execution,
