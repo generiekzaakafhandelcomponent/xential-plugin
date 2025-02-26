@@ -38,15 +38,6 @@ class DocumentGenerationServiceTest {
     lateinit var xentialTokenRepository: XentialTokenRepository
 
     @Mock
-    lateinit var temporaryResourceStorageService: TemporaryResourceStorageService
-
-    @Mock
-    lateinit var runtimeService: RuntimeService
-
-    @Mock
-    lateinit var valueResolverService: ValueResolverService
-
-    @Mock
     lateinit var userManagementService: UserManagementService
 
     @InjectMocks
