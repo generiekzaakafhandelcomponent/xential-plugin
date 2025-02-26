@@ -5,7 +5,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import okhttp3.Credentials
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.web.client.RestClient
-import java.net.http.HttpHeaders
 
 class OpentunnelEsbClient {
 

@@ -21,7 +21,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.web.client.RestClient
-import java.net.URI
 import java.util.UUID
 
 class DocumentGenerationServiceTest {
