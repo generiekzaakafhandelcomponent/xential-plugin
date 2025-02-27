@@ -1,12 +1,10 @@
-package com.ritense.valtimo.xential.service
+package com.ritense.valtimoplugins.xential.service
 
 import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimo.contract.authentication.UserManagementService
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.domain.XentialToken
 import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
-import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
-import com.ritense.valtimoplugins.xential.service.OpentunnelEsbClient
 import com.ritense.valueresolver.ValueResolverService
 import com.rotterdam.esb.xential.api.DefaultApi
 import com.rotterdam.esb.xential.model.DocumentCreatieResultaat
@@ -35,14 +33,22 @@ class DocumentGenerationServiceTest {
     lateinit var esbClient: OpentunnelEsbClient
 
     @Mock
+    lateinit var runtimeService: RuntimeService
+
+    @Mock
     lateinit var xentialTokenRepository: XentialTokenRepository
 
     @Mock
     lateinit var userManagementService: UserManagementService
 
+    @Mock
+    lateinit var temporaryResourceStorageService: TemporaryResourceStorageService
+
+    @Mock
+    lateinit var valueResolverService: ValueResolverService
+
     @InjectMocks
     lateinit var documentGenerationService: DocumentGenerationService
-
 
     @BeforeEach
     fun setup() {
