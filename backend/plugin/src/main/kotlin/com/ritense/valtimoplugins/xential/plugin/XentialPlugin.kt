@@ -24,13 +24,14 @@ import com.ritense.plugin.annotation.PluginAction
 import com.ritense.plugin.annotation.PluginActionProperty
 import com.ritense.plugin.annotation.PluginProperty
 import com.ritense.processlink.domain.ActivityTypeWithEventName
-import com.ritense.valtimoplugins.xential.domain.HttpClientProperties
 import com.ritense.valtimoplugins.xential.domain.FileFormat
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin.Companion.PLUGIN_KEY
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
+import com.ritense.valtimoplugins.xential.service.OpentunnelEsbClient
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.springframework.web.client.RestClient
 import java.net.URI
 import java.util.UUID
 
@@ -41,6 +42,7 @@ import java.util.UUID
 )
 @Suppress("UNUSED")
 class XentialPlugin(
+    private val esbClient: OpentunnelEsbClient,
     private val documentGenerationService: DocumentGenerationService
 ) {
     @PluginProperty(key = "applicationName", secret = false, required = true)
@@ -72,23 +74,12 @@ class XentialPlugin(
         execution: DelegateExecution
     ) {
 
-        logger.info { "xentialContentId: $xentialContentId" }
-
-        val xentialDocumentProperties: XentialDocumentProperties = objectMapper.convertValue(xentialContentId)
-
-        val httpClientProperties = HttpClientProperties(
-            applicationName,
-            applicationPassword,
-            baseUrl,
-            serverCertificate,
-            clientPrivateKey,
-            clientCertificate
-        )
+        logger.info { "generating document with XentialContent: $xentialContentId" }
 
         documentGenerationService.generateDocument(
-            httpClientProperties,
+            esbClient.documentApi(restClient()),
             UUID.fromString(execution.processInstanceId),
-            xentialDocumentProperties,
+            objectMapper.convertValue(xentialContentId) as XentialDocumentProperties,
             execution
         )
     }
@@ -169,6 +160,17 @@ class XentialPlugin(
             return
         }
     }
+
+    private fun restClient(): RestClient =
+        esbClient.createRestClient(
+            baseUrl = baseUrl.toString(),
+            applicationName = applicationName,
+            applicationPassword = applicationPassword,
+            authenticationEnabled = true,
+            base64PrivateKey = clientPrivateKey,
+            base64ClientCert = clientCertificate,
+            base64ServerCert = serverCertificate
+        )
 
     companion object {
         private val logger = KotlinLogging.logger { }
