@@ -87,9 +87,6 @@ openApiGenerate {
     apiPackage = "com.rotterdam.esb.xential.api"
     invokerPackage = "com.rotterdam.esb.xential.invoker"
     modelPackage = "com.rotterdam.esb.xential.model"
-//    apiPackage = "com.rotterdam.xential.api"
-//    invokerPackage = "com.rotterdam.xential.invoker"
-//    modelPackage = "com.rotterdam.xential.model"
     configOptions = mapOf(
         "useSpringBoot3" to "true",
         "library" to "jvm-spring-restclient",

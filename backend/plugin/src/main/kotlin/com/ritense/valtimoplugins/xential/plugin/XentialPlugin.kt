@@ -64,8 +64,6 @@ class XentialPlugin(
     @PluginProperty(key = "clientCertificate", secret = true, required = false)
     var clientCertificate: String? = null
 
-    val mTLSSSLContext: MTlsSslContextPlugin = MTlsSslContextPlugin()
-
     @PluginAction(
         key = "generate-document",
         title = "Generate document",
