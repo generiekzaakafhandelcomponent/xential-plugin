@@ -24,6 +24,7 @@ import com.ritense.plugin.annotation.PluginAction
 import com.ritense.plugin.annotation.PluginActionProperty
 import com.ritense.plugin.annotation.PluginProperty
 import com.ritense.processlink.domain.ActivityTypeWithEventName
+import com.ritense.valtimoplugins.mtlssslcontext.plugin.MTlsSslContextPlugin
 import com.ritense.valtimoplugins.xential.domain.FileFormat
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin.Companion.PLUGIN_KEY
@@ -62,6 +63,8 @@ class XentialPlugin(
 
     @PluginProperty(key = "clientCertificate", secret = true, required = false)
     var clientCertificate: String? = null
+
+    val mTLSSSLContext: MTlsSslContextPlugin = MTlsSslContextPlugin()
 
     @PluginAction(
         key = "generate-document",
