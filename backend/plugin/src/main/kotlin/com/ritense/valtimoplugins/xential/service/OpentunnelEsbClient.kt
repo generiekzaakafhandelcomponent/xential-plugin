@@ -5,6 +5,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import okhttp3.Credentials
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.web.client.RestClient
+import javax.net.ssl.SSLContext
 
 class OpentunnelEsbClient {
 
@@ -13,26 +14,20 @@ class OpentunnelEsbClient {
         applicationName: String,
         applicationPassword: String,
         authenticationEnabled: Boolean,
-        base64PrivateKey: String? = null,
-        base64ClientCert: String? = null,
-        base64ServerCert: String? = null
+        sslContext: SSLContext
     ): RestClient {
         logger.debug { "Creating ESB client" }
         val credentials = Credentials.basic(applicationName, applicationPassword)
 
         return when {
             authenticationEnabled -> {
-                require(base64PrivateKey != null)
-                require(base64ClientCert != null)
-                require(base64ServerCert != null)
                 HttpClientHelper.createSecureHttpClient(
-                    base64PrivateKey = base64PrivateKey,
-                    base64ClientCert = base64ClientCert,
-                    base64CaCert = base64ServerCert
+                    sslContext
                 ).also {
                     logger.debug { "Using secure HttpClient with Client Certificate authentication" }
                 }
             }
+
             else ->
                 HttpClientHelper.createDefaultHttpClient().also {
                     logger.debug { "Using default HttpClient" }

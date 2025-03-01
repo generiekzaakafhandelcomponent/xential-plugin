@@ -16,76 +16,22 @@ import javax.net.ssl.SSLContext
 
 object HttpClientHelper {
 
-    private const val PKCS12 = "PKCS12"
-    private const val X_509 = "X.509"
-    private const val RSA = "RSA"
-
     fun createDefaultHttpClient(): CloseableHttpClient {
         return HttpClients.createDefault()
     }
 
     fun createSecureHttpClient(
-        base64PrivateKey: String,
-        base64ClientCert: String,
-        base64CaCert: String
+        sslContext: SSLContext
     ): CloseableHttpClient =
-        createSslContext(base64PrivateKey, base64ClientCert, base64CaCert).let { sslContext ->
-            PoolingHttpClientConnectionManagerBuilder.create()
-                .setSSLSocketFactory(
-                    SSLConnectionSocketFactoryBuilder.create()
-                        .setSslContext(sslContext)
-                        .build()
-                )
-                .build().let { connectionManager ->
-                    HttpClients.custom()
-                        .setConnectionManager(connectionManager)
-                        .build()
-                }
-        }
-
-    private fun createSslContext(
-        base64PrivateKey: String,
-        base64ClientCert: String,
-        base64CaCert: String
-    ): SSLContext {
-        val privateKey = decodePrivateKey(base64PrivateKey)//loadPrivateKeyFromString(base64PrivateKey)
-        val clientCert = decodeCertificate(base64ClientCert)
-        val caCert = decodeCertificate(base64CaCert)
-
-        val keyStore = KeyStore.getInstance(PKCS12).apply {
-            load(null, null) // Initialize empty keystore
-            setKeyEntry("client-cert", privateKey, null, arrayOf(clientCert))
-        }
-
-        val trustStore = KeyStore.getInstance(PKCS12).apply {
-            load(null, null) // Initialize empty truststore
-            setCertificateEntry("ca-cert", caCert)
-        }
-
-        return SSLContextBuilder.create()
-            .loadKeyMaterial(keyStore, null) // No password needed
-            .loadTrustMaterial(trustStore, null)
-            .build()
-    }
-
-    private fun decodeCertificate(base64Cert: String): Certificate =
-        CertificateFactory.getInstance(X_509).generateCertificate(
-            ByteArrayInputStream(Base64.getDecoder().decode(base64Cert))
-        )
-
-    private fun decodePrivateKey(input: String) =
-        String(Base64.getDecoder().decode(input)).let { decodedBytes ->
-            decodedBytes
-                .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replace("-----END PRIVATE KEY-----", "")
-                .replace("\\s".toRegex(), "")
-                .let {
-                    Base64.getDecoder().decode(it)
-                }
-                .let { keyBytes ->
-                    KeyFactory.getInstance(RSA).generatePrivate(
-                        PKCS8EncodedKeySpec(keyBytes)
-                    )
-                }
-        }
+        PoolingHttpClientConnectionManagerBuilder.create()
+            .setSSLSocketFactory(
+                SSLConnectionSocketFactoryBuilder.create()
+                    .setSslContext(sslContext)
+                    .build()
+            )
+            .build().let { connectionManager ->
+                HttpClients.custom()
+                    .setConnectionManager(connectionManager)
+                    .build()
+            }
 }
