@@ -13,25 +13,24 @@ class OpentunnelEsbClient {
         baseUrl: String,
         applicationName: String,
         applicationPassword: String,
-        authenticationEnabled: Boolean,
-        sslContext: SSLContext
+        sslContext: SSLContext?
     ): RestClient {
         logger.debug { "Creating ESB client" }
         val credentials = Credentials.basic(applicationName, applicationPassword)
 
         return when {
-            authenticationEnabled -> {
+            sslContext != null -> {
                 HttpClientHelper.createSecureHttpClient(
                     sslContext
                 ).also {
                     logger.debug { "Using secure HttpClient with Client Certificate authentication" }
                 }
             }
-
             else ->
                 HttpClientHelper.createDefaultHttpClient().also {
                     logger.debug { "Using default HttpClient" }
                 }
+
         }.let { httpClient ->
             RestClient.builder()
                 .defaultHeader("Authorization", credentials)

@@ -35,7 +35,6 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.springframework.web.client.RestClient
 import java.net.URI
 import java.util.UUID
-import javax.net.ssl.SSLContext
 
 @Plugin(
     key = PLUGIN_KEY,
@@ -57,7 +56,7 @@ class XentialPlugin(
     lateinit var baseUrl: URI
 
     @PluginProperty(key = "mTlsSslContextAutoConfiguration", secret = false, required = true)
-    lateinit var mTlsSslContextAutoConfiguration: MTlsSslContext
+    private lateinit var mTlsSslContextAutoConfiguration: MTlsSslContext
 
     @PluginAction(
         key = "generate-document",
@@ -72,11 +71,8 @@ class XentialPlugin(
 
         logger.info { "generating document with XentialContent: $xentialContentId" }
 
-        val sslContext = mTlsSslContextAutoConfiguration.createSslContext()
-
-        logger.info { "generating document with sslContext: $sslContext" }
         documentGenerationService.generateDocument(
-            esbClient.documentApi(restClient(sslContext)),
+            esbClient.documentApi(restClient(mTlsSslContextAutoConfiguration)),
             UUID.fromString(execution.processInstanceId),
             objectMapper.convertValue(xentialContentId) as XentialDocumentProperties,
             execution
@@ -163,14 +159,15 @@ class XentialPlugin(
         }
     }
 
-    private fun restClient(sslContext: SSLContext): RestClient =
-        esbClient.createRestClient(
+    private fun restClient(mTlsSslContextAutoConfiguration: MTlsSslContext?): RestClient {
+
+        return esbClient.createRestClient(
             baseUrl = baseUrl.toString(),
             applicationName = applicationName,
             applicationPassword = applicationPassword,
-            authenticationEnabled = true,
-            sslContext
+            mTlsSslContextAutoConfiguration?.createSslContext()
         )
+    }
 
     companion object {
         private val logger = KotlinLogging.logger { }
