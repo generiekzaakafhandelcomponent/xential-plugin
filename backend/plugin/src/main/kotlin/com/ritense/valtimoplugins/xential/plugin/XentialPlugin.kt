@@ -24,6 +24,7 @@ import com.ritense.plugin.annotation.PluginAction
 import com.ritense.plugin.annotation.PluginActionProperty
 import com.ritense.plugin.annotation.PluginProperty
 import com.ritense.processlink.domain.ActivityTypeWithEventName
+import com.ritense.valtimoplugins.mtlssslcontext.MTlsSslContext
 import com.ritense.valtimoplugins.xential.domain.FileFormat
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin.Companion.PLUGIN_KEY
@@ -54,14 +55,8 @@ class XentialPlugin(
     @PluginProperty(key = "baseUrl", secret = false, required = true)
     lateinit var baseUrl: URI
 
-    @PluginProperty(key = "serverCertificate", secret = true, required = false)
-    var serverCertificate: String? = null
-
-    @PluginProperty(key = "clientPrivateKey", secret = true, required = false)
-    var clientPrivateKey: String? = null
-
-    @PluginProperty(key = "clientCertificate", secret = true, required = false)
-    var clientCertificate: String? = null
+    @PluginProperty(key = "mTlsSslContextAutoConfiguration", secret = false, required = true)
+    private lateinit var mTlsSslContextAutoConfiguration: MTlsSslContext
 
     @PluginAction(
         key = "generate-document",
@@ -77,7 +72,7 @@ class XentialPlugin(
         logger.info { "generating document with XentialContent: $xentialContentId" }
 
         documentGenerationService.generateDocument(
-            esbClient.documentApi(restClient()),
+            esbClient.documentApi(restClient(mTlsSslContextAutoConfiguration)),
             UUID.fromString(execution.processInstanceId),
             objectMapper.convertValue(xentialContentId) as XentialDocumentProperties,
             execution
@@ -144,6 +139,7 @@ class XentialPlugin(
         execution: DelegateExecution
     ) {
         try {
+            logger.info { "ha toch hier" }
             val xentialDocumentProperties = XentialDocumentProperties(
                 templateId,
                 gebruikersId,
@@ -152,6 +148,8 @@ class XentialPlugin(
                 eventMessageName,
                 textTemplateId
             )
+
+            logger.info { "ha toch hier" }
             execution.processInstance.setVariable(
                 xentialContentId, objectMapper.convertValue(xentialDocumentProperties)
             )
@@ -161,16 +159,15 @@ class XentialPlugin(
         }
     }
 
-    private fun restClient(): RestClient =
-        esbClient.createRestClient(
+    private fun restClient(mTlsSslContextAutoConfiguration: MTlsSslContext?): RestClient {
+
+        return esbClient.createRestClient(
             baseUrl = baseUrl.toString(),
             applicationName = applicationName,
             applicationPassword = applicationPassword,
-            authenticationEnabled = true,
-            base64PrivateKey = clientPrivateKey,
-            base64ClientCert = clientCertificate,
-            base64ServerCert = serverCertificate
+            mTlsSslContextAutoConfiguration?.createSslContext()
         )
+    }
 
     companion object {
         private val logger = KotlinLogging.logger { }
