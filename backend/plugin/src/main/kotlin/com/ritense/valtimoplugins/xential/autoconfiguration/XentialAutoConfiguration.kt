@@ -25,7 +25,9 @@ import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
 import com.ritense.valtimoplugins.xential.security.config.XentialApiHttpSecurityConfigurer
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
 import com.ritense.valtimoplugins.xential.service.OpentunnelEsbClient
+import com.ritense.valtimoplugins.xential.service.XentialSjablonenService
 import com.ritense.valtimoplugins.xential.web.rest.DocumentResource
+import com.ritense.valtimoplugins.xential.web.rest.XentialSjablonenResource
 import com.ritense.valueresolver.ValueResolverService
 import org.camunda.bpm.engine.RuntimeService
 import org.springframework.boot.autoconfigure.AutoConfiguration
@@ -48,10 +50,10 @@ class XentialAutoConfiguration {
         esbClient: OpentunnelEsbClient,
         documentGenerationService: DocumentGenerationService
     ) = XentialPluginFactory(
-            pluginService,
-            esbClient,
-            documentGenerationService,
-        )
+        pluginService,
+        esbClient,
+        documentGenerationService,
+    )
 
     @Bean
     fun opentunnelEsbClient() = OpentunnelEsbClient()
@@ -60,6 +62,16 @@ class XentialAutoConfiguration {
     @ConditionalOnMissingBean(name = ["xentialLiquibaseMasterChangeLogLocation"])
     fun xentialLiquibaseMasterChangeLogLocation() =
         LiquibaseMasterChangeLogLocation("config/liquibase/xential-plugin-master.xml")
+
+    @Bean
+    @ConditionalOnMissingBean
+    fun xentialSjablonenService(
+        pluginService: PluginService,
+        esbClient: OpentunnelEsbClient
+    ) = XentialSjablonenService(
+        pluginService,
+        esbClient
+    )
 
     @Bean
     @ConditionalOnMissingBean
@@ -74,6 +86,11 @@ class XentialAutoConfiguration {
         runtimeService,
         valueResolverService
     )
+
+    @Bean
+    @ConditionalOnMissingBean(DocumentResource::class)
+    fun xentialResource(xentialSjablonenService: XentialSjablonenService) =
+        XentialSjablonenResource(xentialSjablonenService)
 
     @Bean
     @ConditionalOnMissingBean(DocumentResource::class)

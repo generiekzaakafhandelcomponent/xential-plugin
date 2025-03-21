@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2022 Ritense BV, the Netherlands.
+ * Copyright 2015-2025 Ritense BV, the Netherlands.
  *
  * Licensed under EUPL, Version 1.2 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import {PluginConfigurationData} from '@valtimo/plugin';
+package com.ritense.valtimoplugins.xential.domain
 
-export interface XentialConfig extends PluginConfigurationData {
-    applicationName: string;
-    applicationPassword: string;
-    baseUrl: string;
-    templateGroupId: string;
-    gebruikersId: string;
-    mTlsSslContextAutoConfigurationId: string;
-}
+data class XentialSjabloon(
+    val taakapplicatie: String,
+    val gebruiker: String,
+    val documentCreatieSessieId: String,
+    val formaat: FileFormat,
+    val documentkenmerk: String,
+    val data: String,
+)

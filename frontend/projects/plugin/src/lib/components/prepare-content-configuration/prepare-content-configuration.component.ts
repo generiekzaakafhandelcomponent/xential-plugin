@@ -1,8 +1,9 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FunctionConfigurationComponent} from '@valtimo/plugin';
-import {BehaviorSubject, combineLatest, Observable, Subscription, take} from 'rxjs';
+import {FunctionConfigurationComponent, PluginManagementService, PluginTranslationService} from '@valtimo/plugin';
+import {BehaviorSubject, combineLatest, map, Observable, Subscription, take} from 'rxjs';
 import {PrepareContentTemplate} from "../../models";
 import {SelectItem} from "@valtimo/components";
+import {XentialApiSjabloonService} from "../../modules/xential-api/services/xential-api-sjabloon.service";
 
 @Component({
     selector: 'xential-prepare-content-configuration',
@@ -27,10 +28,25 @@ export class PrepareContentConfigurationComponent implements FunctionConfigurati
             })
     );
 
-    private saveSubscription!: Subscription;
+    constructor(
+        private readonly xentialApiSjabloonService: XentialApiSjabloonService
+    ) {}
 
+    private saveSubscription!: Subscription;
     private readonly formValue$ = new BehaviorSubject<PrepareContentTemplate | null>(null);
     private readonly valid$ = new BehaviorSubject<boolean>(false);
+
+    readonly xentialSjablonenSelectItems$: Observable<Array<{ id: string; text: string }>> =
+        combineLatest([
+            this.xentialApiSjabloonService.getTemplates(),
+        ]).pipe(
+            map(([configurations]) =>
+                configurations.sjablonen.map(configuration => ({
+                    id: configuration.id,
+                    text: configuration.naam
+                }))
+            )
+        );
 
     ngOnInit(): void {
         this.openSaveSubscription();

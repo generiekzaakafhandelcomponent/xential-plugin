@@ -47,10 +47,16 @@ class XentialPlugin(
     private val documentGenerationService: DocumentGenerationService
 ) {
     @PluginProperty(key = "applicationName", secret = false, required = true)
-    private lateinit var applicationName: String
+    lateinit var applicationName: String
 
     @PluginProperty(key = "applicationPassword", secret = true, required = true)
-    private lateinit var applicationPassword: String
+    lateinit var applicationPassword: String
+
+    @PluginProperty(key = "gebruikersId", secret = false, required = true)
+    lateinit var gebruikersId: String
+
+    @PluginProperty(key = "templateGroupId", secret = false, required = true)
+    lateinit var templateGroupId: String
 
     @PluginProperty(key = "baseUrl", secret = false, required = true)
     lateinit var baseUrl: URI
@@ -117,7 +123,7 @@ class XentialPlugin(
                 )
             }
         } catch (e: Exception) {
-            logger.error{ "Exiting scope due to nested error. $e"}
+            logger.error { "Exiting scope due to nested error. $e" }
             return
         }
     }
@@ -139,7 +145,6 @@ class XentialPlugin(
         execution: DelegateExecution
     ) {
         try {
-            logger.info { "ha toch hier" }
             val xentialDocumentProperties = XentialDocumentProperties(
                 templateId,
                 gebruikersId,
@@ -149,12 +154,11 @@ class XentialPlugin(
                 textTemplateId
             )
 
-            logger.info { "ha toch hier" }
             execution.processInstance.setVariable(
                 xentialContentId, objectMapper.convertValue(xentialDocumentProperties)
             )
         } catch (e: Exception) {
-            logger.error{"Exiting scope due to nested error. $e"}
+            logger.error { "Exiting scope due to nested error. $e" }
             return
         }
     }

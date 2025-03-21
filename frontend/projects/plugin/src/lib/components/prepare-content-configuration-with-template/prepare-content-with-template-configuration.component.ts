@@ -1,8 +1,9 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FunctionConfigurationComponent} from '@valtimo/plugin';
-import {BehaviorSubject, combineLatest, Observable, Subscription, take} from 'rxjs';
+import {BehaviorSubject, combineLatest, map, Observable, Subscription, take} from 'rxjs';
 import {PrepareContentWithTextTemplate} from "../../models";
 import {SelectItem} from "@valtimo/components";
+import {XentialApiSjabloonService} from "../../modules/xential-api/services/xential-api-sjabloon.service";
 
 @Component({
     selector: 'xential-prepare-content-with-template-configuration',
@@ -16,6 +17,22 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
     @Output() valid: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() configuration: EventEmitter<PrepareContentWithTextTemplate> =
         new EventEmitter<PrepareContentWithTextTemplate>();
+
+    constructor(
+        private readonly xentialApiSjabloonService: XentialApiSjabloonService
+    ) {}
+
+    readonly xentialSjablonenSelectItems$: Observable<Array<{ id: string; text: string }>> =
+        combineLatest([
+            this.xentialApiSjabloonService.getTemplates(),
+        ]).pipe(
+            map(([sjablonenList]) =>
+                sjablonenList.sjablonen.map(configuration => ({
+                    id: configuration.id,
+                    text: configuration.naam
+                }))
+            )
+        );
 
     public fileFormats$ = new BehaviorSubject<SelectItem[]>(
         ['WORD', 'PDF']
@@ -44,6 +61,7 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
         this.formValue$.next(formValue);
         this.handleValid(formValue);
     }
+
 
     private handleValid(formValue: PrepareContentWithTextTemplate): void {
         const valid = !!(

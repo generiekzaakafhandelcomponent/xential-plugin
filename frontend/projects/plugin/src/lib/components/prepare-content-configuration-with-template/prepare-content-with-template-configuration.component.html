@@ -29,14 +29,20 @@
             [disabled]="obs.disabled"
             [required]="true"
     />
-    <v-input
-            name="templateId"
-            [title]="'templateId' | pluginTranslate: pluginId | async"
-            [margin]="true"
-            [defaultValue]="obs.prefill?.templateId"
-            [disabled]="obs.disabled"
-            [required]="true"
-    />
+    <ng-container
+            *ngIf="{xentialSjablonenSelectItems: xentialSjablonenSelectItems$ | async} as authObs"
+    >
+        <v-select
+                [items]="authObs.xentialSjablonenSelectItems"
+                [margin]="true"
+                name="templateId"
+                [title]="'templateId' | pluginTranslate: pluginId | async"
+                [disabled]="obs.disabled"
+                [defaultSelectionId]="obs.prefill?.templateId"
+                [required]="true"
+                [loading]="!authObs.xentialSjablonenSelectItems"
+        ></v-select>
+    </ng-container>
     <v-select
             name="fileFormat"
             [title]="'fileFormat' | pluginTranslate: pluginId | async"

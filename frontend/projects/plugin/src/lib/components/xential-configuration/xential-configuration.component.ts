@@ -86,6 +86,8 @@ export class XentialConfigurationComponent
             formValue.applicationName &&
             formValue.applicationPassword &&
             formValue.baseUrl &&
+            formValue.templateGroupId &&
+            formValue.gebruikersId &&
             formValue.mTlsSslContextAutoConfigurationId
         );
 
