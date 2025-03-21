@@ -24,7 +24,6 @@ import {
 import {BehaviorSubject, combineLatest, map, Observable, Subscription, take} from 'rxjs';
 import {XentialConfig} from '../../models';
 import {TranslateService} from "@ngx-translate/core";
-import {ValuePathSelectorPrefix} from "@valtimo/components";
 
 @Component({
     selector: 'valtimo-xential-configuration',

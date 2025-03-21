@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FunctionConfigurationComponent, PluginManagementService, PluginTranslationService} from '@valtimo/plugin';
+import {FunctionConfigurationComponent} from '@valtimo/plugin';
 import {BehaviorSubject, combineLatest, map, Observable, Subscription, take} from 'rxjs';
 import {PrepareContentTemplate} from "../../models";
 import {SelectItem} from "@valtimo/components";

@@ -15,7 +15,7 @@
  */
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {BaseApiService, ConfigService, Page} from '@valtimo/config';
+import {BaseApiService, ConfigService} from '@valtimo/config';
 import {Observable} from 'rxjs';
 import {XentialApiSjabloon} from '../models/xential-api-sjabloon.model';
 

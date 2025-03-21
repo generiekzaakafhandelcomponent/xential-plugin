@@ -21,7 +21,6 @@ import com.ritense.valtimoplugins.mtlssslcontext.MTlsSslContext
 import com.ritense.valtimoplugins.mtlssslcontext.plugin.MTlsSslContextPlugin
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin
 import com.rotterdam.esb.xential.model.Sjabloonitems
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.web.client.RestClient
 
 class XentialSjablonenService(
@@ -62,9 +61,5 @@ class XentialSjablonenService(
                 mTlsSslContextAutoConfiguration?.createSslContext()
             )
         }
-    }
-
-    companion object {
-        private val logger = KotlinLogging.logger {}
     }
 }
