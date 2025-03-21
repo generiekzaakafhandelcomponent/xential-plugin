@@ -21,23 +21,6 @@
     prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null
   } as obs"
 >
-    <div>
-        <v-input-label
-                [title]="'maak plugin'"
-        ></v-input-label>
-    </div>
-<!--
-    <div>
-        <v-input-label
-                [title]="'val1'"
-        ></v-input-label>
-        <valtimo-value-path-selector
-                formControlName="path"
-                [documentDefinitionName]=documentDefinitionName
-                [prefixes]="[ValuePathSelectorPrefix.DOC, ValuePathSelectorPrefix.CASE]"
-        ></valtimo-value-path-selector>
-    </div>
--->
     <v-input
             name="configurationTitle"
             [title]="'configurationTitle' | pluginTranslate: pluginId | async"
@@ -72,6 +55,24 @@
             [margin]="true"
             [fullWidth]="true"
             [defaultValue]="obs.prefill?.baseUrl"
+            [disabled]="obs.disabled"
+            [required]="true"
+    >
+    </v-input>
+    <v-input
+            name="gebruikersId"
+            [title]="'gebruikersId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.gebruikersId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="templateGroupId"
+            [title]="'templateGroupId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [fullWidth]="true"
+            [defaultValue]="obs.prefill?.templateGroupId"
             [disabled]="obs.disabled"
             [required]="true"
     >

@@ -12,7 +12,21 @@
                 [title]="'preparing doc creation'"
         ></v-input-label>
     </div>
-
+    <hr/>
+    <ng-container
+            *ngIf="{xentialSjablonenSelectItems: xentialSjablonenSelectItems$ | async} as authObs"
+    >
+        <v-select
+                [items]="authObs.xentialSjablonenSelectItems"
+                [margin]="true"
+                name="xentialSjabloon"
+                [title]="'xentialSjabloon' | pluginTranslate: pluginId | async"
+                [disabled]="obs.disabled"
+                [defaultSelectionId]="obs.prefill?.xentialSjabloon"
+                [required]="true"
+                [loading]="!authObs.xentialSjablonenSelectItems"
+        ></v-select>
+    </ng-container>
     <v-input
             name="xentialContentId"
             [title]="'xentialContentId' | pluginTranslate: pluginId | async"
