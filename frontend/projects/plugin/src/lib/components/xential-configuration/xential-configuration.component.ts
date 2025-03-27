@@ -24,6 +24,7 @@ import {
 import {BehaviorSubject, combineLatest, map, Observable, Subscription, take} from 'rxjs';
 import {XentialConfig} from '../../models';
 import {TranslateService} from "@ngx-translate/core";
+import {XentialApiSjabloonService} from "../../modules/xential-api/services/xential-api-sjabloon.service";
 
 @Component({
     selector: 'valtimo-xential-configuration',
@@ -41,6 +42,18 @@ export class XentialConfigurationComponent
     private saveSubscription!: Subscription;
     private readonly formValue$ = new BehaviorSubject<XentialConfig | null>(null);
     private readonly valid$ = new BehaviorSubject<boolean>(false);
+
+    readonly xentialSjablonenSelectItems$: Observable<Array<{ id: string; text: string }>> =
+        combineLatest([
+            this.xentialApiSjabloonService.getTemplates(),
+        ]).pipe(
+            map(([sjablonenList]) =>
+                sjablonenList.sjabloongroepen.map(sjabloonGroep => ({
+                    id: sjabloonGroep.id,
+                    text: sjabloonGroep.naam
+                }))
+            )
+        );
 
     readonly authenticationPluginSelectItems$: Observable<Array<{ id: string; text: string }>> =
         combineLatest([
@@ -61,11 +74,11 @@ export class XentialConfigurationComponent
         );
 
     constructor(
+        private readonly xentialApiSjabloonService: XentialApiSjabloonService,
         private readonly pluginManagementService: PluginManagementService,
         private readonly translateService: TranslateService,
         private readonly pluginTranslationService: PluginTranslationService
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         this.openSaveSubscription();

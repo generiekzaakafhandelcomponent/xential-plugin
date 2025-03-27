@@ -67,16 +67,31 @@
             [disabled]="obs.disabled"
             [required]="true"
     />
-    <v-input
-            name="templateGroupId"
-            [title]="'templateGroupId' | pluginTranslate: pluginId | async"
-            [margin]="true"
-            [fullWidth]="true"
-            [defaultValue]="obs.prefill?.templateGroupId"
-            [disabled]="obs.disabled"
-            [required]="true"
+    <ng-container
+            *ngIf="{xentialSjabloonGroupSelectItems: xentialSjablonenSelectItems$ | async} as authObs"
     >
-    </v-input>
+        <v-select
+                [items]="authObs.xentialSjabloonGroupSelectItems"
+                [margin]="true"
+                name="templateGroupId"
+                [title]="'templateGroupId' | pluginTranslate: pluginId | async"
+                [disabled]="obs.disabled"
+                [defaultSelectionId]="obs.prefill?.templateGroupId"
+                [required]="true"
+                [loading]="!authObs.xentialSjabloonGroupSelectItems"
+        ></v-select>
+    </ng-container>
+
+<!--    <v-input-->
+<!--            name="templateGroupId"-->
+<!--            [title]="'templateGroupId' | pluginTranslate: pluginId | async"-->
+<!--            [margin]="true"-->
+<!--            [fullWidth]="true"-->
+<!--            [defaultValue]="obs.prefill?.templateGroupId"-->
+<!--            [disabled]="obs.disabled"-->
+<!--            [required]="true"-->
+<!--    >-->
+<!--    </v-input>-->
     <hr/>
     <ng-container
             *ngIf="{authenticationPluginSelectItems: authenticationPluginSelectItems$ | async} as authObs"

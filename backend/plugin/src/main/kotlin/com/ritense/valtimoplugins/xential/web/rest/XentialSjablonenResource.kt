@@ -37,4 +37,12 @@ class XentialSjablonenResource(
     ): Sjabloonitems {
         return xentialSjablonenService.getTemplateList(sjabloonGroupId)
     }
+
+    @GetMapping("/v1/bla/bla")
+    fun getSjablonenFromBla(
+        @RequestParam sjabloonGroupId: String?
+    ): Sjabloonitems {
+        return xentialSjablonenService.getTemplateList(sjabloonGroupId)
+    }
+
 }
