@@ -31,7 +31,7 @@ export class XentialApiSjabloonService extends BaseApiService {
     }
 
     public getTemplates(sjabloonGroupId?: string): Observable<XentialApiSjabloon> {
-        console.log("--- sjabloonGroupId: " + sjabloonGroupId)
+        console.log("getting --- sjabloonGroupId: " + sjabloonGroupId)
         return this.http.get<XentialApiSjabloon>(
             this.getApiUrl(
                 !sjabloonGroupId

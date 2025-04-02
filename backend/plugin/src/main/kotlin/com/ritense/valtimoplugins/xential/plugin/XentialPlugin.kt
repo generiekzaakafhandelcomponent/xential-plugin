@@ -69,6 +69,7 @@ class XentialPlugin(
     )
     fun generateDocument(
         @PluginActionProperty xentialContentId: Map<String, Any>,
+        @PluginActionProperty xentialSjabloonId: String,
         execution: DelegateExecution
     ) {
 
@@ -77,6 +78,8 @@ class XentialPlugin(
         documentGenerationService.generateDocument(
             esbClient.documentApi(restClient(mTlsSslContextAutoConfigurationId)),
             UUID.fromString(execution.processInstanceId),
+            gebruikersId,
+            xentialSjabloonId,
             objectMapper.convertValue(xentialContentId) as XentialDocumentProperties,
             execution
         )
@@ -89,7 +92,6 @@ class XentialPlugin(
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
     )
     fun prepareContent(
-        @PluginActionProperty templateId: UUID,
         @PluginActionProperty fileFormat: FileFormat,
         @PluginActionProperty documentId: String,
         @PluginActionProperty eventMessageName: String,
@@ -97,6 +99,10 @@ class XentialPlugin(
         @PluginActionProperty verzendAdresData: Array<TemplateDataEntry>,
         @PluginActionProperty colofonData: Array<TemplateDataEntry>,
         @PluginActionProperty documentDetailsData: Array<TemplateDataEntry>,
+        @PluginActionProperty firstTemplateGroupId: UUID,
+        @PluginActionProperty secondTemplateGroupId: UUID?,
+        @PluginActionProperty thirdTemplateGroupId: UUID?,
+
         execution: DelegateExecution
     ) {
         try {
@@ -107,8 +113,7 @@ class XentialPlugin(
                 execution
             ).let {
                 val xentialDocumentProperties = XentialDocumentProperties(
-                    templateId,
-                    gebruikersId,
+                    thirdTemplateGroupId?: secondTemplateGroupId ?: firstTemplateGroupId,
                     fileFormat,
                     documentId,
                     eventMessageName,
@@ -131,21 +136,19 @@ class XentialPlugin(
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
     )
     fun prepareContentWithTemplate(
-        @PluginActionProperty templateId: UUID,
         @PluginActionProperty fileFormat: FileFormat,
         @PluginActionProperty documentId: String,
         @PluginActionProperty eventMessageName: String,
         @PluginActionProperty xentialContentId: String,
         @PluginActionProperty textTemplateId: String,
         @PluginActionProperty firstTemplateGroupId: UUID,
-        @PluginActionProperty secondTemplateGroupId: UUID,
-        @PluginActionProperty thirdTemplateGroupId: UUID,
+        @PluginActionProperty secondTemplateGroupId: UUID?,
+        @PluginActionProperty thirdTemplateGroupId: UUID?,
         execution: DelegateExecution
     ) {
         try {
             val xentialDocumentProperties = XentialDocumentProperties(
-                templateId,
-                gebruikersId,
+                thirdTemplateGroupId?: secondTemplateGroupId ?: firstTemplateGroupId,
                 fileFormat,
                 documentId,
                 eventMessageName,

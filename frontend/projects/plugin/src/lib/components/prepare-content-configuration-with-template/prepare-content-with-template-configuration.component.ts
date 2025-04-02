@@ -4,7 +4,6 @@ import {BehaviorSubject, combineLatest, filter, map, Observable, Subscription, t
 import {PrepareContentWithTextTemplate} from "../../models";
 import {SelectItem} from "@valtimo/components";
 import {XentialApiSjabloonService} from "../../modules/xential-api/services/xential-api-sjabloon.service";
-import {XentialApiSjabloon} from "../../modules/xential-api/models/xential-api-sjabloon.model";
 
 @Component({
     selector: 'xential-prepare-content-with-template-configuration',
@@ -21,9 +20,13 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
 
     constructor(
         private readonly xentialApiSjabloonService: XentialApiSjabloonService
-    ) {}
+    ) {
+    }
 
-    readonly xentialSjabloonGroepenSelectItems$: Observable<Array<{ id: string; text: string }>> =
+    readonly firstGroupId$ = new BehaviorSubject<string>('')
+    readonly secondGroupId$ = new BehaviorSubject<string>('')
+
+    readonly xentialFirstGroupSelectItems$: Observable<Array<{ id: string; text: string }>> =
         combineLatest([
             this.xentialApiSjabloonService.getTemplates(),
         ]).pipe(
@@ -35,13 +38,11 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
             )
         );
 
-    readonly firstGroupId$ = new BehaviorSubject<string>('')
-    readonly secondGroupId$ = new BehaviorSubject<string>('')
 
     readonly xentialSecondGroupSelectItems$ = this.firstGroupId$.pipe(
         startWith(null),
         filter((firstGroupId) => !!firstGroupId),
-        switchMap((firstGroupId) =>  this.xentialApiSjabloonService.getTemplates(firstGroupId)),
+        switchMap((firstGroupId) => this.xentialApiSjabloonService.getTemplates(firstGroupId)),
         map((sjablonenList) =>
             sjablonenList.sjabloongroepen.map(configuration => ({
                 id: configuration.id,
@@ -53,7 +54,7 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
     readonly xentialThirdGroupSelectItems$ = this.secondGroupId$.pipe(
         startWith(null),
         filter((secondGroupId) => !!secondGroupId),
-        switchMap((secondGroupId) =>  this.xentialApiSjabloonService.getTemplates(secondGroupId)),
+        switchMap((secondGroupId) => this.xentialApiSjabloonService.getTemplates(secondGroupId)),
         map((sjablonenList) =>
             sjablonenList.sjabloongroepen.map(configuration => ({
                 id: configuration.id,
@@ -86,14 +87,16 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
     }
 
     formValueChange(formValue: PrepareContentWithTextTemplate): void {
-        console.log("formalue: ", formValue)
-        if(formValue.firstTemplateGroupId) {
-            console.log("hi", formValue.firstTemplateGroupId)
+
+        if (formValue.firstTemplateGroupId &&
+            formValue.firstTemplateGroupId != this.currentFirstTemplateGroupId) {
+            this.currentFirstTemplateGroupId = formValue.firstTemplateGroupId
             this.firstGroupId$.next(formValue.firstTemplateGroupId)
         }
-        if(formValue.secondTemplateGroupId) {
-            console.log("hi", formValue.secondTemplateGroupId)
+        if (formValue.secondTemplateGroupId &&
+            formValue.secondTemplateGroupId != this.currentSecondTemplateGroupId) {
             this.secondGroupId$.next(formValue.secondTemplateGroupId)
+            this.currentSecondTemplateGroupId = formValue.secondTemplateGroupId
         }
 
         this.formValue$.next(formValue);
@@ -105,8 +108,6 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
             formValue.xentialContentId &&
             formValue.textTemplateId &&
             formValue.firstTemplateGroupId &&
-            formValue.secondTemplateGroupId &&
-            formValue.thirdTemplateGroupId &&
             formValue.fileFormat &&
             formValue.documentId &&
             formValue.eventMessageName
@@ -127,4 +128,7 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
                 });
         });
     }
+
+    currentFirstTemplateGroupId: string = "notset"
+    currentSecondTemplateGroupId: string = "notset"
 }
