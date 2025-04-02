@@ -44,15 +44,11 @@ class XentialSjablonenService(
                     mTlsSslContextPlugin.createSslContext()
                 )
                 val api = esbClient.documentApi(restClient(mTlsSslContextPlugin))
-                logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { it.isNullOrBlank() }?: "geen id"}" }
+                logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { !it.isNullOrBlank() }?: "geen id"}" }
                 return api.geefSjablonenlijst(
                     gebruikersId = xentialPlugin.gebruikersId,
                     sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank()}
                 )
-//                return api.geefSjablonenlijst(
-//                    gebruikersId = xentialPlugin.gebruikersId,
-//                    sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank()}?: xentialPlugin.templateGroupId
-//                )
             }
         }
     }
@@ -68,6 +64,7 @@ class XentialSjablonenService(
             )
         }
     }
+
     companion object {
         private val logger = KotlinLogging.logger {}
     }

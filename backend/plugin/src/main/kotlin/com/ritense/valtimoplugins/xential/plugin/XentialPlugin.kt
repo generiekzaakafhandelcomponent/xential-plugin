@@ -55,9 +55,6 @@ class XentialPlugin(
     @PluginProperty(key = "gebruikersId", secret = false, required = true)
     lateinit var gebruikersId: String
 
-    @PluginProperty(key = "templateGroupId", secret = false, required = true)
-    lateinit var templateGroupId: String
-
     @PluginProperty(key = "baseUrl", secret = false, required = true)
     lateinit var baseUrl: URI
 
@@ -95,7 +92,6 @@ class XentialPlugin(
         @PluginActionProperty templateId: UUID,
         @PluginActionProperty fileFormat: FileFormat,
         @PluginActionProperty documentId: String,
-        @PluginActionProperty gebruikersId: String,
         @PluginActionProperty eventMessageName: String,
         @PluginActionProperty xentialContentId: String,
         @PluginActionProperty verzendAdresData: Array<TemplateDataEntry>,
@@ -138,10 +134,12 @@ class XentialPlugin(
         @PluginActionProperty templateId: UUID,
         @PluginActionProperty fileFormat: FileFormat,
         @PluginActionProperty documentId: String,
-        @PluginActionProperty gebruikersId: String,
         @PluginActionProperty eventMessageName: String,
         @PluginActionProperty xentialContentId: String,
         @PluginActionProperty textTemplateId: String,
+        @PluginActionProperty firstTemplateGroupId: UUID,
+        @PluginActionProperty secondTemplateGroupId: UUID,
+        @PluginActionProperty thirdTemplateGroupId: UUID,
         execution: DelegateExecution
     ) {
         try {

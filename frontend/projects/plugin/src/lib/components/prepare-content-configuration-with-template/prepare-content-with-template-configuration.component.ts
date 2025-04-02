@@ -1,9 +1,10 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FunctionConfigurationComponent} from '@valtimo/plugin';
-import {BehaviorSubject, combineLatest, map, Observable, Subscription, take} from 'rxjs';
+import {BehaviorSubject, combineLatest, filter, map, Observable, Subscription, take, startWith, switchMap} from 'rxjs';
 import {PrepareContentWithTextTemplate} from "../../models";
 import {SelectItem} from "@valtimo/components";
 import {XentialApiSjabloonService} from "../../modules/xential-api/services/xential-api-sjabloon.service";
+import {XentialApiSjabloon} from "../../modules/xential-api/models/xential-api-sjabloon.model";
 
 @Component({
     selector: 'xential-prepare-content-with-template-configuration',
@@ -22,17 +23,44 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
         private readonly xentialApiSjabloonService: XentialApiSjabloonService
     ) {}
 
-    readonly xentialSjablonenSelectItems$: Observable<Array<{ id: string; text: string }>> =
+    readonly xentialSjabloonGroepenSelectItems$: Observable<Array<{ id: string; text: string }>> =
         combineLatest([
             this.xentialApiSjabloonService.getTemplates(),
         ]).pipe(
             map(([sjablonenList]) =>
-                sjablonenList.sjablonen.map(configuration => ({
+                sjablonenList.sjabloongroepen.map(configuration => ({
                     id: configuration.id,
                     text: configuration.naam
                 }))
             )
         );
+
+    readonly firstGroupId$ = new BehaviorSubject<string>('')
+    readonly secondGroupId$ = new BehaviorSubject<string>('')
+
+    readonly xentialSecondGroupSelectItems$ = this.firstGroupId$.pipe(
+        startWith(null),
+        filter((firstGroupId) => !!firstGroupId),
+        switchMap((firstGroupId) =>  this.xentialApiSjabloonService.getTemplates(firstGroupId)),
+        map((sjablonenList) =>
+            sjablonenList.sjabloongroepen.map(configuration => ({
+                id: configuration.id,
+                text: configuration.naam
+            }))
+        )
+    )
+
+    readonly xentialThirdGroupSelectItems$ = this.secondGroupId$.pipe(
+        startWith(null),
+        filter((secondGroupId) => !!secondGroupId),
+        switchMap((secondGroupId) =>  this.xentialApiSjabloonService.getTemplates(secondGroupId)),
+        map((sjablonenList) =>
+            sjablonenList.sjabloongroepen.map(configuration => ({
+                id: configuration.id,
+                text: configuration.naam
+            }))
+        )
+    )
 
     public fileFormats$ = new BehaviorSubject<SelectItem[]>(
         ['WORD', 'PDF']
@@ -58,20 +86,30 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
     }
 
     formValueChange(formValue: PrepareContentWithTextTemplate): void {
+        console.log("formalue: ", formValue)
+        if(formValue.firstTemplateGroupId) {
+            console.log("hi", formValue.firstTemplateGroupId)
+            this.firstGroupId$.next(formValue.firstTemplateGroupId)
+        }
+        if(formValue.secondTemplateGroupId) {
+            console.log("hi", formValue.secondTemplateGroupId)
+            this.secondGroupId$.next(formValue.secondTemplateGroupId)
+        }
+
         this.formValue$.next(formValue);
         this.handleValid(formValue);
     }
 
-
     private handleValid(formValue: PrepareContentWithTextTemplate): void {
         const valid = !!(
             formValue.xentialContentId &&
-            formValue.gebruikersId &&
-            formValue.templateId &&
+            formValue.textTemplateId &&
+            formValue.firstTemplateGroupId &&
+            formValue.secondTemplateGroupId &&
+            formValue.thirdTemplateGroupId &&
             formValue.fileFormat &&
             formValue.documentId &&
-            formValue.eventMessageName &&
-            formValue.textTemplateId
+            formValue.eventMessageName
         );
 
         this.valid$.next(valid);

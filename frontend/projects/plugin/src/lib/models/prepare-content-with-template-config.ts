@@ -2,7 +2,9 @@ import {PluginConfigurationData} from "@valtimo/plugin";
 
 export interface PrepareContentWithTextTemplate extends PluginConfigurationData {
     xentialContentId: string;
-    templateId: string;
+    firstTemplateGroupId: string;
+    secondTemplateGroupId: string;
+    thirdTemplateGroupId: string;
     gebruikersId: string;
     fileFormat: FileFormat;
     documentId: string;
