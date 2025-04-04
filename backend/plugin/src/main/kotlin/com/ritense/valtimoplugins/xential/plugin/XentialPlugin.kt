@@ -140,7 +140,6 @@ class XentialPlugin(
         @PluginActionProperty documentId: String,
         @PluginActionProperty eventMessageName: String,
         @PluginActionProperty xentialContentId: String,
-        @PluginActionProperty textTemplateId: String,
         @PluginActionProperty firstTemplateGroupId: UUID,
         @PluginActionProperty secondTemplateGroupId: UUID?,
         @PluginActionProperty thirdTemplateGroupId: UUID?,
@@ -152,7 +151,7 @@ class XentialPlugin(
                 fileFormat,
                 documentId,
                 eventMessageName,
-                textTemplateId
+                null
             )
 
             execution.processInstance.setVariable(

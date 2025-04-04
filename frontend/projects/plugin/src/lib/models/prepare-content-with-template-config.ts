@@ -8,7 +8,6 @@ export interface PrepareContentWithTextTemplate extends PluginConfigurationData 
     fileFormat: FileFormat;
     documentId: string;
     eventMessageName: string;
-    textTemplateId: string;
 }
 
 type FileFormat = 'WORD' | 'PDF';
