@@ -48,11 +48,13 @@ class XentialAutoConfiguration {
     fun xentialPluginFactory(
         pluginService: PluginService,
         esbClient: OpentunnelEsbClient,
-        documentGenerationService: DocumentGenerationService
+        documentGenerationService: DocumentGenerationService,
+        valueResolverService: ValueResolverService,
     ) = XentialPluginFactory(
         pluginService,
         esbClient,
         documentGenerationService,
+        valueResolverService
     )
 
     @Bean
