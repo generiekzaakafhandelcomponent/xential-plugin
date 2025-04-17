@@ -54,9 +54,6 @@ class XentialPlugin(
     @PluginProperty(key = "applicationPassword", secret = true, required = true)
     lateinit var applicationPassword: String
 
-    @PluginProperty(key = "gebruikersId", secret = false, required = true)
-    lateinit var gebruikersId: String
-
     @PluginProperty(key = "baseUrl", secret = false, required = true)
     lateinit var baseUrl: URI
 
@@ -71,7 +68,7 @@ class XentialPlugin(
                 value.startsWith("pv:")
         )
 
-    fun resolveValuesFor(
+    private fun resolveValuesFor(
         execution: DelegateExecution,
         params: Map<String, Any?>
     ): Map<String, Any?> {
@@ -97,7 +94,6 @@ class XentialPlugin(
             }
         return params.toMutableMap().apply {
             this.putAll(resolvedValues)
-            return this
         }.toMap()
     }
 
@@ -110,6 +106,7 @@ class XentialPlugin(
     fun generateDocument(
         @PluginActionProperty xentialContentId: Map<String, Any>,
         @PluginActionProperty xentialSjabloonId: String,
+        @PluginActionProperty xentialGebruikersId: String,
         execution: DelegateExecution
     ) {
 
@@ -121,11 +118,11 @@ class XentialPlugin(
             "content" to props.content,
         ))
 
-        props.content = resolvedValues.get("content") as String
+        props.content = resolvedValues["content"] as String
         documentGenerationService.generateDocument(
             esbClient.documentApi(restClient(mTlsSslContextAutoConfigurationId)),
             UUID.fromString(execution.processInstanceId),
-            gebruikersId,
+            xentialGebruikersId,
             xentialSjabloonId,
             props,
             execution

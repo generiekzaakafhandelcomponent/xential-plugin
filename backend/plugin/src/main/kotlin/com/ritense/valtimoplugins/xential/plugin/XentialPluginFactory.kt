@@ -24,12 +24,16 @@ import com.ritense.valueresolver.ValueResolverService
 
 class XentialPluginFactory(
     pluginService: PluginService,
-    val esbClient: OpentunnelEsbClient,
-    val documentGenerationService: DocumentGenerationService,
-    val valueResolverService: ValueResolverService
+    private val esbClient: OpentunnelEsbClient,
+    private val documentGenerationService: DocumentGenerationService,
+    private val valueResolverService: ValueResolverService
 ) : PluginFactory<XentialPlugin>(pluginService) {
 
     override fun create(): XentialPlugin {
-        return XentialPlugin(esbClient,documentGenerationService,valueResolverService)
+        return XentialPlugin(
+            esbClient,
+            documentGenerationService,
+            valueResolverService
+        )
     }
 }
