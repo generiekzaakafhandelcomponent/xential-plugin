@@ -104,15 +104,15 @@ class XentialPlugin(
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
     )
     fun generateDocument(
-        @PluginActionProperty xentialContentId: Map<String, Any>,
+        @PluginActionProperty xentialContent: Map<String, Any>,
         @PluginActionProperty xentialSjabloonId: String,
         @PluginActionProperty xentialGebruikersId: String,
         execution: DelegateExecution
     ) {
 
-        logger.info { "generating document with XentialContent: $xentialContentId" }
+        logger.info { "generating document with XentialContent: $xentialContent" }
 
-        val props = objectMapper.convertValue(xentialContentId) as XentialDocumentProperties
+        val props = objectMapper.convertValue(xentialContent) as XentialDocumentProperties
 
         val resolvedValues = resolveValuesFor(execution, mapOf(
             "content" to props.content,
@@ -139,7 +139,7 @@ class XentialPlugin(
         @PluginActionProperty fileFormat: FileFormat,
         @PluginActionProperty documentId: String,
         @PluginActionProperty eventMessageName: String,
-        @PluginActionProperty xentialContentId: String,
+        @PluginActionProperty xentialContent: String,
         @PluginActionProperty verzendAdresData: Array<TemplateDataEntry>,
         @PluginActionProperty colofonData: Array<TemplateDataEntry>,
         @PluginActionProperty documentDetailsData: Array<TemplateDataEntry>,
@@ -164,7 +164,7 @@ class XentialPlugin(
                     it as String
                 )
                 execution.processInstance.setVariable(
-                    xentialContentId, objectMapper.convertValue(xentialDocumentProperties)
+                    xentialContent, objectMapper.convertValue(xentialDocumentProperties)
                 )
             }
         } catch (e: Exception) {
