@@ -63,14 +63,6 @@
             [items]="obs.fileFormats"
     />
     <v-input
-            name="documentId"
-            [title]="'documentId' | pluginTranslate: pluginId | async"
-            [margin]="true"
-            [defaultValue]="obs.prefill?.documentId"
-            [disabled]="obs.disabled"
-            [required]="true"
-    />
-    <v-input
             name="eventMessageName"
             [title]="'eventMessageName' | pluginTranslate: pluginId | async"
             [margin]="true"

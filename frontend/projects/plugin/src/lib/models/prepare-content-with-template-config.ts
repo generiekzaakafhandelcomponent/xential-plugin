@@ -6,7 +6,6 @@ export interface PrepareContentWithTextTemplate extends PluginConfigurationData 
     secondTemplateGroupId: string;
     thirdTemplateGroupId: string;
     fileFormat: FileFormat;
-    documentId: string;
     eventMessageName: string;
 }
 

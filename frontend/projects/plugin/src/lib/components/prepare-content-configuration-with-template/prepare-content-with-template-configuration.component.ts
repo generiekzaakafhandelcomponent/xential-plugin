@@ -108,7 +108,6 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
             formValue.xentialContentId &&
             formValue.firstTemplateGroupId &&
             formValue.fileFormat &&
-            formValue.documentId &&
             formValue.eventMessageName
         );
 

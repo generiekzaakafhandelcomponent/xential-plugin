@@ -19,6 +19,7 @@ package com.ritense.valtimoplugins.xential.autoconfiguration
 import com.ritense.plugin.service.PluginService
 import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimo.contract.annotation.ProcessBean
+import com.ritense.valtimo.contract.authentication.UserManagementService
 import com.ritense.valtimo.contract.config.LiquibaseMasterChangeLogLocation
 import com.ritense.valtimo.security.jwt.authentication.TokenAuthenticationService
 import com.ritense.valtimo.security.jwt.provider.SecretKeyResolver
@@ -98,7 +99,11 @@ class XentialAutoConfiguration {
 
     @Bean
     @ProcessBean
-    fun xentialUserIdHelper(secretKeyResolver: SecretKeyResolver) = XentialUserIdHelper(secretKeyResolver)
+    fun xentialUserIdHelper(
+        userManagementService: UserManagementService
+    ) = XentialUserIdHelper(
+        userManagementService
+    )
 
     @Bean
     @ConditionalOnMissingBean(DocumentResource::class)

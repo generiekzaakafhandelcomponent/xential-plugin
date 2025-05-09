@@ -105,6 +105,7 @@ class XentialPlugin(
     )
     fun generateDocument(
         @PluginActionProperty xentialContent: Map<String, Any>,
+        @PluginActionProperty xentialData: String,
         @PluginActionProperty xentialSjabloonId: String,
         @PluginActionProperty xentialGebruikersId: String,
         execution: DelegateExecution
@@ -113,6 +114,8 @@ class XentialPlugin(
         logger.info { "generating document with XentialContent: $xentialContent" }
 
         val props = objectMapper.convertValue(xentialContent) as XentialDocumentProperties
+
+        props.content = xentialData
 
         val resolvedValues = resolveValuesFor(execution, mapOf(
             "content" to props.content,
@@ -181,7 +184,6 @@ class XentialPlugin(
     )
     fun prepareContentWithTemplate(
         @PluginActionProperty fileFormat: FileFormat,
-        @PluginActionProperty documentId: String,
         @PluginActionProperty eventMessageName: String,
         @PluginActionProperty xentialContentId: String,
         @PluginActionProperty firstTemplateGroupId: UUID,
@@ -193,7 +195,7 @@ class XentialPlugin(
             val xentialDocumentProperties = XentialDocumentProperties(
                 thirdTemplateGroupId ?: secondTemplateGroupId ?: firstTemplateGroupId,
                 fileFormat,
-                documentId,
+                "documentId",
                 eventMessageName,
                 null
             )
