@@ -2,9 +2,9 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {FunctionConfigurationComponent} from '@valtimo/plugin';
 import {
     BehaviorSubject,
-    combineLatest,
+    combineLatest, filter,
     map,
-    Observable,
+    Observable, startWith,
     Subscription,
     take,
 } from 'rxjs';
@@ -25,23 +25,41 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
     @Output() valid: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() configuration: EventEmitter<PrepareContentWithTextTemplate> =
         new EventEmitter<PrepareContentWithTextTemplate>();
-    protected readonly user$ = new BehaviorSubject<string>("");
-    firstLevelGroupSelectItems$: BehaviorSubject<Array<{ id: string; text: string }>>;
-    secondLevelGroupSelectItems$: BehaviorSubject<Array<{ id: string; text: string }>>;
-    thirdLevelGroupSelectItems$: BehaviorSubject<Array<{ id: string; text: string }>>;
+
+    protected readonly username$ = new BehaviorSubject<string>("");
+    firstLevelGroupSelectItems$: BehaviorSubject<Array<{ id: string; text: string }>> = new BehaviorSubject<Array<{
+        id: string;
+        text: string
+    }>>([]);
+    secondLevelGroupSelectItems$: BehaviorSubject<Array<{ id: string; text: string }>> = new BehaviorSubject<Array<{
+        id: string;
+        text: string
+    }>>([]);
+    thirdLevelGroupSelectItems$: BehaviorSubject<Array<{ id: string; text: string }>> = new BehaviorSubject<Array<{
+        id: string;
+        text: string
+    }>>([]);
 
     constructor(
         private readonly xentialApiSjabloonService: XentialApiSjabloonService,
         private readonly keycloakUserService: KeycloakUserService
     ) {
-        // this.user$.subscribe(user =>
-        //     this.user$.next(user)
-        // )
+        this.getFirstLevelTemplate()
+        this.keycloakUserService.getUserSubject()
+            .subscribe(
+                userIdentity => {
+                    this.username$.next(userIdentity.username)
+                }
+            )
     }
+
+    private saveSubscription!: Subscription;
+
+    private readonly formValue$ = new BehaviorSubject<PrepareContentWithTextTemplate | null>(null);
+    private readonly valid$ = new BehaviorSubject<boolean>(false);
 
     readonly firstGroupId$ = new BehaviorSubject<string>('')
     readonly secondGroupId$ = new BehaviorSubject<string>('')
-
 
     public fileFormats$ = new BehaviorSubject<SelectItem[]>(
         ['WORD', 'PDF']
@@ -53,45 +71,44 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
             })
     );
 
-    private saveSubscription!: Subscription;
+    private currentFirstTemplateGroupId: string = "notset"
+    private currentSecondTemplateGroupId: string = "notset"
 
-    private readonly formValue$ = new BehaviorSubject<PrepareContentWithTextTemplate | null>(null);
-    private readonly valid$ = new BehaviorSubject<boolean>(false);
+    handleLevelSelected(groupId$: BehaviorSubject<string>, levelGroupSelectItems$: BehaviorSubject<Array<{
+        id: string;
+        text: string
+    }>>) {
+        combineLatest([
+            this.username$,
+            this.xentialApiSjabloonService.getTemplates(this.username$.getValue(), groupId$.getValue()),
+        ])
+            .pipe(
+                map(([username, sjablonenList]) => {
+                        levelGroupSelectItems$.next(
+                            sjablonenList.sjabloongroepen.map(configuration => ({
+                                        id: configuration.id,
+                                        text: configuration.naam
+                                    }
+                                )
+                            )
+                        )
+                    }
+                )
+            ).subscribe()
+    }
 
     ngOnInit(): void {
-        console.log("ngOnInit")
         this.openSaveSubscription();
-        this.getFirstLevelTemplate()
-        console.log("ngOnInit 2")
-        this.keycloakUserService.getUserSubject()
-            .subscribe(
-                userIdentity => {
-                    console.log("ngOnInit 3 " + userIdentity.username)
-                    this.user$.next(userIdentity.username)
-
-                }
-            )
     }
 
     getFirstLevelTemplate() {
-        console.log("getFirstLevelTemplate")
-        this.user$.subscribe(user => {
-                console.log("getFirstLevelTemplate user subscribed")
-                combineLatest([
-                    this.xentialApiSjabloonService.getTemplates(user),
-                ]).pipe(
-                    map(([sjablonenList]) => {
-                            let val = sjablonenList.sjabloongroepen.map(configuration => ({
-                                id: configuration.id,
-                                text: configuration.naam
-                            }))
-
-                            this.firstLevelGroupSelectItems$.next(val)
-                        }
-                    )
-                )
-            }
-        )
+        this.username$
+            .pipe(
+                filter(gebruikersId => !!gebruikersId) // Filters out empty strings, null, or undefined
+            )
+            .subscribe(gebruikersId => {
+                this.handleLevelSelected(this.firstGroupId$, this.firstLevelGroupSelectItems$);
+            });
     }
 
     ngOnDestroy() {
@@ -99,16 +116,17 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
     }
 
     formValueChange(formValue: PrepareContentWithTextTemplate): void {
-
         if (formValue.firstTemplateGroupId &&
             formValue.firstTemplateGroupId != this.currentFirstTemplateGroupId) {
             this.currentFirstTemplateGroupId = formValue.firstTemplateGroupId
             this.firstGroupId$.next(formValue.firstTemplateGroupId)
+            this.handleLevelSelected(this.firstGroupId$, this.secondLevelGroupSelectItems$)
         }
         if (formValue.secondTemplateGroupId &&
             formValue.secondTemplateGroupId != this.currentSecondTemplateGroupId) {
-            this.secondGroupId$.next(formValue.secondTemplateGroupId)
             this.currentSecondTemplateGroupId = formValue.secondTemplateGroupId
+            this.secondGroupId$.next(formValue.secondTemplateGroupId)
+            this.handleLevelSelected(this.secondGroupId$, this.thirdLevelGroupSelectItems$)
         }
 
         this.formValue$.next(formValue);
@@ -138,37 +156,4 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
                 });
         });
     }
-
-    currentFirstTemplateGroupId: string = "notset"
-    currentSecondTemplateGroupId: string = "notset"
-
-    handleFirstLevelSelected($event: Event) {
-        // handle me and emit new row value
-    }
-
-    // handleSecondLevelSelected(selectedIndex: SelectedValue) {
-    //     combineLatest([
-    //         this.user$,
-    //         this.firstLevelGroupSelectItems$,
-    //         this.firstGroupId$
-    //     ])
-    //         .pipe(take(1))
-    //         .subscribe(([user, firstLevelGroup, firstGroupId]) => {
-    //             this.xentialApiSjabloonService.getTemplates(
-    //                 user,
-    //                 firstLevelGroup[selectedIndex]
-    //             ).pipe(
-    //                 map((sjablonenList) =>
-    //                     sjablonenList.sjabloongroepen.map(configuration => ({
-    //                         id: configuration.id,
-    //                         text: configuration.naam
-    //                     }))
-    //                 ),
-    //                 map((filteredList) => {
-    //
-    //                     this.secondLevelGroupSelectItems$.next(filteredList)
-    //                 }))
-    //
-    //         })
-    // }
 }

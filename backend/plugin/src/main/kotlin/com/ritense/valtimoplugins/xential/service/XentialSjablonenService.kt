@@ -29,8 +29,32 @@ class XentialSjablonenService(
     private val esbClient: OpentunnelEsbClient,
     private val xentialUserIdHelper: XentialUserIdHelper
 ) {
-
-    fun getTemplateList(sjabloongroepId: String?): Sjabloonitems {
+//
+//    fun getTemplateList(sjabloongroepId: String?): Sjabloonitems {
+//
+//        pluginService.findPluginConfiguration(MTlsSslContextPlugin::class.java) {
+//            true
+//        }.let { mLTSPlugin ->
+//            val mTlsSslContextPlugin = mLTSPlugin?.let { pluginService.createInstance(it.id) } as MTlsSslContextPlugin
+//            pluginService.findPluginConfigurations(XentialPlugin::class.java).first().let { plugin ->
+//                val xentialPlugin = pluginService.createInstance(plugin.id) as XentialPlugin
+//                esbClient.createRestClient(
+//                    baseUrl = xentialPlugin.baseUrl.toString(),
+//                    applicationName = xentialPlugin.applicationName,
+//                    applicationPassword = xentialPlugin.applicationPassword,
+//                    mTlsSslContextPlugin.createSslContext()
+//                )
+//                val api = esbClient.documentApi(restClient(mTlsSslContextPlugin))
+//                logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { !it.isNullOrBlank() }?: "geen id"}" }
+//                return api.geefSjablonenlijst(
+//                    gebruikersId = xentialUserIdHelper.getGebruikersId(),
+//                    sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank()}
+//                )
+//            }
+//        }
+//    }
+//
+    fun getTemplateList(gebruikersId: String, sjabloongroepId: String?): Sjabloonitems {
 
         pluginService.findPluginConfiguration(MTlsSslContextPlugin::class.java) {
             true
@@ -47,7 +71,7 @@ class XentialSjablonenService(
                 val api = esbClient.documentApi(restClient(mTlsSslContextPlugin))
                 logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { !it.isNullOrBlank() }?: "geen id"}" }
                 return api.geefSjablonenlijst(
-                    gebruikersId = xentialUserIdHelper.getGebruikersId(),
+                    gebruikersId = gebruikersId,
                     sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank()}
                 )
             }

@@ -35,11 +35,11 @@ class XentialSjablonenResource(
 ) {
     @GetMapping("/v1/xential/sjablonen")
     fun getSjablonenFromDefaultGroup(
-//        @RequestParam username: String,
+        @RequestParam gebruikersId: String,
         @RequestParam sjabloonGroupId: String?
     ): Sjabloonitems {
-//        logger.info { "user: $username, sjabloonGroupId: $sjabloonGroupId" }
-        val items = xentialSjablonenService.getTemplateList(sjabloonGroupId)
+        logger.info { "gebruikersId: $gebruikersId, sjabloonGroupId: $sjabloonGroupId" }
+        val items = xentialSjablonenService.getTemplateList(gebruikersId, sjabloonGroupId)
         logger.info { "${sjabloonGroupId} found sjablonen: ${items.sjablonen.size } sjabloongroepen: ${items.sjabloongroepen.size }"}
         return items
     }
