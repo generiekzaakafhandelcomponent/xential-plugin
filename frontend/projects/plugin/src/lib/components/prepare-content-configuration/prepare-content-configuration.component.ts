@@ -38,7 +38,7 @@ export class PrepareContentConfigurationComponent implements FunctionConfigurati
 
     readonly xentialSjablonenSelectItems$: Observable<Array<{ id: string; text: string }>> =
         combineLatest([
-            this.xentialApiSjabloonService.getTemplates(),
+            this.xentialApiSjabloonService.getTemplates(null),
         ]).pipe(
             map(([configurations]) =>
                 configurations.sjablonen.map(configuration => ({

@@ -47,7 +47,7 @@ class XentialSjablonenService(
                 val api = esbClient.documentApi(restClient(mTlsSslContextPlugin))
                 logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { !it.isNullOrBlank() }?: "geen id"}" }
                 return api.geefSjablonenlijst(
-                    gebruikersId = xentialUserIdHelper.getXentialUserId(),
+                    gebruikersId = xentialUserIdHelper.getGebruikersId(),
                     sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank()}
                 )
             }

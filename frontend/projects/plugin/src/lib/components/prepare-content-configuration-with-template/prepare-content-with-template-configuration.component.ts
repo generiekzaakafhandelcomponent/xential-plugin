@@ -1,9 +1,17 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FunctionConfigurationComponent} from '@valtimo/plugin';
-import {BehaviorSubject, combineLatest, filter, map, Observable, Subscription, take, startWith, switchMap} from 'rxjs';
+import {
+    BehaviorSubject,
+    combineLatest,
+    map,
+    Observable,
+    Subscription,
+    take,
+} from 'rxjs';
 import {PrepareContentWithTextTemplate} from "../../models";
-import {SelectItem} from "@valtimo/components";
+import {SelectedValue, SelectItem} from "@valtimo/components";
 import {XentialApiSjabloonService} from "../../modules/xential-api/services/xential-api-sjabloon.service";
+import {KeycloakUserService} from "@valtimo/keycloak";
 
 @Component({
     selector: 'xential-prepare-content-with-template-configuration',
@@ -17,51 +25,23 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
     @Output() valid: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() configuration: EventEmitter<PrepareContentWithTextTemplate> =
         new EventEmitter<PrepareContentWithTextTemplate>();
+    protected readonly user$ = new BehaviorSubject<string>("");
+    firstLevelGroupSelectItems$: BehaviorSubject<Array<{ id: string; text: string }>>;
+    secondLevelGroupSelectItems$: BehaviorSubject<Array<{ id: string; text: string }>>;
+    thirdLevelGroupSelectItems$: BehaviorSubject<Array<{ id: string; text: string }>>;
 
     constructor(
-        private readonly xentialApiSjabloonService: XentialApiSjabloonService
+        private readonly xentialApiSjabloonService: XentialApiSjabloonService,
+        private readonly keycloakUserService: KeycloakUserService
     ) {
+        // this.user$.subscribe(user =>
+        //     this.user$.next(user)
+        // )
     }
 
     readonly firstGroupId$ = new BehaviorSubject<string>('')
     readonly secondGroupId$ = new BehaviorSubject<string>('')
 
-    readonly firstLevelGroupSelectItems$: Observable<Array<{ id: string; text: string }>> =
-        combineLatest([
-            this.xentialApiSjabloonService.getTemplates(),
-        ]).pipe(
-            map(([sjablonenList]) =>
-                sjablonenList.sjabloongroepen.map(configuration => ({
-                    id: configuration.id,
-                    text: configuration.naam
-                }))
-            )
-        );
-
-
-    readonly secondLevelGroupSelectItems$ = this.firstGroupId$.pipe(
-        startWith(null),
-        filter((firstGroupId) => !!firstGroupId),
-        switchMap((firstGroupId) => this.xentialApiSjabloonService.getTemplates(firstGroupId)),
-        map((sjablonenList) =>
-            sjablonenList.sjabloongroepen.map(configuration => ({
-                id: configuration.id,
-                text: configuration.naam
-            }))
-        )
-    )
-
-    readonly thirdLevelGroupSelectItems$ = this.secondGroupId$.pipe(
-        startWith(null),
-        filter((secondGroupId) => !!secondGroupId),
-        switchMap((secondGroupId) => this.xentialApiSjabloonService.getTemplates(secondGroupId)),
-        map((sjablonenList) =>
-            sjablonenList.sjabloongroepen.map(configuration => ({
-                id: configuration.id,
-                text: configuration.naam
-            }))
-        )
-    )
 
     public fileFormats$ = new BehaviorSubject<SelectItem[]>(
         ['WORD', 'PDF']
@@ -79,7 +59,39 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
     private readonly valid$ = new BehaviorSubject<boolean>(false);
 
     ngOnInit(): void {
+        console.log("ngOnInit")
         this.openSaveSubscription();
+        this.getFirstLevelTemplate()
+        console.log("ngOnInit 2")
+        this.keycloakUserService.getUserSubject()
+            .subscribe(
+                userIdentity => {
+                    console.log("ngOnInit 3 " + userIdentity.username)
+                    this.user$.next(userIdentity.username)
+
+                }
+            )
+    }
+
+    getFirstLevelTemplate() {
+        console.log("getFirstLevelTemplate")
+        this.user$.subscribe(user => {
+                console.log("getFirstLevelTemplate user subscribed")
+                combineLatest([
+                    this.xentialApiSjabloonService.getTemplates(user),
+                ]).pipe(
+                    map(([sjablonenList]) => {
+                            let val = sjablonenList.sjabloongroepen.map(configuration => ({
+                                id: configuration.id,
+                                text: configuration.naam
+                            }))
+
+                            this.firstLevelGroupSelectItems$.next(val)
+                        }
+                    )
+                )
+            }
+        )
     }
 
     ngOnDestroy() {
@@ -129,4 +141,34 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
 
     currentFirstTemplateGroupId: string = "notset"
     currentSecondTemplateGroupId: string = "notset"
+
+    handleFirstLevelSelected($event: Event) {
+        // handle me and emit new row value
+    }
+
+    // handleSecondLevelSelected(selectedIndex: SelectedValue) {
+    //     combineLatest([
+    //         this.user$,
+    //         this.firstLevelGroupSelectItems$,
+    //         this.firstGroupId$
+    //     ])
+    //         .pipe(take(1))
+    //         .subscribe(([user, firstLevelGroup, firstGroupId]) => {
+    //             this.xentialApiSjabloonService.getTemplates(
+    //                 user,
+    //                 firstLevelGroup[selectedIndex]
+    //             ).pipe(
+    //                 map((sjablonenList) =>
+    //                     sjablonenList.sjabloongroepen.map(configuration => ({
+    //                         id: configuration.id,
+    //                         text: configuration.naam
+    //                     }))
+    //                 ),
+    //                 map((filteredList) => {
+    //
+    //                     this.secondLevelGroupSelectItems$.next(filteredList)
+    //                 }))
+    //
+    //         })
+    // }
 }
