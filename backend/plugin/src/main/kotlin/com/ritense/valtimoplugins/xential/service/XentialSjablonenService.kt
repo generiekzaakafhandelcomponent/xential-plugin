@@ -17,6 +17,8 @@
 package com.ritense.valtimoplugins.xential.service
 
 import com.ritense.plugin.service.PluginService
+import com.ritense.processlink.domain.ActivityTypeWithEventName
+import com.ritense.processlink.service.ProcessLinkService
 import com.ritense.valtimoplugins.mtlssslcontext.MTlsSslContext
 import com.ritense.valtimoplugins.mtlssslcontext.plugin.MTlsSslContextPlugin
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin
@@ -27,35 +29,22 @@ import org.springframework.web.client.RestClient
 class XentialSjablonenService(
     private val pluginService: PluginService,
     private val esbClient: OpentunnelEsbClient,
-    private val xentialUserIdHelper: XentialUserIdHelper
+    private val processLinkService: ProcessLinkService
 ) {
-//
-//    fun getTemplateList(sjabloongroepId: String?): Sjabloonitems {
-//
-//        pluginService.findPluginConfiguration(MTlsSslContextPlugin::class.java) {
-//            true
-//        }.let { mLTSPlugin ->
-//            val mTlsSslContextPlugin = mLTSPlugin?.let { pluginService.createInstance(it.id) } as MTlsSslContextPlugin
-//            pluginService.findPluginConfigurations(XentialPlugin::class.java).first().let { plugin ->
-//                val xentialPlugin = pluginService.createInstance(plugin.id) as XentialPlugin
-//                esbClient.createRestClient(
-//                    baseUrl = xentialPlugin.baseUrl.toString(),
-//                    applicationName = xentialPlugin.applicationName,
-//                    applicationPassword = xentialPlugin.applicationPassword,
-//                    mTlsSslContextPlugin.createSslContext()
-//                )
-//                val api = esbClient.documentApi(restClient(mTlsSslContextPlugin))
-//                logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { !it.isNullOrBlank() }?: "geen id"}" }
-//                return api.geefSjablonenlijst(
-//                    gebruikersId = xentialUserIdHelper.getGebruikersId(),
-//                    sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank()}
-//                )
-//            }
-//        }
-//    }
-//
-    fun getTemplateList(gebruikersId: String, sjabloongroepId: String?): Sjabloonitems {
 
+    fun testAccessToSjabloongroep(gebruikersId: String) {
+        val lijstje = processLinkService.getProcessLinks("xential-test:10:91be102d-30c8-11f0-b631-6269324b49de")
+//        lijstje.forEach { linkedProperty ->
+//            val vla = linkedProperty as com.ritense.plugin.domain.PluginProcessLink
+//            val vlaaas = vla.actionProperties?.get("firstTemplateGroupId")
+//            logger.info { "linkedProperty: $vlaaas"  }
+//        }
+        logger.info { "++++++++++++++++ XentialSjablonenService $gebruikersId" }
+
+    }
+
+    fun getTemplateList(gebruikersId: String, sjabloongroepId: String?): Sjabloonitems {
+        pluginService.getPluginDefinitions()
         pluginService.findPluginConfiguration(MTlsSslContextPlugin::class.java) {
             true
         }.let { mLTSPlugin ->

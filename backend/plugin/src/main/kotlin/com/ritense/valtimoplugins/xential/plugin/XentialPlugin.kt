@@ -30,6 +30,7 @@ import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin.Companion.PLUGIN_KEY
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
 import com.ritense.valtimoplugins.xential.service.OpentunnelEsbClient
+import com.ritense.valtimoplugins.xential.service.XentialSjablonenService
 import com.ritense.valueresolver.ValueResolverService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -46,7 +47,8 @@ import java.util.UUID
 class XentialPlugin(
     private val esbClient: OpentunnelEsbClient,
     private val documentGenerationService: DocumentGenerationService,
-    private val valueResolverService: ValueResolverService
+    private val valueResolverService: ValueResolverService,
+    private val xentialSjablonenService: XentialSjablonenService
 ) {
     @PluginProperty(key = "applicationName", secret = false, required = true)
     lateinit var applicationName: String
@@ -130,6 +132,21 @@ class XentialPlugin(
             props,
             execution
         )
+    }
+
+    @PluginAction(
+        key = "validate-xential-access",
+        title = "Valideer xential access",
+        description = "Valideer toegang tot xential gebasseerd op configuratie proceskoppeling.",
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
+    )
+    fun validateAccess(
+        @PluginActionProperty xentialGebruikersId: String,
+        execution: DelegateExecution
+    ) {
+        logger.info { "----------------------------- validate access!! $xentialGebruikersId" }
+        xentialSjablonenService.testAccessToSjabloongroep(xentialGebruikersId)
+
     }
 
     @PluginAction(

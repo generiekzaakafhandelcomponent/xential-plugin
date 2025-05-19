@@ -26,6 +26,9 @@ import {
 import {
     PrepareContentWithTemplateConfigurationComponent
 } from "./components/prepare-content-configuration-with-template/prepare-content-with-template-configuration.component";
+import {
+    ValidateAccessConfigurationComponent
+} from "./components/validate-access-configuration/validate-access-configuration.component";
 
 const XentialPluginSpecification: PluginSpecification = {
     pluginId: 'xential',
@@ -34,8 +37,8 @@ const XentialPluginSpecification: PluginSpecification = {
     functionConfigurationComponents: {
         'generate-document': GenerateDocumentConfigurationComponent,
         'prepare-content': PrepareContentConfigurationComponent,
-        'prepare-content-with-template': PrepareContentWithTemplateConfigurationComponent
-
+        'prepare-content-with-template': PrepareContentWithTemplateConfigurationComponent,
+        'validate-xential-access': ValidateAccessConfigurationComponent
     },
     pluginTranslations: {
         nl: {
@@ -51,6 +54,7 @@ const XentialPluginSpecification: PluginSpecification = {
             clientPassword: 'Taak applicatie wachtwoord',
             'generate-document': 'Genereer document',
             'prepare-content': 'Genereren document content',
+            'validate-xential-access': 'Valideer toegang tot Xential Sjablonen',
             templateId: 'Template ID',
             fileFormat: 'Bestandsformaat',
             documentId: 'Document kenmerk',
@@ -77,6 +81,7 @@ const XentialPluginSpecification: PluginSpecification = {
             clientPassword: 'Client password',
             'generate-document': 'Generate document',
             'prepare-content': 'Generate document content',
+            'validate-xential-access': 'Validate access to Xential Sjablonen',
             templateId: 'Sjabloon ID',
             fileFormat: 'File format',
             documentId: 'Document ID',
@@ -97,6 +102,7 @@ const XentialPluginSpecification: PluginSpecification = {
             clientId: 'Kunden-ID',
             clientPassword: 'Kundenpasswort',
             'generate-document': 'Dokument generieren',
+            'validate-xential-access': 'Zugriff auf Xential-Vorlagen validieren',
             templateId: 'Vorlage ID',
             fileFormat: 'Dateiformat',
             xentialGebruikersId: 'Default Xential Benutzer Id',

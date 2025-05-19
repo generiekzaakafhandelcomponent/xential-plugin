@@ -17,6 +17,7 @@
 package com.ritense.valtimoplugins.xential.autoconfiguration
 
 import com.ritense.plugin.service.PluginService
+import com.ritense.processlink.service.ProcessLinkService
 import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimo.contract.annotation.ProcessBean
 import com.ritense.valtimo.contract.authentication.UserManagementService
@@ -54,12 +55,14 @@ class XentialAutoConfiguration {
         esbClient: OpentunnelEsbClient,
         documentGenerationService: DocumentGenerationService,
         tokenAuthenticationService: TokenAuthenticationService,
-        valueResolverService: ValueResolverService
+        valueResolverService: ValueResolverService,
+        xentialSjablonenService: XentialSjablonenService
     ) = XentialPluginFactory(
         pluginService,
         esbClient,
         documentGenerationService,
-        valueResolverService
+        valueResolverService,
+        xentialSjablonenService
     )
 
     @Bean
@@ -75,11 +78,12 @@ class XentialAutoConfiguration {
     fun xentialSjablonenService(
         pluginService: PluginService,
         esbClient: OpentunnelEsbClient,
-        xentialUserIdHelper: XentialUserIdHelper
+        xentialUserIdHelper: XentialUserIdHelper,
+        processLinkService: ProcessLinkService
     ) = XentialSjablonenService(
         pluginService,
         esbClient,
-        xentialUserIdHelper
+        processLinkService
     )
 
     @Bean
