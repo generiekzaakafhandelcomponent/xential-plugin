@@ -135,7 +135,7 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
 
     private handleValid(formValue: PrepareContentWithTextTemplate): void {
         const valid = !!(
-            formValue.xentialContentId &&
+            formValue.xentialDocumentPropertiesId &&
             formValue.firstTemplateGroupId &&
             formValue.fileFormat &&
             formValue.eventMessageName

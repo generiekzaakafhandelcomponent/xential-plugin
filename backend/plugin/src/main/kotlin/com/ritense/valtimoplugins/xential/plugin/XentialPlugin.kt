@@ -106,16 +106,16 @@ class XentialPlugin(
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
     )
     fun generateDocument(
-        @PluginActionProperty xentialContent: Map<String, Any>,
+        @PluginActionProperty xentialDocumentProperties: Map<String, Any>,
         @PluginActionProperty xentialData: String,
         @PluginActionProperty xentialSjabloonId: String,
         @PluginActionProperty xentialGebruikersId: String,
         execution: DelegateExecution
     ) {
 
-        logger.info { "generating document with XentialContent: $xentialContent" }
+        logger.info { "generating document with XentialContent: $xentialDocumentProperties" }
 
-        val props = objectMapper.convertValue(xentialContent) as XentialDocumentProperties
+        val props = objectMapper.convertValue(xentialDocumentProperties) as XentialDocumentProperties
 
         props.content = xentialData
 
@@ -135,18 +135,27 @@ class XentialPlugin(
     }
 
     @PluginAction(
-        key = "validate-xential-access",
-        title = "Valideer xential access",
+        key = "validate-xential-toegang",
+        title = "Valideer xential toegang",
         description = "Valideer toegang tot xential gebasseerd op configuratie proceskoppeling.",
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
     )
     fun validateAccess(
+        @PluginActionProperty toegangResultaatId: String,
         @PluginActionProperty xentialGebruikersId: String,
+        @PluginActionProperty xentialDocumentProperties: Map<String, Any>,
         execution: DelegateExecution
     ) {
-        logger.info { "----------------------------- validate access!! $xentialGebruikersId" }
-        xentialSjablonenService.testAccessToSjabloongroep(xentialGebruikersId)
 
+        val props = objectMapper.convertValue(xentialDocumentProperties) as XentialDocumentProperties
+
+        logger.info { "----------------------------- validate access for !! $xentialGebruikersId op map ${props.xentialGroupId}" }
+
+        val accessResult = xentialSjablonenService.testAccessToSjabloongroep(xentialGebruikersId, props.xentialGroupId.toString())
+
+        execution.processInstance.setVariable(
+            toegangResultaatId, objectMapper.convertValue(accessResult)
+        )
     }
 
     @PluginAction(
@@ -202,7 +211,7 @@ class XentialPlugin(
     fun prepareContentWithTemplate(
         @PluginActionProperty fileFormat: FileFormat,
         @PluginActionProperty eventMessageName: String,
-        @PluginActionProperty xentialContentId: String,
+        @PluginActionProperty xentialDocumentPropertiesId: String,
         @PluginActionProperty firstTemplateGroupId: UUID,
         @PluginActionProperty secondTemplateGroupId: UUID?,
         @PluginActionProperty thirdTemplateGroupId: UUID?,
@@ -218,7 +227,7 @@ class XentialPlugin(
             )
 
             execution.processInstance.setVariable(
-                xentialContentId, objectMapper.convertValue(xentialDocumentProperties)
+                xentialDocumentPropertiesId, objectMapper.convertValue(xentialDocumentProperties)
             )
         } catch (e: Exception) {
             logger.error { "Exiting scope due to nested error. $e" }

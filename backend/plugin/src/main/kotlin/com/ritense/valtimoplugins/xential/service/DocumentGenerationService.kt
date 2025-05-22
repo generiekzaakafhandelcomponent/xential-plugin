@@ -88,15 +88,17 @@ class DocumentGenerationService(
         logger.info { "token: ${xentialToken.token}" }
         xentialTokenRepository.save(xentialToken)
 
-        val toWizard = if (execution.hasVariable("testWizard")) {
-            execution.getVariable("testWizard")
-        } else null
+        execution.setVariable("xentialStatus", result.status)
 
-        if (toWizard?.equals("JA") == true) {
-            execution.setVariable("xentialStatus", "ONVOLTOOID")
-        } else {
-            execution.setVariable("xentialStatus", result.status)
-        }
+//        val toWizard = if (execution.hasVariable("testWizard")) {
+//            execution.getVariable("testWizard")
+//        } else null
+//
+//        if (toWizard?.equals("JA") == true) {
+//            execution.setVariable("xentialStatus", "ONVOLTOOID")
+//        } else {
+//            execution.setVariable("xentialStatus", result.status)
+//        }
         result.resumeUrl?.let {
             execution.setVariable("resumeUrl", it)
         }
