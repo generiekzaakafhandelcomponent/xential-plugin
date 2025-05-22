@@ -36,9 +36,10 @@ export class ValidateAccessConfigurationComponent implements FunctionConfigurati
 
     private handleValid(formValue: ValidateAccessConfig): void {
         const valid = !!(
-            formValue.xentialGebruikersId
+            formValue.toegangResultaatId &&
+            formValue.xentialGebruikersId &&
+            formValue.xentialDocumentProperties
         );
-        console.log('logging form')
         this.valid$.next(valid);
         this.valid.emit(valid);
     }
