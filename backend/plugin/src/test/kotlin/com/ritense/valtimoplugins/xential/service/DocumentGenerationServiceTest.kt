@@ -1,11 +1,13 @@
 package com.ritense.valtimoplugins.xential.service
 
+import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimo.contract.authentication.UserManagementService
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.domain.XentialToken
 import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
 import com.rotterdam.esb.xential.api.DefaultApi
 import com.rotterdam.esb.xential.model.DocumentCreatieResultaat
+import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -33,6 +35,12 @@ class DocumentGenerationServiceTest {
 
     @Mock
     lateinit var userManagementService: UserManagementService
+
+    @Mock
+    lateinit var temporaryResourceStorageService: TemporaryResourceStorageService
+
+    @Mock
+    lateinit var runtimeService: RuntimeService
 
     @InjectMocks
     lateinit var documentGenerationService: DocumentGenerationService
