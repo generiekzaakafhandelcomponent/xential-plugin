@@ -1,25 +1,23 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FunctionConfigurationComponent} from '@valtimo/plugin';
-import {BehaviorSubject, combineLatest, Observable, Subscription, take} from 'rxjs';
-import {GenerateDocumentConfig} from "../../models";
-import {SelectItem, ValuePathSelectorPrefix} from "@valtimo/components";
+import {BehaviorSubject, combineLatest,Observable,Subscription,take} from 'rxjs';
+import {ValidateAccessConfig} from "../../models";
 
 @Component({
-    selector: 'xential-generate-document-configuration',
-    templateUrl: './generate-document-configuration.component.html'
+    selector: 'xential-validate-access-configuration',
+    templateUrl: './validate-access-configuration.component.html'
 })
-export class GenerateDocumentConfigurationComponent implements FunctionConfigurationComponent, OnInit, OnDestroy {
+export class ValidateAccessConfigurationComponent implements FunctionConfigurationComponent, OnInit, OnDestroy {
     @Input() save$: Observable<void>;
     @Input() disabled$: Observable<boolean>;
     @Input() pluginId: string;
-    @Input() prefillConfiguration$: Observable<GenerateDocumentConfig>;
+    @Input() prefillConfiguration$: Observable<ValidateAccessConfig>;
     @Output() valid: EventEmitter<boolean> = new EventEmitter<boolean>();
-    @Output() configuration: EventEmitter<GenerateDocumentConfig> =
-        new EventEmitter<GenerateDocumentConfig>();
+    @Output() configuration: EventEmitter<ValidateAccessConfig> = new EventEmitter<ValidateAccessConfig>();
 
     private saveSubscription!: Subscription;
 
-    private readonly formValue$ = new BehaviorSubject<GenerateDocumentConfig | null>(null);
+    private readonly formValue$ = new BehaviorSubject<ValidateAccessConfig | null>(null);
     private readonly valid$ = new BehaviorSubject<boolean>(false);
 
     ngOnInit(): void {
@@ -30,19 +28,18 @@ export class GenerateDocumentConfigurationComponent implements FunctionConfigura
         this.saveSubscription?.unsubscribe();
     }
 
-    formValueChange(formValue: GenerateDocumentConfig): void {
+    formValueChange(formValue: ValidateAccessConfig): void {
+
         this.formValue$.next(formValue);
         this.handleValid(formValue);
     }
 
-    private handleValid(formValue: GenerateDocumentConfig): void {
+    private handleValid(formValue: ValidateAccessConfig): void {
         const valid = !!(
-            formValue.xentialDocumentProperties &&
-            formValue.xentialData &&
-            formValue.xentialSjabloonId &&
-            formValue.xentialGebruikersId
+            formValue.toegangResultaatId &&
+            formValue.xentialGebruikersId &&
+            formValue.xentialDocumentProperties
         );
-
         this.valid$.next(valid);
         this.valid.emit(valid);
     }
@@ -58,6 +55,4 @@ export class GenerateDocumentConfigurationComponent implements FunctionConfigura
                 });
         });
     }
-
-    protected readonly ValuePathSelectorPrefix = ValuePathSelectorPrefix;
 }
