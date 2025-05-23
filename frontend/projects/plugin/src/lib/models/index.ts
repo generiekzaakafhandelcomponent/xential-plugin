@@ -16,5 +16,5 @@
 
 export * from './xential-config';
 export * from './generate-document-config'
-export * from './prepare-content-with-template-config'
+export * from './prepare-content-config'
 export * from './validate-access-config'

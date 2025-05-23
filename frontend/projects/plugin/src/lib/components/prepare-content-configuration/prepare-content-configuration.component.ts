@@ -8,23 +8,23 @@ import {
     Subscription,
     take,
 } from 'rxjs';
-import {PrepareContentWithTextTemplate} from "../../models";
+import {PrepareContent} from "../../models";
 import {SelectedValue, SelectItem} from "@valtimo/components";
 import {XentialApiSjabloonService} from "../../modules/xential-api/services/xential-api-sjabloon.service";
 import {KeycloakUserService} from "@valtimo/keycloak";
 
 @Component({
-    selector: 'xential-prepare-content-with-template-configuration',
-    templateUrl: './prepare-content-with-template-configuration.component.html'
+    selector: 'xential-prepare-content-configuration',
+    templateUrl: './prepare-content-configuration.component.html'
 })
-export class PrepareContentWithTemplateConfigurationComponent implements FunctionConfigurationComponent, OnInit, OnDestroy {
+export class PrepareContentConfigurationComponent implements FunctionConfigurationComponent, OnInit, OnDestroy {
     @Input() save$: Observable<void>;
     @Input() disabled$: Observable<boolean>;
     @Input() pluginId: string;
-    @Input() prefillConfiguration$: Observable<PrepareContentWithTextTemplate>;
+    @Input() prefillConfiguration$: Observable<PrepareContent>;
     @Output() valid: EventEmitter<boolean> = new EventEmitter<boolean>();
-    @Output() configuration: EventEmitter<PrepareContentWithTextTemplate> =
-        new EventEmitter<PrepareContentWithTextTemplate>();
+    @Output() configuration: EventEmitter<PrepareContent> =
+        new EventEmitter<PrepareContent>();
 
     protected readonly username$ = new BehaviorSubject<string>("");
     firstLevelGroupSelectItems$: BehaviorSubject<Array<{ id: string; text: string }>> = new BehaviorSubject<Array<{
@@ -55,7 +55,7 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
 
     private saveSubscription!: Subscription;
 
-    private readonly formValue$ = new BehaviorSubject<PrepareContentWithTextTemplate | null>(null);
+    private readonly formValue$ = new BehaviorSubject<PrepareContent | null>(null);
     private readonly valid$ = new BehaviorSubject<boolean>(false);
 
     readonly firstGroupId$ = new BehaviorSubject<string>('')
@@ -115,7 +115,7 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
         this.saveSubscription?.unsubscribe();
     }
 
-    formValueChange(formValue: PrepareContentWithTextTemplate): void {
+    formValueChange(formValue: PrepareContent): void {
         if (formValue.firstTemplateGroupId &&
             formValue.firstTemplateGroupId != this.currentFirstTemplateGroupId) {
             this.currentFirstTemplateGroupId = formValue.firstTemplateGroupId
@@ -133,7 +133,7 @@ export class PrepareContentWithTemplateConfigurationComponent implements Functio
         this.handleValid(formValue);
     }
 
-    private handleValid(formValue: PrepareContentWithTextTemplate): void {
+    private handleValid(formValue: PrepareContent): void {
         const valid = !!(
             formValue.xentialDocumentPropertiesId &&
             formValue.firstTemplateGroupId &&

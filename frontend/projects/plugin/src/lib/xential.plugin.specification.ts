@@ -21,8 +21,8 @@ import {
     GenerateDocumentConfigurationComponent
 } from "./components/generate-document-configuration/generate-document-configuration.component";
 import {
-    PrepareContentWithTemplateConfigurationComponent
-} from "./components/prepare-content-configuration-with-template/prepare-content-with-template-configuration.component";
+    PrepareContentConfigurationComponent
+} from "./components/prepare-content-configuration/prepare-content-configuration.component";
 import {
     ValidateAccessConfigurationComponent
 } from "./components/validate-access-configuration/validate-access-configuration.component";
@@ -33,7 +33,7 @@ const XentialPluginSpecification: PluginSpecification = {
     pluginLogoBase64: XENTIAL_PLUGIN_LOGO_BASE64,
     functionConfigurationComponents: {
         'generate-document': GenerateDocumentConfigurationComponent,
-        'prepare-content-with-template': PrepareContentWithTemplateConfigurationComponent,
+        'prepare-content': PrepareContentConfigurationComponent,
         'validate-xential-toegang': ValidateAccessConfigurationComponent
     },
     pluginTranslations: {

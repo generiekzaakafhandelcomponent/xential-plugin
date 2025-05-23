@@ -30,8 +30,8 @@ import {
 } from "./components/generate-document-configuration/generate-document-configuration.component";
 import {DropdownModule} from "carbon-components-angular";
 import {
-    PrepareContentWithTemplateConfigurationComponent
-} from "./components/prepare-content-configuration-with-template/prepare-content-with-template-configuration.component";
+    PrepareContentConfigurationComponent
+} from "./components/prepare-content-configuration/prepare-content-configuration.component";
 import {
     ValidateAccessConfigurationComponent
 } from "./components/validate-access-configuration/validate-access-configuration.component";
@@ -40,7 +40,7 @@ import {
     declarations: [
         XentialConfigurationComponent,
         GenerateDocumentConfigurationComponent,
-        PrepareContentWithTemplateConfigurationComponent,
+        PrepareContentConfigurationComponent,
         ValidateAccessConfigurationComponent
     ],
     imports: [
@@ -57,7 +57,7 @@ import {
     exports: [
         XentialConfigurationComponent,
         GenerateDocumentConfigurationComponent,
-        PrepareContentWithTemplateConfigurationComponent,
+        PrepareContentConfigurationComponent,
         ValidateAccessConfigurationComponent
     ],
 })
