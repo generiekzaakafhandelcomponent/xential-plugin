@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package com.ritense.valtimoplugins.xential.plugin
 
 import com.fasterxml.jackson.module.kotlin.convertValue
@@ -41,7 +40,7 @@ import java.util.UUID
 @Plugin(
     key = PLUGIN_KEY,
     title = "Xential Plugin",
-    description = "handle xentail requests"
+    description = "handle xentail requests",
 )
 @Suppress("UNUSED")
 class XentialPlugin(
@@ -64,36 +63,39 @@ class XentialPlugin(
 
     private fun isResolvableValue(value: String): Boolean =
         value.isNotBlank() && (
-                value.startsWith("case:") ||
-                        value.startsWith("doc:") ||
-                        value.startsWith("template:") ||
-                        value.startsWith("pv:")
-                )
+            value.startsWith("case:") ||
+                value.startsWith("doc:") ||
+                value.startsWith("template:") ||
+                value.startsWith("pv:")
+        )
 
     private fun resolveValuesFor(
         execution: DelegateExecution,
         params: Map<String, Any?>,
     ): Map<String, Any?> {
-        val resolvedValues = params.filter {
-            if (it.value is String) {
-                isResolvableValue(it.value as String)
-            } else false
-        }
-            .let { filteredParams ->
-                logger.debug { "Trying to resolve values for: $filteredParams" }
-                valueResolverService.resolveValues(
-                    execution.processInstanceId,
-                    execution,
-                    filteredParams.map { it.value as String }
-                ).let { resolvedValues ->
-                    logger.debug { "Resolved values: $resolvedValues" }
-                    filteredParams.toMutableMap().apply {
-                        this.entries.forEach { (key, value) ->
-                            this.put(key, resolvedValues[value])
+        val resolvedValues =
+            params.filter {
+                if (it.value is String) {
+                    isResolvableValue(it.value as String)
+                } else {
+                    false
+                }
+            }
+                .let { filteredParams ->
+                    logger.debug { "Trying to resolve values for: $filteredParams" }
+                    valueResolverService.resolveValues(
+                        execution.processInstanceId,
+                        execution,
+                        filteredParams.map { it.value as String },
+                    ).let { resolvedValues ->
+                        logger.debug { "Resolved values: $resolvedValues" }
+                        filteredParams.toMutableMap().apply {
+                            this.entries.forEach { (key, value) ->
+                                this.put(key, resolvedValues[value])
+                            }
                         }
                     }
                 }
-            }
         return params.toMutableMap().apply {
             this.putAll(resolvedValues)
         }.toMap()
@@ -103,7 +105,7 @@ class XentialPlugin(
         key = "generate-document",
         title = "Generate document",
         description = "Generate a document using xential.",
-        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
     )
     fun generateDocument(
         @PluginActionProperty xentialDocumentProperties: Map<String, Any>,
@@ -112,18 +114,19 @@ class XentialPlugin(
         @PluginActionProperty xentialGebruikersId: String,
         execution: DelegateExecution,
     ) {
-
         logger.info { "generating document with XentialContent: $xentialDocumentProperties" }
 
         val props = objectMapper.convertValue(xentialDocumentProperties) as XentialDocumentProperties
 
         props.content = xentialData
 
-        val resolvedValues = resolveValuesFor(
-            execution, mapOf(
-                "content" to props.content,
+        val resolvedValues =
+            resolveValuesFor(
+                execution,
+                mapOf(
+                    "content" to props.content,
+                ),
             )
-        )
 
         props.content = resolvedValues["content"] as String
         documentGenerationService.generateDocument(
@@ -132,7 +135,7 @@ class XentialPlugin(
             xentialGebruikersId,
             xentialSjabloonId,
             props,
-            execution
+            execution,
         )
     }
 
@@ -140,7 +143,7 @@ class XentialPlugin(
         key = "validate-xential-toegang",
         title = "Valideer xential toegang",
         description = "Valideer toegang tot xential gebasseerd op configuratie proceskoppeling.",
-        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
     )
     fun validateAccess(
         @PluginActionProperty toegangResultaatId: String,
@@ -148,7 +151,6 @@ class XentialPlugin(
         @PluginActionProperty xentialDocumentProperties: Map<String, Any>,
         execution: DelegateExecution,
     ) {
-
         val props = objectMapper.convertValue(xentialDocumentProperties) as XentialDocumentProperties
 
         logger.info { "----------------------------- validate access for !! $xentialGebruikersId op map ${props.xentialGroupId}" }
@@ -157,7 +159,8 @@ class XentialPlugin(
             xentialSjablonenService.testAccessToSjabloongroep(xentialGebruikersId, props.xentialGroupId.toString())
 
         execution.processInstance.setVariable(
-            toegangResultaatId, objectMapper.convertValue(accessResult)
+            toegangResultaatId,
+            objectMapper.convertValue(accessResult),
         )
     }
 
@@ -165,7 +168,7 @@ class XentialPlugin(
         key = "prepare-content",
         title = "Prepare content",
         description = "Prepare content for xential with template.",
-        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
     )
     fun prepareContent(
         @PluginActionProperty fileFormat: FileFormat,
@@ -177,16 +180,18 @@ class XentialPlugin(
         execution: DelegateExecution,
     ) {
         try {
-            val xentialDocumentProperties = XentialDocumentProperties(
-                thirdTemplateGroupId ?: secondTemplateGroupId ?: firstTemplateGroupId,
-                fileFormat,
-                "documentId",
-                eventMessageName,
-                null
-            )
+            val xentialDocumentProperties =
+                XentialDocumentProperties(
+                    thirdTemplateGroupId ?: secondTemplateGroupId ?: firstTemplateGroupId,
+                    fileFormat,
+                    "documentId",
+                    eventMessageName,
+                    null,
+                )
 
             execution.processInstance.setVariable(
-                xentialDocumentPropertiesId, objectMapper.convertValue(xentialDocumentProperties)
+                xentialDocumentPropertiesId,
+                objectMapper.convertValue(xentialDocumentProperties),
             )
         } catch (e: Exception) {
             logger.error { "Exiting scope due to nested error. $e" }
@@ -199,7 +204,7 @@ class XentialPlugin(
             baseUrl = baseUrl.toString(),
             applicationName = applicationName,
             applicationPassword = applicationPassword,
-            mTlsSslContextAutoConfiguration?.createSslContext()
+            mTlsSslContextAutoConfiguration?.createSslContext(),
         )
 
     companion object {
@@ -207,5 +212,4 @@ class XentialPlugin(
         private val objectMapper = jacksonObjectMapper().findAndRegisterModules()
         const val PLUGIN_KEY = "xential"
     }
-
 }

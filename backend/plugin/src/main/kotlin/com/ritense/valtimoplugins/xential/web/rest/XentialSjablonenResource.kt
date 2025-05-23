@@ -19,7 +19,6 @@ package com.ritense.valtimoplugins.xential.web.rest
 import com.ritense.valtimo.contract.annotation.SkipComponentScan
 import com.ritense.valtimo.contract.domain.ValtimoMediaType
 import com.ritense.valtimoplugins.xential.service.XentialSjablonenService
-import com.ritense.valtimoplugins.xential.service.XentialUserIdHelper
 import com.rotterdam.esb.xential.model.Sjabloonitems
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.web.bind.annotation.GetMapping
@@ -31,21 +30,20 @@ import org.springframework.web.bind.annotation.RestController
 @SkipComponentScan
 @RequestMapping("/api", produces = [ValtimoMediaType.APPLICATION_JSON_UTF8_VALUE])
 class XentialSjablonenResource(
-    val xentialSjablonenService: XentialSjablonenService
+    val xentialSjablonenService: XentialSjablonenService,
 ) {
     @GetMapping("/v1/xential/sjablonen")
     fun getSjablonenFromDefaultGroup(
         @RequestParam gebruikersId: String,
-        @RequestParam sjabloonGroupId: String?
+        @RequestParam sjabloonGroupId: String?,
     ): Sjabloonitems {
         logger.info { "gebruikersId: $gebruikersId, sjabloonGroupId: $sjabloonGroupId" }
         val items = xentialSjablonenService.getTemplateList(gebruikersId, sjabloonGroupId)
-        logger.info { "${sjabloonGroupId} found sjablonen: ${items.sjablonen.size } sjabloongroepen: ${items.sjabloongroepen.size }"}
+        logger.info { "$sjabloonGroupId found sjablonen: ${items.sjablonen.size } sjabloongroepen: ${items.sjabloongroepen.size }" }
         return items
     }
 
     companion object {
         private val logger = KotlinLogging.logger {}
     }
-
 }

@@ -22,22 +22,20 @@ import com.ritense.valtimoplugins.xential.domain.DocumentCreatedMessage
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.domain.XentialToken
 import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
-import com.ritense.valueresolver.ValueResolverService
 import com.rotterdam.esb.xential.api.DefaultApi
 import com.rotterdam.esb.xential.model.Sjabloondata
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import java.io.ByteArrayInputStream
-import java.util.UUID
 import java.util.Base64
+import java.util.UUID
 
 class DocumentGenerationService(
     private val xentialTokenRepository: XentialTokenRepository,
     private val temporaryResourceStorageService: TemporaryResourceStorageService,
-    private val runtimeService: RuntimeService
+    private val runtimeService: RuntimeService,
 ) {
-
     fun generateDocument(
         api: DefaultApi,
         processId: UUID,
@@ -48,24 +46,26 @@ class DocumentGenerationService(
     ) {
         logger.info { "generating xential document" }
 
-        val result = api.creeerDocument(
-
-            gebruikersId = xentialGebruikersId,
-            accepteerOnbekend = false,
-            sjabloondata = Sjabloondata(
-                sjabloonId = sjabloonId,
-                bestandsFormaat = Sjabloondata.BestandsFormaat.valueOf(xentialDocumentProperties.fileFormat.name),
-                documentkenmerk = xentialDocumentProperties.documentId,
-                sjabloonVulData = xentialDocumentProperties.content.toString()
+        val result =
+            api.creeerDocument(
+                gebruikersId = xentialGebruikersId,
+                accepteerOnbekend = false,
+                sjabloondata =
+                    Sjabloondata(
+                        sjabloonId = sjabloonId,
+                        bestandsFormaat = Sjabloondata.BestandsFormaat.valueOf(xentialDocumentProperties.fileFormat.name),
+                        documentkenmerk = xentialDocumentProperties.documentId,
+                        sjabloonVulData = xentialDocumentProperties.content.toString(),
+                    ),
             )
-        )
         logger.info { "found something: $result" }
-        val xentialToken = XentialToken(
-            token = UUID.fromString(result.documentCreatieSessieId),
-            processId = processId,
-            messageName = xentialDocumentProperties.messageName,
-            resumeUrl = result.resumeUrl.toString()
-        )
+        val xentialToken =
+            XentialToken(
+                token = UUID.fromString(result.documentCreatieSessieId),
+                processId = processId,
+                messageName = xentialDocumentProperties.messageName,
+                resumeUrl = result.resumeUrl.toString(),
+            )
 
         logger.info { "token: ${xentialToken.token}" }
         xentialTokenRepository.save(xentialToken)
@@ -79,11 +79,11 @@ class DocumentGenerationService(
     }
 
     fun onDocumentGenerated(message: DocumentCreatedMessage) {
-
         val bytes = Base64.getDecoder().decode(message.data)
 
-        val xentialToken = xentialTokenRepository.findById(UUID.fromString(message.documentCreatieSessieId))
-            .orElseThrow { NoSuchElementException("Could not find Xential Token ${message.documentCreatieSessieId}") }
+        val xentialToken =
+            xentialTokenRepository.findById(UUID.fromString(message.documentCreatieSessieId))
+                .orElseThrow { NoSuchElementException("Could not find Xential Token ${message.documentCreatieSessieId}") }
 
         logger.info { "Retrieved content from Xential Callback, token: ${xentialToken.token}" }
 

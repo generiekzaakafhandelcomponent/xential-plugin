@@ -28,15 +28,14 @@ class XentialPluginFactory(
     private val esbClient: OpentunnelEsbClient,
     private val documentGenerationService: DocumentGenerationService,
     private val valueResolverService: ValueResolverService,
-    private val xentialSjablonenService: XentialSjablonenService
+    private val xentialSjablonenService: XentialSjablonenService,
 ) : PluginFactory<XentialPlugin>(pluginService) {
-
     override fun create(): XentialPlugin {
         return XentialPlugin(
             esbClient,
             documentGenerationService,
             valueResolverService,
-            xentialSjablonenService
+            xentialSjablonenService,
         )
     }
 }

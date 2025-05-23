@@ -31,9 +31,7 @@ class XentialSjablonenService(
     private val pluginService: PluginService,
     private val esbClient: OpentunnelEsbClient,
 ) {
-
     private fun generateApi(): DefaultApi {
-
         pluginService.findPluginConfiguration(MTlsSslContextPlugin::class.java) {
             true
         }.let { mLTSPlugin ->
@@ -44,47 +42,52 @@ class XentialSjablonenService(
                     baseUrl = xentialPlugin.baseUrl.toString(),
                     applicationName = xentialPlugin.applicationName,
                     applicationPassword = xentialPlugin.applicationPassword,
-                    mTlsSslContextPlugin.createSslContext()
+                    mTlsSslContextPlugin.createSslContext(),
                 )
                 return esbClient.documentApi(restClient(mTlsSslContextPlugin))
             }
         }
     }
 
-    fun testAccessToSjabloongroep(gebruikersId: String, sjabloongroepId: String): XentialAccessResult {
-
+    fun testAccessToSjabloongroep(
+        gebruikersId: String,
+        sjabloongroepId: String,
+    ): XentialAccessResult {
         logger.info { "testing sjabloongroep with $sjabloongroepId" }
         generateApi().let {
             try {
                 it.geefSjablonenlijstWithHttpInfo(
                     gebruikersId = gebruikersId,
-                    sjabloongroepId = sjabloongroepId
+                    sjabloongroepId = sjabloongroepId,
                 ).let { response ->
                     return XentialAccessResult(
                         statusCode = response.statusCode.toString(),
-                        statusMessage = ""
+                        statusMessage = "",
                     )
                 }
             } catch (ex: RestClientResponseException) {
                 return XentialAccessResult(
                     statusCode = ex.statusCode.toString(),
-                    statusMessage = ex.message.toString()
+                    statusMessage = ex.message.toString(),
                 )
             } catch (ex: Exception) {
                 return XentialAccessResult(
                     statusCode = "No error code",
-                    statusMessage = ex.message.toString()
+                    statusMessage = ex.message.toString(),
                 )
             }
         }
     }
 
-    fun getTemplateList(gebruikersId: String, sjabloongroepId: String?): Sjabloonitems {
+    fun getTemplateList(
+        gebruikersId: String,
+        sjabloongroepId: String?,
+    ): Sjabloonitems {
         logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { !it.isNullOrBlank() } ?: "geen id"}" }
         generateApi().let {
             return it.geefSjablonenlijst(
                 gebruikersId = gebruikersId,
-                sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank() }
+                sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank() },
             )
         }
     }
@@ -119,7 +122,7 @@ class XentialSjablonenService(
                 baseUrl = xentialPlugin.baseUrl.toString(),
                 applicationName = xentialPlugin.applicationName,
                 applicationPassword = xentialPlugin.applicationPassword,
-                mTlsSslContextAutoConfiguration?.createSslContext()
+                mTlsSslContextAutoConfiguration?.createSslContext(),
             )
         }
     }

@@ -45,9 +45,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @AutoConfiguration
 @EnableJpaRepositories(basePackageClasses = [XentialTokenRepository::class])
 @EntityScan(basePackageClasses = [XentialToken::class])
-
 class XentialAutoConfiguration {
-
     @Bean
     @ConditionalOnMissingBean(XentialPluginFactory::class)
     fun xentialPluginFactory(
@@ -56,13 +54,13 @@ class XentialAutoConfiguration {
         documentGenerationService: DocumentGenerationService,
         tokenAuthenticationService: TokenAuthenticationService,
         valueResolverService: ValueResolverService,
-        xentialSjablonenService: XentialSjablonenService
+        xentialSjablonenService: XentialSjablonenService,
     ) = XentialPluginFactory(
         pluginService,
         esbClient,
         documentGenerationService,
         valueResolverService,
-        xentialSjablonenService
+        xentialSjablonenService,
     )
 
     @Bean
@@ -70,8 +68,7 @@ class XentialAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = ["xentialLiquibaseMasterChangeLogLocation"])
-    fun xentialLiquibaseMasterChangeLogLocation() =
-        LiquibaseMasterChangeLogLocation("config/liquibase/xential-plugin-master.xml")
+    fun xentialLiquibaseMasterChangeLogLocation() = LiquibaseMasterChangeLogLocation("config/liquibase/xential-plugin-master.xml")
 
     @Bean
     @ConditionalOnMissingBean
@@ -79,10 +76,10 @@ class XentialAutoConfiguration {
         pluginService: PluginService,
         esbClient: OpentunnelEsbClient,
         xentialUserIdHelper: XentialUserIdHelper,
-        processLinkService: ProcessLinkService
+        processLinkService: ProcessLinkService,
     ) = XentialSjablonenService(
         pluginService,
-        esbClient
+        esbClient,
     )
 
     @Bean
@@ -91,31 +88,27 @@ class XentialAutoConfiguration {
         xentialTokenRepository: XentialTokenRepository,
         temporaryResourceStorageService: TemporaryResourceStorageService,
         runtimeService: RuntimeService,
-        valueResolverService: ValueResolverService
+        valueResolverService: ValueResolverService,
     ) = DocumentGenerationService(
         xentialTokenRepository,
         temporaryResourceStorageService,
-        runtimeService
+        runtimeService,
     )
 
     @Bean
     @ProcessBean
-    fun xentialUserIdHelper(
-        userManagementService: UserManagementService
-    ) = XentialUserIdHelper(
-        userManagementService
-    )
+    fun xentialUserIdHelper(userManagementService: UserManagementService) =
+        XentialUserIdHelper(
+            userManagementService,
+        )
 
     @Bean
     @ConditionalOnMissingBean(DocumentResource::class)
-    fun xentialResource(
-        xentialSjablonenService: XentialSjablonenService
-    ) = XentialSjablonenResource(xentialSjablonenService)
+    fun xentialResource(xentialSjablonenService: XentialSjablonenService) = XentialSjablonenResource(xentialSjablonenService)
 
     @Bean
     @ConditionalOnMissingBean(DocumentResource::class)
-    fun xentialDocumentResource(documentGenerationService: DocumentGenerationService) =
-        DocumentResource(documentGenerationService)
+    fun xentialDocumentResource(documentGenerationService: DocumentGenerationService) = DocumentResource(documentGenerationService)
 
     @Bean
     @Order(270)

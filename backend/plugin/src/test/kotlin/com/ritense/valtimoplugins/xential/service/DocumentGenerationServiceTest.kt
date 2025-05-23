@@ -1,14 +1,11 @@
 package com.ritense.valtimoplugins.xential.service
 
-import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimo.contract.authentication.UserManagementService
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.domain.XentialToken
 import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
-import com.ritense.valueresolver.ValueResolverService
 import com.rotterdam.esb.xential.api.DefaultApi
 import com.rotterdam.esb.xential.model.DocumentCreatieResultaat
-import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,7 +19,6 @@ import org.springframework.web.client.RestClient
 import java.util.UUID
 
 class DocumentGenerationServiceTest {
-
     @Mock
     lateinit var execution: DelegateExecution
 
@@ -46,27 +42,27 @@ class DocumentGenerationServiceTest {
         MockitoAnnotations.openMocks(this)
     }
 
-
     @Test
     fun shouldGenerateDocument() {
         whenever(userManagementService.currentUserId).thenReturn("1234456")
 
         whenever(esbClient.documentApi(any<RestClient>())).thenReturn(defaultApi)
 
+        val xentialDocumentProperties =
+            XentialDocumentProperties(
+                xentialGroupId = UUID.randomUUID(),
+                fileFormat = com.ritense.valtimoplugins.xential.domain.FileFormat.PDF,
+                documentId = "mijn-kenmerk",
+                messageName = "messageName",
+                content = "voorbeeld data",
+            )
 
-        val xentialDocumentProperties = XentialDocumentProperties(
-            xentialGroupId = UUID.randomUUID(),
-            fileFormat = com.ritense.valtimoplugins.xential.domain.FileFormat.PDF,
-            documentId = "mijn-kenmerk",
-            messageName = "messageName",
-            content = "voorbeeld data"
-        )
-
-        val creatieResultaat = DocumentCreatieResultaat(
-            documentCreatieSessieId = UUID.randomUUID().toString(),
-            status = DocumentCreatieResultaat.Status.VOLTOOID,
-            resumeUrl = null
-        )
+        val creatieResultaat =
+            DocumentCreatieResultaat(
+                documentCreatieSessieId = UUID.randomUUID().toString(),
+                status = DocumentCreatieResultaat.Status.VOLTOOID,
+                resumeUrl = null,
+            )
         whenever(defaultApi.creeerDocument(any(), any(), any())).thenReturn(creatieResultaat)
 
         documentGenerationService.generateDocument(
@@ -80,5 +76,4 @@ class DocumentGenerationServiceTest {
 
         verify(xentialTokenRepository).save(any<XentialToken>())
     }
-
 }
