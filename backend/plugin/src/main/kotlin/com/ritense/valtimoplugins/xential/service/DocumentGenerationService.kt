@@ -35,10 +35,9 @@ import java.util.Base64
 class DocumentGenerationService(
     private val xentialTokenRepository: XentialTokenRepository,
     private val temporaryResourceStorageService: TemporaryResourceStorageService,
-    private val runtimeService: RuntimeService,
-    private val valueResolverService: ValueResolverService
+    private val runtimeService: RuntimeService
 ) {
-    @Suppress("UNCHECKED_CAST")
+
     fun generateDocument(
         api: DefaultApi,
         processId: UUID,

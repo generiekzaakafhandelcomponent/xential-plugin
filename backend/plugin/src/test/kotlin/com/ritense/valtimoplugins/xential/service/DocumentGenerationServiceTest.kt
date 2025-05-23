@@ -33,19 +33,10 @@ class DocumentGenerationServiceTest {
     lateinit var esbClient: OpentunnelEsbClient
 
     @Mock
-    lateinit var runtimeService: RuntimeService
-
-    @Mock
     lateinit var xentialTokenRepository: XentialTokenRepository
 
     @Mock
     lateinit var userManagementService: UserManagementService
-
-    @Mock
-    lateinit var temporaryResourceStorageService: TemporaryResourceStorageService
-
-    @Mock
-    lateinit var valueResolverService: ValueResolverService
 
     @InjectMocks
     lateinit var documentGenerationService: DocumentGenerationService

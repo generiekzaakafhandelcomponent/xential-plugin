@@ -95,8 +95,7 @@ class XentialAutoConfiguration {
     ) = DocumentGenerationService(
         xentialTokenRepository,
         temporaryResourceStorageService,
-        runtimeService,
-        valueResolverService
+        runtimeService
     )
 
     @Bean

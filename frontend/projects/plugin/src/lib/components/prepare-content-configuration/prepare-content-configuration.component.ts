@@ -4,12 +4,12 @@ import {
     BehaviorSubject,
     combineLatest, filter,
     map,
-    Observable, startWith,
+    Observable,
     Subscription,
     take,
 } from 'rxjs';
 import {PrepareContent} from "../../models";
-import {SelectedValue, SelectItem} from "@valtimo/components";
+import {SelectItem} from "@valtimo/components";
 import {XentialApiSjabloonService} from "../../modules/xential-api/services/xential-api-sjabloon.service";
 import {KeycloakUserService} from "@valtimo/keycloak";
 
