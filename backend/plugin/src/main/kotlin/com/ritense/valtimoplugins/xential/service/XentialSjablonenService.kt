@@ -17,11 +17,11 @@
 package com.ritense.valtimoplugins.xential.service
 
 import com.ritense.plugin.service.PluginService
-import com.ritense.processlink.service.ProcessLinkService
 import com.ritense.valtimoplugins.mtlssslcontext.MTlsSslContext
 import com.ritense.valtimoplugins.mtlssslcontext.plugin.MTlsSslContextPlugin
 import com.ritense.valtimoplugins.xential.domain.XentialAccessResult
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin
+import com.rotterdam.esb.xential.api.DefaultApi
 import com.rotterdam.esb.xential.model.Sjabloonitems
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.web.client.RestClient
@@ -30,12 +30,9 @@ import org.springframework.web.client.RestClientResponseException
 class XentialSjablonenService(
     private val pluginService: PluginService,
     private val esbClient: OpentunnelEsbClient,
-    private val processLinkService: ProcessLinkService
 ) {
 
-    fun testAccessToSjabloongroep(gebruikersId: String, sjabloongroepId: String) : XentialAccessResult {
-
-        logger.info { "++++++++++++++++ XentialSjablonenService $gebruikersId" }
+    private fun generateApi(): DefaultApi {
         pluginService.getPluginDefinitions()
         pluginService.findPluginConfiguration(MTlsSslContextPlugin::class.java) {
             true
@@ -49,55 +46,68 @@ class XentialSjablonenService(
                     applicationPassword = xentialPlugin.applicationPassword,
                     mTlsSslContextPlugin.createSslContext()
                 )
-                val api = esbClient.documentApi(restClient(mTlsSslContextPlugin))
-                logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { !it.isNullOrBlank() }?: "geen id"}" }
-                try {
-                    val response = api.geefSjablonenlijstWithHttpInfo(
-                        gebruikersId = gebruikersId,
-                        sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank()}
-                    )
-
-                    logger.info { "status code ${response.statusCode}"}
-                    return XentialAccessResult(
-                        statusCode = response.statusCode,
-                        statusMessage = ""
-                    )
-                } catch (ex: Exception) {
-                    val exxxx = ex as RestClientResponseException
-                    logger.info { "all: ${exxxx}" }
-                    return XentialAccessResult(
-                        statusCode = exxxx.statusCode,
-                        statusMessage = exxxx.message.toString()
-                    )
-                }
-
+                return esbClient.documentApi(restClient(mTlsSslContextPlugin))
             }
         }
+    }
+
+    fun testAccessToSjabloongroep(gebruikersId: String, sjabloongroepId: String): XentialAccessResult {
+
+        logger.info { "testing sjabloongroep with $sjabloongroepId" }
+        val api = generateApi()
+        try {
+            api.geefSjablonenlijstWithHttpInfo(
+                gebruikersId = gebruikersId,
+                sjabloongroepId = sjabloongroepId
+            ).let { response ->
+                return XentialAccessResult(
+                    statusCode = response.statusCode,
+                    statusMessage = ""
+                )
+            }
+
+        } catch (ex: Exception) {
+            val exxxx = ex as RestClientResponseException
+            return XentialAccessResult(
+                statusCode = exxxx.statusCode,
+                statusMessage = exxxx.message.toString()
+            )
+        }
+
     }
 
     fun getTemplateList(gebruikersId: String, sjabloongroepId: String?): Sjabloonitems {
-        pluginService.getPluginDefinitions()
-        pluginService.findPluginConfiguration(MTlsSslContextPlugin::class.java) {
-            true
-        }.let { mLTSPlugin ->
-            val mTlsSslContextPlugin = mLTSPlugin?.let { pluginService.createInstance(it.id) } as MTlsSslContextPlugin
-            pluginService.findPluginConfigurations(XentialPlugin::class.java).first().let { plugin ->
-                val xentialPlugin = pluginService.createInstance(plugin.id) as XentialPlugin
-                esbClient.createRestClient(
-                    baseUrl = xentialPlugin.baseUrl.toString(),
-                    applicationName = xentialPlugin.applicationName,
-                    applicationPassword = xentialPlugin.applicationPassword,
-                    mTlsSslContextPlugin.createSslContext()
-                )
-                val api = esbClient.documentApi(restClient(mTlsSslContextPlugin))
-                logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { !it.isNullOrBlank() }?: "geen id"}" }
-                return api.geefSjablonenlijst(
-                    gebruikersId = gebruikersId,
-                    sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank()}
-                )
-            }
-        }
+        val api = generateApi()
+        logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { !it.isNullOrBlank() } ?: "geen id"}" }
+        return api.geefSjablonenlijst(
+            gebruikersId = gebruikersId,
+            sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank() }
+        )
+
     }
+
+//        pluginService.getPluginDefinitions()
+//        pluginService.findPluginConfiguration(MTlsSslContextPlugin::class.java) {
+//            true
+//        }.let { mLTSPlugin ->
+//            val mTlsSslContextPlugin = mLTSPlugin?.let { pluginService.createInstance(it.id) } as MTlsSslContextPlugin
+//            pluginService.findPluginConfigurations(XentialPlugin::class.java).first().let { plugin ->
+//                val xentialPlugin = pluginService.createInstance(plugin.id) as XentialPlugin
+//                esbClient.createRestClient(
+//                    baseUrl = xentialPlugin.baseUrl.toString(),
+//                    applicationName = xentialPlugin.applicationName,
+//                    applicationPassword = xentialPlugin.applicationPassword,
+//                    mTlsSslContextPlugin.createSslContext()
+//                )
+//                val api = esbClient.documentApi(restClient(mTlsSslContextPlugin))
+//                logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { !it.isNullOrBlank() } ?: "geen id"}" }
+//                return api.geefSjablonenlijst(
+//                    gebruikersId = gebruikersId,
+//                    sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank() }
+//                )
+//            }
+//        }
+//    }
 
     private fun restClient(mTlsSslContextAutoConfiguration: MTlsSslContext?): RestClient {
         pluginService.findPluginConfigurations(XentialPlugin::class.java).first().let { plugin ->

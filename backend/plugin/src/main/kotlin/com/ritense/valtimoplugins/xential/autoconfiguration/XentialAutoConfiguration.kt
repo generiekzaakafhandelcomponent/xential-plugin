@@ -82,8 +82,7 @@ class XentialAutoConfiguration {
         processLinkService: ProcessLinkService
     ) = XentialSjablonenService(
         pluginService,
-        esbClient,
-        processLinkService
+        esbClient
     )
 
     @Bean
