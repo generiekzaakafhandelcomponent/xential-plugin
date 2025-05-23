@@ -33,7 +33,7 @@ class XentialSjablonenService(
 ) {
 
     private fun generateApi(): DefaultApi {
-        pluginService.getPluginDefinitions()
+
         pluginService.findPluginConfiguration(MTlsSslContextPlugin::class.java) {
             true
         }.let { mLTSPlugin ->
@@ -54,36 +54,39 @@ class XentialSjablonenService(
     fun testAccessToSjabloongroep(gebruikersId: String, sjabloongroepId: String): XentialAccessResult {
 
         logger.info { "testing sjabloongroep with $sjabloongroepId" }
-        val api = generateApi()
-        try {
-            api.geefSjablonenlijstWithHttpInfo(
-                gebruikersId = gebruikersId,
-                sjabloongroepId = sjabloongroepId
-            ).let { response ->
+        generateApi().let {
+            try {
+                it.geefSjablonenlijstWithHttpInfo(
+                    gebruikersId = gebruikersId,
+                    sjabloongroepId = sjabloongroepId
+                ).let { response ->
+                    return XentialAccessResult(
+                        statusCode = response.statusCode.toString(),
+                        statusMessage = ""
+                    )
+                }
+            } catch (ex: RestClientResponseException) {
                 return XentialAccessResult(
-                    statusCode = response.statusCode,
-                    statusMessage = ""
+                    statusCode = ex.statusCode.toString(),
+                    statusMessage = ex.message.toString()
+                )
+            } catch (ex: Exception) {
+                return XentialAccessResult(
+                    statusCode = "No error code",
+                    statusMessage = ex.message.toString()
                 )
             }
-
-        } catch (ex: Exception) {
-            val exxxx = ex as RestClientResponseException
-            return XentialAccessResult(
-                statusCode = exxxx.statusCode,
-                statusMessage = exxxx.message.toString()
-            )
         }
-
     }
 
     fun getTemplateList(gebruikersId: String, sjabloongroepId: String?): Sjabloonitems {
-        val api = generateApi()
         logger.info { "getting sjabloongroep with ${sjabloongroepId.takeIf { !it.isNullOrBlank() } ?: "geen id"}" }
-        return api.geefSjablonenlijst(
-            gebruikersId = gebruikersId,
-            sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank() }
-        )
-
+        generateApi().let {
+            return it.geefSjablonenlijst(
+                gebruikersId = gebruikersId,
+                sjabloongroepId = sjabloongroepId.takeIf { !it.isNullOrBlank() }
+            )
+        }
     }
 
 //        pluginService.getPluginDefinitions()

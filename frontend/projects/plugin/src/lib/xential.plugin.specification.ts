@@ -21,9 +21,6 @@ import {
     GenerateDocumentConfigurationComponent
 } from "./components/generate-document-configuration/generate-document-configuration.component";
 import {
-    PrepareContentConfigurationComponent
-} from "./components/prepare-content-configuration/prepare-content-configuration.component";
-import {
     PrepareContentWithTemplateConfigurationComponent
 } from "./components/prepare-content-configuration-with-template/prepare-content-with-template-configuration.component";
 import {
@@ -36,7 +33,6 @@ const XentialPluginSpecification: PluginSpecification = {
     pluginLogoBase64: XENTIAL_PLUGIN_LOGO_BASE64,
     functionConfigurationComponents: {
         'generate-document': GenerateDocumentConfigurationComponent,
-        'prepare-content': PrepareContentConfigurationComponent,
         'prepare-content-with-template': PrepareContentWithTemplateConfigurationComponent,
         'validate-xential-toegang': ValidateAccessConfigurationComponent
     },
@@ -53,8 +49,8 @@ const XentialPluginSpecification: PluginSpecification = {
             clientId: 'Taak applicatie naam',
             clientPassword: 'Taak applicatie wachtwoord',
             'generate-document': 'Genereer document',
-            'prepare-content': 'Genereren document content',
-            'validate-xential-access': 'Valideer toegang tot Xential Sjablonen',
+            'prepare-content': 'kies inhoud op basis van een template',
+            'validate-xential-toegang': 'Valideer toegang tot Xential Sjablonen',
             templateId: 'Template ID',
             fileFormat: 'Bestandsformaat',
             documentId: 'Document kenmerk',
@@ -71,7 +67,6 @@ const XentialPluginSpecification: PluginSpecification = {
             xentialData: 'inhoud voor het genereren van het document',
             xentialSjabloonId: 'Sjabloon id van het te genereren document',
             toegangResultaatId: 'Toegang tot xential test resultaat proces variabele',
-            'prepare-content-with-template': 'kies inhoud op basis van een template'
         },
         en: {
             title: 'Xential',
@@ -86,7 +81,7 @@ const XentialPluginSpecification: PluginSpecification = {
             clientPassword: 'Client password',
             'generate-document': 'Generate document',
             'prepare-content': 'Generate document content',
-            'validate-xential-access': 'Validate access to Xential Sjablonen',
+            'validate-xential-toegang': 'Validate access to Xential Sjablonen',
             templateId: 'Sjabloon ID',
             fileFormat: 'File format',
             documentId: 'Document ID',
@@ -103,7 +98,6 @@ const XentialPluginSpecification: PluginSpecification = {
             xentialData: 'content for generating the document',
             xentialSjabloonId: 'Template ID of the document to be generated',
             toegangResultaatId: 'Access to xential test result process variable',
-            'prepare-content-with-template': 'choose content based on a template'
         },
         de: {
             title: 'Xential',
@@ -112,7 +106,7 @@ const XentialPluginSpecification: PluginSpecification = {
             clientId: 'Kunden-ID',
             clientPassword: 'Kundenpasswort',
             'generate-document': 'Dokument generieren',
-            'validate-xential-access': 'Zugriff auf Xential-Vorlagen validieren',
+            'validate-xential-toegang': 'Zugriff auf Xential-Vorlagen validieren',
             templateId: 'Vorlage ID',
             fileFormat: 'Dateiformat',
             xentialGebruikersId: 'Default Xential Benutzer Id',
@@ -129,7 +123,7 @@ const XentialPluginSpecification: PluginSpecification = {
             xentialData: 'Inhalt zur Generierung des Dokuments',
             xentialSjabloonId: 'Vorlagen-ID des zu generierenden Dokuments',
             toegangResultaatId: 'Zugriff auf die Prozessvariable Xential Test Results',
-            'prepare-content-with-template': 'Inhalte basierend auf einer Vorlage auswählen'
+            'prepare-content': 'Inhalte basierend auf einer Vorlage auswählen'
         },
     },
 };

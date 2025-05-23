@@ -1,8 +1,6 @@
 package com.ritense.valtimoplugins.xential.domain
 
-import org.springframework.http.HttpStatusCode
-
 data class XentialAccessResult(
-    val statusCode: HttpStatusCode,
+    val statusCode: String,
     val statusMessage: String
 )

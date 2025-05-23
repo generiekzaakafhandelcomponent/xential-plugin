@@ -21,7 +21,6 @@ import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimoplugins.xential.domain.DocumentCreatedMessage
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.domain.XentialToken
-import com.ritense.valtimoplugins.xential.plugin.TemplateDataEntry
 import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
 import com.ritense.valueresolver.ValueResolverService
 import com.rotterdam.esb.xential.api.DefaultApi
@@ -40,22 +39,10 @@ class DocumentGenerationService(
     private val valueResolverService: ValueResolverService
 ) {
     @Suppress("UNCHECKED_CAST")
-    fun generateContent(
-        documentDetailsData: Array<TemplateDataEntry>,
-        colofonData: Array<TemplateDataEntry>,
-        verzendAdresData: Array<TemplateDataEntry>,
-        execution: DelegateExecution,
-    ) = mutableMapOf(
-        "documentDetails" to resolveTemplateData(documentDetailsData, execution),
-        "colofon" to resolveTemplateData(colofonData, execution),
-        "verzendAdres" to resolveTemplateData(verzendAdresData, execution)
-    ) as MutableMap<String, Any>
-
-    @Suppress("UNCHECKED_CAST")
     fun generateDocument(
         api: DefaultApi,
         processId: UUID,
-        xentialgGebruikersId: String,
+        xentialGebruikersId: String,
         sjabloonId: String,
         xentialDocumentProperties: XentialDocumentProperties,
         execution: DelegateExecution,
@@ -64,17 +51,13 @@ class DocumentGenerationService(
 
         val result = api.creeerDocument(
 
-            gebruikersId = xentialgGebruikersId,
+            gebruikersId = xentialGebruikersId,
             accepteerOnbekend = false,
             sjabloondata = Sjabloondata(
                 sjabloonId = sjabloonId,
                 bestandsFormaat = Sjabloondata.BestandsFormaat.valueOf(xentialDocumentProperties.fileFormat.name),
                 documentkenmerk = xentialDocumentProperties.documentId,
-                sjabloonVulData = (if ( xentialDocumentProperties.content is String ) {
-                    xentialDocumentProperties.content.toString()
-                } else {
-                    generateXml(xentialDocumentProperties.content as MutableMap<String, Any>)
-                })
+                sjabloonVulData = xentialDocumentProperties.content.toString()
             )
         )
         logger.info { "found something: $result" }
@@ -90,39 +73,10 @@ class DocumentGenerationService(
 
         execution.setVariable("xentialStatus", result.status)
 
-//        val toWizard = if (execution.hasVariable("testWizard")) {
-//            execution.getVariable("testWizard")
-//        } else null
-//
-//        if (toWizard?.equals("JA") == true) {
-//            execution.setVariable("xentialStatus", "ONVOLTOOID")
-//        } else {
-//            execution.setVariable("xentialStatus", result.status)
-//        }
         result.resumeUrl?.let {
             execution.setVariable("resumeUrl", it)
         }
         logger.info { "ready" }
-    }
-
-    private fun generateXml(
-        map: MutableMap<String, Any>
-    ): String {
-        val verzendadres = map["verzendAdres"] as Map<*, *>
-        val colofon = map["colofon"] as Map<*, *>
-        val documentDetails = map["documentDetails"] as Map<*, *>
-
-        return """
-                <root>
-                    <verzendAdres>
-                        ${verzendadres.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
-                    </verzendAdres>
-                    ${colofon.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
-                    <creatieData>
-                        ${documentDetails.map { "<${it.key}>${it.value}</${it.key}>" }.joinToString()}
-                    </creatieData>
-                </root>
-                """
     }
 
     fun onDocumentGenerated(message: DocumentCreatedMessage) {
@@ -145,18 +99,18 @@ class DocumentGenerationService(
         }
     }
 
-    private fun resolveTemplateData(
-        templateData: Array<TemplateDataEntry>,
-        execution: DelegateExecution
-    ): Map<String, Any?> {
-        val placeHolderValueMap = valueResolverService.resolveValues(
-            execution.processInstanceId,
-            execution,
-            templateData.map { it.value }.toList()
-        )
-        return templateData.associate { it.key to placeHolderValueMap.getOrDefault(it.value, null) }
-    }
-
+//    private fun resolveTemplateData(
+//        templateData: Array<TemplateDataEntry>,
+//        execution: DelegateExecution
+//    ): Map<String, Any?> {
+//        val placeHolderValueMap = valueResolverService.resolveValues(
+//            execution.processInstanceId,
+//            execution,
+//            templateData.map { it.value }.toList()
+//        )
+//        return templateData.associate { it.key to placeHolderValueMap.getOrDefault(it.value, null) }
+//    }
+//
     companion object {
         private val logger = KotlinLogging.logger {}
     }

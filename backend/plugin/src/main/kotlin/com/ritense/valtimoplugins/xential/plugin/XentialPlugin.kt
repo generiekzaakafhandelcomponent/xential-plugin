@@ -48,7 +48,7 @@ class XentialPlugin(
     private val esbClient: OpentunnelEsbClient,
     private val documentGenerationService: DocumentGenerationService,
     private val valueResolverService: ValueResolverService,
-    private val xentialSjablonenService: XentialSjablonenService
+    private val xentialSjablonenService: XentialSjablonenService,
 ) {
     @PluginProperty(key = "applicationName", secret = false, required = true)
     lateinit var applicationName: String
@@ -65,14 +65,14 @@ class XentialPlugin(
     private fun isResolvableValue(value: String): Boolean =
         value.isNotBlank() && (
                 value.startsWith("case:") ||
-                value.startsWith("doc:") ||
-                value.startsWith("template:") ||
-                value.startsWith("pv:")
-        )
+                        value.startsWith("doc:") ||
+                        value.startsWith("template:") ||
+                        value.startsWith("pv:")
+                )
 
     private fun resolveValuesFor(
         execution: DelegateExecution,
-        params: Map<String, Any?>
+        params: Map<String, Any?>,
     ): Map<String, Any?> {
         val resolvedValues = params.filter {
             if (it.value is String) {
@@ -110,7 +110,7 @@ class XentialPlugin(
         @PluginActionProperty xentialData: String,
         @PluginActionProperty xentialSjabloonId: String,
         @PluginActionProperty xentialGebruikersId: String,
-        execution: DelegateExecution
+        execution: DelegateExecution,
     ) {
 
         logger.info { "generating document with XentialContent: $xentialDocumentProperties" }
@@ -119,9 +119,11 @@ class XentialPlugin(
 
         props.content = xentialData
 
-        val resolvedValues = resolveValuesFor(execution, mapOf(
-            "content" to props.content,
-        ))
+        val resolvedValues = resolveValuesFor(
+            execution, mapOf(
+                "content" to props.content,
+            )
+        )
 
         props.content = resolvedValues["content"] as String
         documentGenerationService.generateDocument(
@@ -144,14 +146,15 @@ class XentialPlugin(
         @PluginActionProperty toegangResultaatId: String,
         @PluginActionProperty xentialGebruikersId: String,
         @PluginActionProperty xentialDocumentProperties: Map<String, Any>,
-        execution: DelegateExecution
+        execution: DelegateExecution,
     ) {
 
         val props = objectMapper.convertValue(xentialDocumentProperties) as XentialDocumentProperties
 
         logger.info { "----------------------------- validate access for !! $xentialGebruikersId op map ${props.xentialGroupId}" }
 
-        val accessResult = xentialSjablonenService.testAccessToSjabloongroep(xentialGebruikersId, props.xentialGroupId.toString())
+        val accessResult =
+            xentialSjablonenService.testAccessToSjabloongroep(xentialGebruikersId, props.xentialGroupId.toString())
 
         execution.processInstance.setVariable(
             toegangResultaatId, objectMapper.convertValue(accessResult)
@@ -161,61 +164,17 @@ class XentialPlugin(
     @PluginAction(
         key = "prepare-content",
         title = "Prepare content",
-        description = "Prepare content for xential.",
-        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
-    )
-    fun prepareContent(
-        @PluginActionProperty fileFormat: FileFormat,
-        @PluginActionProperty documentId: String,
-        @PluginActionProperty eventMessageName: String,
-        @PluginActionProperty xentialContent: String,
-        @PluginActionProperty verzendAdresData: Array<TemplateDataEntry>,
-        @PluginActionProperty colofonData: Array<TemplateDataEntry>,
-        @PluginActionProperty documentDetailsData: Array<TemplateDataEntry>,
-        @PluginActionProperty firstTemplateGroupId: UUID,
-        @PluginActionProperty secondTemplateGroupId: UUID?,
-        @PluginActionProperty thirdTemplateGroupId: UUID?,
-
-        execution: DelegateExecution
-    ) {
-        try {
-            documentGenerationService.generateContent(
-                documentDetailsData,
-                colofonData,
-                verzendAdresData,
-                execution
-            ).let {
-                val xentialDocumentProperties = XentialDocumentProperties(
-                    thirdTemplateGroupId ?: secondTemplateGroupId ?: firstTemplateGroupId,
-                    fileFormat,
-                    documentId,
-                    eventMessageName,
-                    it as String
-                )
-                execution.processInstance.setVariable(
-                    xentialContent, objectMapper.convertValue(xentialDocumentProperties)
-                )
-            }
-        } catch (e: Exception) {
-            logger.error { "Exiting scope due to nested error. $e" }
-            return
-        }
-    }
-
-    @PluginAction(
-        key = "prepare-content-with-template",
-        title = "Prepare content with template",
         description = "Prepare content for xential with template.",
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START]
     )
-    fun prepareContentWithTemplate(
+    fun prepareContent(
         @PluginActionProperty fileFormat: FileFormat,
         @PluginActionProperty eventMessageName: String,
         @PluginActionProperty xentialDocumentPropertiesId: String,
         @PluginActionProperty firstTemplateGroupId: UUID,
         @PluginActionProperty secondTemplateGroupId: UUID?,
         @PluginActionProperty thirdTemplateGroupId: UUID?,
-        execution: DelegateExecution
+        execution: DelegateExecution,
     ) {
         try {
             val xentialDocumentProperties = XentialDocumentProperties(
@@ -235,15 +194,13 @@ class XentialPlugin(
         }
     }
 
-    private fun restClient(mTlsSslContextAutoConfiguration: MTlsSslContext?): RestClient {
-
-        return esbClient.createRestClient(
+    private fun restClient(mTlsSslContextAutoConfiguration: MTlsSslContext?): RestClient =
+        esbClient.createRestClient(
             baseUrl = baseUrl.toString(),
             applicationName = applicationName,
             applicationPassword = applicationPassword,
             mTlsSslContextAutoConfiguration?.createSslContext()
         )
-    }
 
     companion object {
         private val logger = KotlinLogging.logger { }
