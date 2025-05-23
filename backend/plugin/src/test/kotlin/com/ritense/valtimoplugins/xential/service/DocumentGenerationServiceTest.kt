@@ -55,27 +55,20 @@ class DocumentGenerationServiceTest {
         MockitoAnnotations.openMocks(this)
     }
 
+
     @Test
     fun shouldGenerateDocument() {
         whenever(userManagementService.currentUserId).thenReturn("1234456")
 
         whenever(esbClient.documentApi(any<RestClient>())).thenReturn(defaultApi)
 
-        val verzendAdres: MutableMap<String, Any> = HashMap()
-        val colofon: MutableMap<String, Any> = HashMap()
-        val documentDetails: MutableMap<String, Any> = HashMap()
-        val map: MutableMap<String, Any> = HashMap()
-        map["verzendAdres"] = verzendAdres
-        map["colofon"] = colofon
-        map["documentDetails"] = documentDetails
 
         val xentialDocumentProperties = XentialDocumentProperties(
-            templateId = UUID.randomUUID(),
-            gebruikersId = "123",
+            xentialGroupId = UUID.randomUUID(),
             fileFormat = com.ritense.valtimoplugins.xential.domain.FileFormat.PDF,
             documentId = "mijn-kenmerk",
             messageName = "messageName",
-            content = map
+            content = "voorbeeld data"
         )
 
         val creatieResultaat = DocumentCreatieResultaat(
@@ -88,6 +81,8 @@ class DocumentGenerationServiceTest {
         documentGenerationService.generateDocument(
             defaultApi,
             UUID.randomUUID(),
+            "xentialGebruikersId",
+            UUID.randomUUID().toString(),
             xentialDocumentProperties,
             execution,
         )
