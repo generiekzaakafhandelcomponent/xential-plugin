@@ -8,5 +8,9 @@
   },
   "dependencies": {
     "tslib": "2.6.3"
+  },
+  "scripts": {
+    "build": "ng build @valtimo-plugins/xential",
+    "watch": "ng build @valtimo-plugins/xential --watch"
   }
 }
