@@ -17,6 +17,7 @@ dependencies {
     }
 
     implementation(project(":backend:plugin"))
+    implementation("com.ritense.valtimoplugins:mTLS-SSLContext:1.0.1")
 }
 
 tasks.jar {
