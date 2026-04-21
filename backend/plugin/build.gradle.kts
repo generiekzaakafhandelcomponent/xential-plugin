@@ -23,7 +23,7 @@ val openApiGeneratorPluginVersion: String by project
 val squareupMoshiVersion: String by project
 
 plugins {
-    id("org.openapi.generator") version "$openApiGeneratorPluginVersion"
+    id("org.openapi.generator") version "7.13.0"
 }
 
 dockerCompose {
@@ -46,7 +46,7 @@ dependencies {
     implementation("com.ritense.valtimo:zaken-api")
     implementation("com.ritense.valtimo:documenten-api")
 
-    implementation(project(":backend:mTLS-SSLContext"))
+    implementation("com.ritense.valtimoplugins:mTLS-SSLContext:1.0.1")
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -56,7 +56,7 @@ dependencies {
     implementation("jakarta.inject:jakarta.inject-api:$jakartaInjectVersion")
     implementation("jakarta.persistence:jakarta.persistence-api:$jakartaPersistenceVersion")
 
-    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("com.squareup.moshi:moshi:$squareupMoshiVersion")
     implementation("com.squareup.moshi:moshi-kotlin:$squareupMoshiVersion")
 
@@ -91,7 +91,7 @@ apply(from = "gradle/publishing.gradle")
 
 openApiGenerate {
     generatorName = "kotlin"
-    inputSpec = "$rootDir/backend/xential/src/main/resources/dcsg_xential.yaml"
+    inputSpec = "$rootDir/backend/plugin/src/main/resources/dcsg_xential.yaml"
     outputDir = "${getLayout().buildDirectory.get()}/generated"
     generateApiDocumentation = false
     generateApiTests = false
