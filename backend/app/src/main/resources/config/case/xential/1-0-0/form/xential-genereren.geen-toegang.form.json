@@ -1,0 +1,46 @@
+{
+  "display" : "form",
+  "components" : [
+    {
+      "key" : "toegangResultaat",
+      "type" : "hidden",
+      "input" : true,
+      "label" : "pv toegang resultaat",
+      "tableView" : false,
+      "properties": {
+          "sourceKey": "pv:toegangResultaat"
+      },
+      "persistent": "client-only"
+    },
+    {
+      "key" : "statusCode",
+      "type" : "textfield",
+      "input" : true,
+      "label" : "statusCode",
+      "tableView" : true,
+      "persistent" : "client-only",
+      "applyMaskOn" : "change",
+      "calculateValue" : "value = data.toegangResultaat.statusCode;"
+    },
+    {
+      "key" : "statusMessage",
+      "rows" : 12,
+      "type" : "textarea",
+      "input" : true,
+      "label" : "statusMessage",
+      "tableView" : true,
+      "persistent" : "client-only",
+      "applyMaskOn" : "change",
+      "calculateValue" : "value = data.toegangResultaat.statusMessage;"
+    },
+    {
+      "key" : "submit",
+      "type" : "button",
+      "input" : true,
+      "label" : "Resultaat tot toegang",
+      "tableView" : false,
+      "showValidations" : false,
+      "disableOnInvalid" : true
+    }
+  ]
+}

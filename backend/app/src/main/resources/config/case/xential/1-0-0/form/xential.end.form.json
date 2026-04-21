@@ -1,0 +1,13 @@
+{
+  "components" : [
+    {
+      "key" : "submit",
+      "type" : "button",
+      "input" : true,
+      "label" : "end xential flow",
+      "tableView" : false,
+      "showValidations" : false,
+      "disableOnInvalid" : true
+    }
+  ]
+}
