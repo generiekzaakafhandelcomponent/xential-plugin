@@ -18,5 +18,5 @@ package com.ritense.valtimoplugins.xential.domain
 
 data class GenerateDocumentResult(
     val status: String,
-    val resumeUrl: String? = null
+    val resumeUrl: String? = null,
 )
