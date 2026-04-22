@@ -66,9 +66,11 @@ dependencies {
     implementation("org.openapitools:openapi-generator-gradle-plugin:$openApiGeneratorPluginVersion")
 
     // Testing
-    testImplementation("com.ritense.valtimo:document")
+    testImplementation("com.ritense.valtimo:case")
+    testImplementation("com.ritense.valtimo:core")
     testImplementation("com.ritense.valtimo:local-resource")
     testImplementation("com.ritense.valtimo:process-document")
+    testImplementation("com.ritense.valtimo:temporary-resource-storage")
     testImplementation("com.ritense.valtimo:test-utils-common")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2025 Ritense BV, the Netherlands.
+ * Copyright 2015-2026 Ritense BV, the Netherlands.
  *
  * Licensed under EUPL, Version 1.2 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.ritense.valtimoplugins.xential.plugin
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.convertValue
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ritense.plugin.annotation.Plugin
 import com.ritense.plugin.annotation.PluginAction
 import com.ritense.plugin.annotation.PluginActionProperty
@@ -40,7 +40,7 @@ import java.util.UUID
 @Plugin(
     key = PLUGIN_KEY,
     title = "Xential Plugin",
-    description = "handle xentail requests",
+    description = "Handle Xential requests",
 )
 @Suppress("UNUSED")
 class XentialPlugin(
@@ -48,6 +48,7 @@ class XentialPlugin(
     private val documentGenerationService: DocumentGenerationService,
     private val valueResolverService: ValueResolverService,
     private val xentialSjablonenService: XentialSjablonenService,
+    private val objectMapper: ObjectMapper,
 ) {
     @PluginProperty(key = "applicationName", secret = false, required = true)
     lateinit var applicationName: String
@@ -60,6 +61,130 @@ class XentialPlugin(
 
     @PluginProperty(key = "mTlsSslContextAutoConfigurationId", secret = false, required = true)
     private lateinit var mTlsSslContextAutoConfigurationId: MTlsSslContext
+
+    @PluginAction(
+        key = "generate-document",
+        title = "Generate document",
+        description = "Generate a document using xential.",
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
+    )
+    fun generateDocument(
+        @PluginActionProperty xentialDocumentPropertiesVariableName: String,
+        @PluginActionProperty xentialData: String,
+        @PluginActionProperty xentialSjabloonId: String,
+        @PluginActionProperty xentialGebruikersId: String,
+        @PluginActionProperty fileFormat: FileFormat,
+        execution: DelegateExecution,
+    ) {
+        val originalProps = getXentialDocumentProperties(execution, xentialDocumentPropertiesVariableName)
+        logger.info { "Generating document from template: $xentialSjabloonId for user: $xentialGebruikersId" }
+        logger.debug { "> XentialDocumentProperties: $originalProps" }
+        logger.debug { "> XentialDate: $xentialData" }
+
+        val xentialSjabloon =
+            xentialSjablonenService
+                .getTemplateList(
+                    gebruikersId = xentialGebruikersId,
+                    sjabloongroepId = originalProps.xentialTemplateGroupId.toString(),
+                ).sjablonen
+                .single { it.id == xentialSjabloonId }
+        logger.debug { "> Template: $xentialSjabloon" }
+
+        val resolvedValues = resolveValuesFor(execution, mapOf("content" to xentialData))
+        val modifiedProps =
+            originalProps.copy(
+                xentialTemplateName = xentialSjabloon.naam,
+                fileFormat = fileFormat,
+                content = resolvedValues["content"] as String,
+            )
+        storeXentialDocumentProperties(execution, xentialDocumentPropertiesVariableName, modifiedProps)
+
+        documentGenerationService
+            .generateDocument(
+                api = esbClient.documentApi(restClient(mTlsSslContextAutoConfigurationId)),
+                processId = UUID.fromString(execution.processInstanceId),
+                xentialGebruikersId = xentialGebruikersId,
+                sjabloonId = xentialSjabloonId,
+                xentialDocumentProperties = modifiedProps,
+            ).let { result ->
+                execution.setVariable("xentialStatus", result.status)
+                result.resumeUrl?.let {
+                    execution.setVariable("xentialResumeUrl", it)
+                }
+            }
+    }
+
+    @PluginAction(
+        key = "validate-xential-toegang",
+        title = "Valideer xential toegang",
+        description = "Valideer toegang tot xential gebasseerd op configuratie proceskoppeling.",
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
+    )
+    fun validateAccess(
+        @PluginActionProperty toegangResultaatId: String,
+        @PluginActionProperty xentialGebruikersId: String,
+        @PluginActionProperty xentialDocumentPropertiesVariableName: String,
+        execution: DelegateExecution,
+    ) {
+        val props = getXentialDocumentProperties(execution, xentialDocumentPropertiesVariableName)
+        logger.info {
+            "Validate access for user: $xentialGebruikersId on template group: ${props.xentialTemplateGroupId}"
+        }
+        xentialSjablonenService
+            .testAccessToSjabloongroep(
+                gebruikersId = xentialGebruikersId,
+                sjabloongroepId = props.xentialTemplateGroupId.toString(),
+            ).let { accessResult ->
+                execution.processInstance.setVariable(
+                    toegangResultaatId,
+                    objectMapper.convertValue(accessResult),
+                )
+            }
+    }
+
+    @PluginAction(
+        key = "prepare-content",
+        title = "Prepare content",
+        description = "Prepare content for xential with template.",
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
+    )
+    fun prepareContent(
+        @PluginActionProperty xentialDocumentPropertiesVariableName: String,
+        @PluginActionProperty firstTemplateGroupId: UUID,
+        @PluginActionProperty secondTemplateGroupId: UUID?,
+        @PluginActionProperty thirdTemplateGroupId: UUID?,
+        @PluginActionProperty eventMessageName: String,
+        execution: DelegateExecution,
+    ) {
+        try {
+            val xentialDocumentProperties =
+                XentialDocumentProperties(
+                    xentialTemplateGroupId = thirdTemplateGroupId ?: secondTemplateGroupId ?: firstTemplateGroupId,
+                    fileFormat = null,
+                    documentId = "documentId",
+                    messageName = eventMessageName,
+                    content = null,
+                    xentialTemplateName = null,
+                )
+            storeXentialDocumentProperties(execution, xentialDocumentPropertiesVariableName, xentialDocumentProperties)
+        } catch (e: Exception) {
+            logger.error { "Exiting scope due to nested error. $e" }
+            return
+        }
+    }
+
+    private fun getXentialDocumentProperties(
+        execution: DelegateExecution,
+        variableName: String,
+    ): XentialDocumentProperties = objectMapper.convertValue(execution.getVariable(variableName))
+
+    private fun storeXentialDocumentProperties(
+        execution: DelegateExecution,
+        variableName: String,
+        properties: XentialDocumentProperties,
+    ) {
+        execution.setVariable(variableName, objectMapper.convertValue<Map<String, Any>>(properties))
+    }
 
     private fun isResolvableValue(value: String): Boolean =
         value.isNotBlank() && (
@@ -74,133 +199,34 @@ class XentialPlugin(
         params: Map<String, Any?>,
     ): Map<String, Any?> {
         val resolvedValues =
-            params.filter {
-                if (it.value is String) {
-                    isResolvableValue(it.value as String)
-                } else {
-                    false
-                }
-            }
-                .let { filteredParams ->
+            params
+                .filter {
+                    if (it.value is String) {
+                        isResolvableValue(it.value as String)
+                    } else {
+                        false
+                    }
+                }.let { filteredParams ->
                     logger.debug { "Trying to resolve values for: $filteredParams" }
-                    valueResolverService.resolveValues(
-                        execution.processInstanceId,
-                        execution,
-                        filteredParams.map { it.value as String },
-                    ).let { resolvedValues ->
-                        logger.debug { "Resolved values: $resolvedValues" }
-                        filteredParams.toMutableMap().apply {
-                            this.entries.forEach { (key, value) ->
-                                this.put(key, resolvedValues[value])
+                    valueResolverService
+                        .resolveValues(
+                            execution.processInstanceId,
+                            execution,
+                            filteredParams.map { it.value as String },
+                        ).let { resolvedValues ->
+                            logger.debug { "Resolved values: $resolvedValues" }
+                            filteredParams.toMutableMap().apply {
+                                this.entries.forEach { (key, value) ->
+                                    this[key] = resolvedValues[value]
+                                }
                             }
                         }
-                    }
                 }
-        return params.toMutableMap().apply {
-            this.putAll(resolvedValues)
-        }.toMap()
-    }
-
-    @PluginAction(
-        key = "generate-document",
-        title = "Generate document",
-        description = "Generate a document using xential.",
-        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
-    )
-    fun generateDocument(
-        @PluginActionProperty xentialDocumentProperties: Map<String, Any>,
-        @PluginActionProperty xentialData: String,
-        @PluginActionProperty xentialSjabloonId: String,
-        @PluginActionProperty xentialGebruikersId: String,
-        execution: DelegateExecution,
-    ) {
-        logger.info { "generating document with XentialContent: $xentialDocumentProperties" }
-
-        val props = objectMapper.convertValue(xentialDocumentProperties) as XentialDocumentProperties
-
-        props.content = xentialData
-
-        val resolvedValues =
-            resolveValuesFor(
-                execution,
-                mapOf(
-                    "content" to props.content,
-                ),
-            )
-
-        props.content = resolvedValues["content"] as String
-        documentGenerationService.generateDocument(
-            esbClient.documentApi(restClient(mTlsSslContextAutoConfigurationId)),
-            UUID.fromString(execution.processInstanceId),
-            xentialGebruikersId,
-            xentialSjabloonId,
-            props,
-            execution,
-        )
-    }
-
-    @PluginAction(
-        key = "validate-xential-toegang",
-        title = "Valideer xential toegang",
-        description = "Valideer toegang tot xential gebasseerd op configuratie proceskoppeling.",
-        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
-    )
-    fun validateAccess(
-        @PluginActionProperty toegangResultaatId: String,
-        @PluginActionProperty xentialGebruikersId: String,
-        @PluginActionProperty xentialDocumentProperties: Map<String, Any>,
-        execution: DelegateExecution,
-    ) {
-        val props = objectMapper.convertValue(xentialDocumentProperties) as XentialDocumentProperties
-
-        logger.info { "----------------------------- validate access for !! $xentialGebruikersId op map ${props.xentialGroupId}" }
-
-        val accessResult =
-            xentialSjablonenService.testAccessToSjabloongroep(xentialGebruikersId, props.xentialGroupId.toString())
-
-        execution.processInstance.setVariable(
-            toegangResultaatId,
-            objectMapper.convertValue(accessResult),
-        )
-    }
-
-    @PluginAction(
-        key = "prepare-content",
-        title = "Prepare content",
-        description = "Prepare content for xential with template.",
-        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
-    )
-    fun prepareContent(
-        @PluginActionProperty fileFormat: FileFormat,
-        @PluginActionProperty documentFilename: String,
-        @PluginActionProperty informationObjectType: String,
-        @PluginActionProperty eventMessageName: String,
-        @PluginActionProperty xentialDocumentPropertiesId: String,
-        @PluginActionProperty firstTemplateGroupId: UUID,
-        @PluginActionProperty secondTemplateGroupId: UUID?,
-        @PluginActionProperty thirdTemplateGroupId: UUID?,
-        execution: DelegateExecution,
-    ) {
-        try {
-            val xentialDocumentProperties =
-                XentialDocumentProperties(
-                    thirdTemplateGroupId ?: secondTemplateGroupId ?: firstTemplateGroupId,
-                    fileFormat,
-                    documentFilename,
-                    informationObjectType,
-                    "documentId",
-                    eventMessageName,
-                    null,
-                )
-
-            execution.processInstance.setVariable(
-                xentialDocumentPropertiesId,
-                objectMapper.convertValue(xentialDocumentProperties),
-            )
-        } catch (e: Exception) {
-            logger.error { "Exiting scope due to nested error. $e" }
-            return
-        }
+        return params
+            .toMutableMap()
+            .apply {
+                this.putAll(resolvedValues)
+            }.toMap()
     }
 
     private fun restClient(mTlsSslContextAutoConfiguration: MTlsSslContext?): RestClient =
@@ -208,12 +234,11 @@ class XentialPlugin(
             baseUrl = baseUrl.toString(),
             applicationName = applicationName,
             applicationPassword = applicationPassword,
-            mTlsSslContextAutoConfiguration?.createSslContext(),
+            sslContext = mTlsSslContextAutoConfiguration?.createSslContext(),
         )
 
     companion object {
         private val logger = KotlinLogging.logger { }
-        private val objectMapper = jacksonObjectMapper().findAndRegisterModules()
         const val PLUGIN_KEY = "xential"
     }
 }

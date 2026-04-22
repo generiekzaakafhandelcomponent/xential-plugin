@@ -123,8 +123,15 @@ subprojects {
     }
 }
 
-ktlint {
-    version.set(ktlintToolVersion)
+allprojects {
+    pluginManager.withPlugin("org.jlleitschuh.gradle.ktlint") {
+        configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+            version.set(ktlintToolVersion)
+            filter {
+                exclude("**/generated/**")
+            }
+        }
+    }
 }
 
 tasks.bootJar {
