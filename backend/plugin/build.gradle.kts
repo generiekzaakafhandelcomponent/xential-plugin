@@ -45,6 +45,7 @@ dependencies {
     compileOnly("com.ritense.valtimo:value-resolver")
     compileOnly("com.ritense.valtimo:zaken-api")
     compileOnly("com.ritense.valtimo:documenten-api")
+    compileOnly("com.ritense.valtimo:smartdocuments")
 
     compileOnly("com.ritense.valtimoplugins:mTLS-SSLContext:1.0.1")
 
