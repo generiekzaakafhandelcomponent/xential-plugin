@@ -28,7 +28,7 @@ apply(from = "../../gradle/environment.gradle.kts")
 val configureEnvironment = extra["configureEnvironment"] as (task: ProcessForkOptions) -> Unit
 
 dockerCompose {
-    setProjectName("gzac-docker-compose")
+    setProjectName("xential-plugin")
     composeAdditionalArgs.addAll("--profile", "zgw")
     // composeAdditionalArgs = ["--profile", "zgw", "--profile", "openformulieren", "--profile", "openklant"]
     stopContainers = false

@@ -31,7 +31,7 @@ dockerCompose {
     isRequiredBy(project.tasks.integrationTesting)
 
     tasks.integrationTesting {
-        useComposeFiles.addAll("$rootDir/docker-resources/docker-compose-base-test.yml", "docker-compose-override.yml")
+        useComposeFiles.addAll("$rootDir/docker-resources/docker-compose-base-test.yml")
     }
 }
 
@@ -67,27 +67,30 @@ dependencies {
     implementation("org.openapitools:openapi-generator-gradle-plugin:$openApiGeneratorPluginVersion")
 
     // Testing
-    testImplementation("com.ritense.valtimo:case")
+    testImplementation("com.ritense.valtimo:building-block")
+    testImplementation("com.ritense.valtimo:contract")
     testImplementation("com.ritense.valtimo:core")
-    testImplementation("com.ritense.valtimo:local-resource")
-    testImplementation("com.ritense.valtimo:process-document")
+    testImplementation("com.ritense.valtimo:plugin")
     testImplementation("com.ritense.valtimo:temporary-resource-storage")
     testImplementation("com.ritense.valtimo:test-utils-common")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa")
-
-    testImplementation("org.mockito:mockito-core")
-    testImplementation("org.hamcrest:hamcrest-library")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
 
     testImplementation("org.postgresql:postgresql")
 
-    testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
-    testImplementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
+    testImplementation("com.ritense.valtimo:plugin-valtimo")
+    testImplementation("com.ritense.valtimo:value-resolver")
+    testImplementation("com.ritense.valtimo:zaken-api")
+    testImplementation("com.ritense.valtimo:documenten-api")
+    testImplementation("com.ritense.valtimo:smartdocuments")
+    testImplementation("com.ritense.valtimoplugins:mTLS-SSLContext:1.0.1")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
+    testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
+}
+
+configurations.named("testImplementation") {
+    exclude(group = "org.slf4j", module = "slf4j-simple")
 }
 
 apply(from = "gradle/publishing.gradle")
@@ -128,4 +131,10 @@ tasks.named("sourcesJar") {
     dependsOn(
         "openApiGenerate",
     )
+}
+
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+    filter {
+        exclude { it.file.path.contains("/generated/") }
+    }
 }

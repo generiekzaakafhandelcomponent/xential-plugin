@@ -1,0 +1,12 @@
+[
+    {
+        "id": "63b44b21-9bd2-42f2-a11e-a4f68837e076",
+        "title": "mTLS SSLContext (Autodeployed)",
+        "pluginDefinitionKey": "mTLS-SSLContext",
+        "properties": {
+            "base64ServerCert": "PLACEHOLDER_SERVER_CERT",
+            "base64PrivateKey": "PLACEHOLDER_PRIVATE_KEY",
+            "base64ClientCert": "PLACEHOLDER_CLIENT_CERT"
+        }
+    }
+]
