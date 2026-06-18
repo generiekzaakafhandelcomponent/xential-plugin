@@ -1,0 +1,27 @@
+{
+  "components" : [
+    {
+      "key" : "html",
+      "type" : "htmlelement",
+      "attrs" : [
+        {
+          "attr" : "",
+          "value" : ""
+        }
+      ],
+      "input" : false,
+      "label" : "HTML",
+      "content" : "Met deze taak kunt u een e-mail versturen naar de aanvrager of naar een collega. \nLet op, upload geen gevoelige informatie.",
+      "tableView" : false,
+      "refreshOnChange" : false
+    },
+    {
+      "key" : "submit",
+      "type" : "button",
+      "input" : true,
+      "label" : "Open e-mail pagina",
+      "tableView" : false,
+      "disableOnInvalid" : true
+    }
+  ]
+}
