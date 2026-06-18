@@ -50,5 +50,36 @@
     "formSize" : "medium",
     "subtitles" : [],
     "processLinkType" : "form"
+  },
+  {
+    "activityId" : "CallUitgaandeBriefMetBouwBlokActivity",
+    "activityType" : "bpmn:CallActivity:start",
+    "buildingBlockDefinitionKey" : "BB:xential-document-creatie:0.0.1",
+    "buildingBlockDefinitionVersionTag" : "0.0.1",
+    "pluginConfigurationMappings" : {
+      "xential" : "6e034748-8ed5-43de-a5f2-f80e1a4b60dd"
+    },
+    "inputMappings" : [
+      {
+        "source" : "pv:informatieObjectTypeUrl",
+        "target" : "informatieObjectTypeUrl"
+      },
+      {
+        "source" : "pv:xentialGebruikersId",
+        "target" : "xentialGebruikersId"
+      },
+      {
+        "source" : "pv:xentialDocumentProperties",
+        "target" : "xentialDocumentProperties"
+      }
+    ],
+    "outputMappings" : [
+      {
+        "source": "resourceId",
+        "target": "pv:resourceId",
+        "syncTiming": "END"
+      }
+    ],
+    "processLinkType" : "building-block"
   }
 ]

@@ -9,12 +9,20 @@
         "custom" : "",
         "values" : [
           {
-            "label" : "Uitgaande brief",
-            "value" : "GENEREER_UITGAANDE_BRIEF_MESSAGE"
+            "label": "Uitgaande brief",
+            "value": "GENEREER_UITGAANDE_BRIEF_MESSAGE"
           },
           {
-            "label" : "Besluit",
-            "value" : "GENEREER_BESLUIT_MESSAGE"
+            "label": "Besluit",
+            "value": "GENEREER_BESLUIT_MESSAGE"
+          },
+          {
+            "label": "Uitgaande brief met bouwblok",
+            "value": "GENEREER_UITGAANDE_BRIEF_BB_MESSAGE"
+          },
+          {
+            "label": "Besluit met bouwblok",
+            "value": "GENEREER_BESLUIT_BB_MESSAGE"
           }
         ],
         "resource" : ""

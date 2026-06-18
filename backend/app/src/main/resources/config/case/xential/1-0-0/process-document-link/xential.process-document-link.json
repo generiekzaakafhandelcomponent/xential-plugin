@@ -5,6 +5,11 @@
     "startableByUser" : true
   },
   {
+    "processDefinitionKey" : "xential-document-creatie-met-bouwblok",
+    "canInitializeDocument" : false,
+    "startableByUser" : true
+  },
+  {
     "processDefinitionKey" : "xential",
     "canInitializeDocument" : true,
     "startableByUser" : false
