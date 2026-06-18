@@ -1,8 +1,8 @@
-name: plugin-docker-compose
+name: xential-gzac
 
 services:
   plugin-keycloak:
-    container_name: plugin-docker-compose-plugin-keycloak
+    container_name: xential-docker-compose-plugin-keycloak
     depends_on:
       - plugin-keycloak-database
     image: quay.io/keycloak/keycloak:26.2.2
@@ -35,7 +35,7 @@ services:
 
   plugin-keycloak-database:
     image: postgres:17.4
-    container_name: plugin-docker-compose-plugin-keycloak-database
+    container_name: xential-docker-compose-plugin-keycloak-database
     ports:
       - "54329:5432"
     environment:
@@ -43,7 +43,7 @@ services:
       POSTGRES_PASSWORD: keycloak
 
   plugin-database:
-    container_name: plugin-docker-compose-plugin-database
+    container_name: xential-docker-compose-plugin-database
     image: postgres:17.4
     ports:
       - "54320:5432"
@@ -56,7 +56,7 @@ services:
 
   plugin-rabbitmq:
     image: rabbitmq:4.1.0-management
-    container_name: plugin-docker-compose-plugin-rabbitmq
+    container_name: xential-docker-compose-plugin-rabbitmq
     volumes:
       - ./imports/plugin-rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./imports/plugin-rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
@@ -74,38 +74,52 @@ services:
   # ZGW
 
   openzaak:
-    image: openzaak/open-zaak:1.20.0
-    container_name: plugin-docker-compose-openzaak
+    image: openzaak/open-zaak:1.25.0
+    container_name: xential-docker-compose-openzaak
     platform: linux/amd64
     profiles:
       - zgw
       - openzaak
-    environment:
+    environment: &openzaak-env
       - DB_HOST=openzaak-database
       - DB_POST=5433
       - SECRET_KEY=veryRestrictedSecretKey
       - DB_USER=openzaak
       - DB_PASSWORD=openzaak
       - DB_NAME=openzaak
-      - CACHE_DEFAULT=openzaak-redis:6379/0
-      - CACHE_AXES=openzaak-redis:6379/0
       - DEBUG=true
       - ALLOWED_HOSTS=localhost,host.docker.internal,172.17.0.1,openzaak
       - OPENZAAK_SUPERUSER_USERNAME=admin
       - OPENZAAK_SUPERUSER_EMAIL=admin@admin.org
       - DJANGO_SUPERUSER_PASSWORD=admin
       - SENDFILE_BACKEND=django_sendfile.backends.simple
-      - NOTIFICATIONS_DISABLED=true
+      - NOTIFICATIONS_DISABLED=false
+      - CACHE_DEFAULT=openzaak-redis:6379/0
+      - CACHE_AXES=openzaak-redis:6379/0
+      - CELERY_BROKER_URL=redis://openzaak-redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://openzaak-redis:6379/0
+      - REDIS_URL=redis://openzaak-redis:6379/0
       - DISABLE_2FA=True
     ports:
       - "8001:8000"
     depends_on:
       - openzaak-database
       - openzaak-redis
+    volumes:
+      - openzaak-private-media:/app/private-media # persist data even if the container shuts down
+      - ./imports/open-zaak/dump_demodata.sh:/app/dump_demodata.sh
+      - ./imports/open-zaak/fixtures:/app/demodata
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import requests; exit(requests.head('http://localhost:8000/admin/').status_code not in [200, 302])" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # This should allow for enough time for migrations to run before the max retries have passed.
+      start_period: 30s
 
   openzaak-database:
     image: postgis/postgis:17-3.4
-    container_name: plugin-docker-compose-openzaak-database
+    container_name: xential-docker-compose-openzaak-database
     platform: linux/amd64
     profiles:
       - zgw
@@ -116,19 +130,43 @@ services:
       - POSTGRES_DB=openzaak
     ports:
       - "5433:5432"
-    volumes:
-      - ./imports/open-zaak:/docker-entrypoint-initdb.d
 
   openzaak-redis:
-    image: redis:7.4.3
-    container_name: plugin-docker-compose-openzaak-redis
+    image: redis:8.2.2
+    container_name: xential-docker-compose-openzaak-redis
     profiles:
       - zgw
       - openzaak
 
+  openzaak-celery:
+    image: openzaak/open-zaak:1.25.0
+    container_name: xential-docker-compose-openzaak-celery
+    platform: linux/amd64
+    environment: *openzaak-env
+    command: /celery_worker.sh
+    healthcheck:
+      test: [ "CMD", "python", "/app/bin/check_celery_worker_liveness.py" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  openzaak-import:
+    image: openzaak/open-zaak:1.25.0
+    container_name: xential-docker-compose-openzaak-import
+    platform: linux/amd64
+    environment: *openzaak-env
+    command: sh /app/load_demodata.sh
+    volumes:
+      - ./imports/open-zaak/fixtures:/app/demodata
+      - ./imports/open-zaak/load_demodata.sh:/app/load_demodata.sh
+    depends_on:
+      openzaak:
+        condition: service_healthy
+
   objecten-api:
     image: maykinmedia/objects-api:2.4.4
-    container_name: plugin-docker-compose-objecten-api
+    container_name: xential-docker-compose-objecten-api
     platform: linux/amd64
     profiles:
       - zgw
@@ -168,7 +206,7 @@ services:
 
   objecten-api-database:
     image: postgis/postgis:17-3.4
-    container_name: plugin-docker-compose-objecten-api-database
+    container_name: xential-docker-compose-objecten-api-database
     platform: linux/amd64
     profiles:
       - zgw
@@ -182,7 +220,7 @@ services:
 
   objecten-api-import:
     image: maykinmedia/objects-api:2.4.4
-    container_name: plugin-docker-compose-objects-api-import
+    container_name: xential-docker-compose-objects-api-import
     platform: linux/amd64
     profiles:
       - zgw
@@ -200,7 +238,7 @@ services:
   objecten-api-redis:
     image: redis:7.4.3
     command: [ "redis-server", "--appendonly", "yes" ]
-    container_name: plugin-docker-compose-objecten-api-redis
+    container_name: xential-docker-compose-objecten-api-redis
     profiles:
       - zgw
       - objecten
@@ -225,7 +263,7 @@ services:
 
   objecttypen-api:
     image: maykinmedia/objecttypes-api:3.0.2
-    container_name: plugin-docker-compose-objecttypen-api
+    container_name: xential-docker-compose-objecttypen-api
     platform: linux/amd64
     profiles:
       - zgw
@@ -263,7 +301,7 @@ services:
 
   objecttypen-api-database:
     image: postgres:17.4
-    container_name: plugin-docker-compose-objecttypen-api-database
+    container_name: xential-docker-compose-objecttypen-api-database
     profiles:
       - zgw
       - objecten
@@ -276,7 +314,7 @@ services:
 
   objecttypen-api-import:
     image: maykinmedia/objecttypes-api:3.0.2
-    container_name: plugin-docker-compose-objecttypen-api-import
+    container_name: xential-docker-compose-objecttypen-api-import
     platform: linux/amd64
     profiles:
       - zgw
@@ -292,7 +330,7 @@ services:
 
   open-notificaties-rabbitmq:
     image: rabbitmq:4.1.0-management
-    container_name: plugin-docker-compose-open-notificaties-rabbitmq
+    container_name: xential-docker-compose-open-notificaties-rabbitmq
     profiles:
       - zgw
     ports:
@@ -301,7 +339,7 @@ services:
 
   open-notificaties-celery:
     image: openzaak/open-notificaties:1.8.2
-    container_name: plugin-docker-compose-open-notificaties
+    container_name: xential-docker-compose-open-notificaties
     platform: linux/amd64
     profiles:
       - zgw
@@ -325,6 +363,7 @@ services:
       - CELERY_WORKER_CONCURRENCY=${CELERY_WORKER_CONCURRENCY:-4}
       - SUBPATH=${SUBPATH:-/}
       - DISABLE_2FA=True
+      - LOG_NOTIFICATIONS_IN_DB=true
     command: /celery_worker.sh
     depends_on:
       - open-notificaties-database
@@ -333,7 +372,7 @@ services:
 
   open-notificaties:
     image: openzaak/open-notificaties:1.8.1
-    container_name: plugin-docker-compose-open-notificaties-celery
+    container_name: xential-docker-compose-open-notificaties-celery
     platform: linux/amd64
     profiles:
       - zgw
@@ -347,7 +386,7 @@ services:
 
   open-notificaties-database:
     image: postgres:17.4
-    container_name: plugin-docker-compose-open-notificaties-database
+    container_name: xential-docker-compose-open-notificaties-database
     profiles:
       - zgw
     ports:
@@ -361,13 +400,13 @@ services:
 
   open-notificaties-redis:
     image: redis:7.4.3
-    container_name: plugin-docker-compose-open-notificaties-redis
+    container_name: xential-docker-compose-open-notificaties-redis
     profiles:
       - zgw
 
   open-forms-database:
     image: postgres:17.4
-    container_name: plugin-docker-compose-open-forms-database
+    container_name: xential-docker-compose-open-forms-database
     profiles:
       - openformulieren
     ports:
@@ -380,14 +419,14 @@ services:
 
   open-forms-redis:
     image: redis:7.4.3
-    container_name: plugin-docker-compose-open-forms-redis
+    container_name: xential-docker-compose-open-forms-redis
     command: [ "redis-server", "--appendonly", "yes" ]
     profiles:
       - openformulieren
 
   open-forms-web:
     image: openformulieren/open-forms:3.1.6
-    container_name: plugin-docker-compose-open-forms-web
+    container_name: xential-docker-compose-open-forms-web
     platform: linux/amd64
     profiles:
       - openformulieren
@@ -424,7 +463,7 @@ services:
 
   open-forms-celery:
     image: openformulieren/open-forms:3.1.6
-    container_name: plugin-docker-compose-open-forms-celery
+    container_name: xential-docker-compose-open-forms-celery
     platform: linux/amd64
     profiles:
       - openformulieren
@@ -444,7 +483,7 @@ services:
 
   open-forms-celery-beat:
     image: openformulieren/open-forms:3.1.6
-    container_name: plugin-docker-compose-open-forms-celery-beat
+    container_name: xential-docker-compose-open-forms-celery-beat
     platform: linux/amd64
     profiles:
       - openformulieren
@@ -456,7 +495,7 @@ services:
 
   open-forms-celery-flower:
     image: openformulieren/open-forms:3.1.6
-    container_name: plugin-docker-compose-open-forms-celery-flower
+    container_name: xential-docker-compose-open-forms-celery-flower
     platform: linux/amd64
     profiles:
       - openformulieren
@@ -470,7 +509,7 @@ services:
 
   open-forms-busybox:
     image: busybox:1.37.0
-    container_name: plugin-docker-compose-open-forms-busybox
+    container_name: xential-docker-compose-open-forms-busybox
     profiles:
       - openformulieren
     command: /bin/chown -R 1000 /private_media
@@ -479,7 +518,7 @@ services:
 
   open-klant:
     image: maykinmedia/open-klant:2.10.0
-    container_name: plugin-docker-compose-open-klant
+    container_name: xential-docker-compose-open-klant
     platform: linux/amd64
     profiles:
       - openklant
@@ -501,7 +540,7 @@ services:
 
   open-klant-database:
     image: postgres:17.4
-    container_name: plugin-docker-compose-open-klant-database
+    container_name: xential-docker-compose-open-klant-database
     profiles:
       - openklant
     ports:
@@ -514,9 +553,10 @@ services:
 
   open-klant-redis:
     image: redis:7.4.3
-    container_name: plugin-docker-compose-open-klant-redis
+    container_name: xential-docker-compose-open-klant-redis
     profiles:
       - openklant
 
 volumes:
   plugin-database-data:
+  openzaak-private-media:
