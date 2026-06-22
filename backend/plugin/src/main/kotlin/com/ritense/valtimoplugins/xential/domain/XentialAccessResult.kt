@@ -17,6 +17,7 @@
 package com.ritense.valtimoplugins.xential.domain
 
 data class XentialAccessResult(
+    val sjabloonGroepId: String = "",
     val statusCode: String,
     val statusMessage: String,
 )

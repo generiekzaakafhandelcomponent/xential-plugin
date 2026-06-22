@@ -123,6 +123,40 @@ class XentialPlugin(
     fun validateAccess(
         @PluginActionProperty toegangResultaatId: String,
         @PluginActionProperty xentialGebruikersId: String,
+        @PluginActionProperty sjabloonGroepNaam: String,
+        execution: DelegateExecution,
+    ) {
+        val sjabloonGroupId = sjabloonGroepUuid(xentialGebruikersId, sjabloonGroepNaam)
+            ?: throw IllegalStateException("No sjabloongroep found with name: $sjabloonGroepNaam")
+
+        xentialSjablonenService
+            .testAccessToSjabloonGroep(
+                gebruikersId = xentialGebruikersId,
+                sjabloonGroepId = sjabloonGroupId,
+            ).let { accessResult ->
+                execution.processInstance.setVariable(
+                    toegangResultaatId,
+                    objectMapper.convertValue(accessResult),
+                )
+            }
+    }
+
+    private fun sjabloonGroepUuid(xentialGebruikersId: String, caseType: String): String? =
+        xentialSjablonenService
+            .getTemplateList(xentialGebruikersId, null)
+            .sjabloongroepen
+            .firstOrNull { it.naam == caseType }
+            ?.id
+
+    @PluginAction(
+        key = "validate-xential-toegang1",
+        title = "Valideer xential toegang",
+        description = "Valideer toegang tot xential gebasseerd op configuratie proceskoppeling.",
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
+    )
+    fun validateAccess1(
+        @PluginActionProperty toegangResultaatId: String,
+        @PluginActionProperty xentialGebruikersId: String,
         @PluginActionProperty xentialDocumentPropertiesVariableName: String,
         execution: DelegateExecution,
     ) {
@@ -131,9 +165,9 @@ class XentialPlugin(
             "Validate access for user: $xentialGebruikersId on template group: ${props.xentialTemplateGroupId}"
         }
         xentialSjablonenService
-            .testAccessToSjabloongroep(
+            .testAccessToSjabloonGroep(
                 gebruikersId = xentialGebruikersId,
-                sjabloongroepId = props.xentialTemplateGroupId.toString(),
+                sjabloonGroepId = props.xentialTemplateGroupId.toString(),
             ).let { accessResult ->
                 execution.processInstance.setVariable(
                     toegangResultaatId,
@@ -154,6 +188,7 @@ class XentialPlugin(
         @PluginActionProperty secondTemplateGroupId: UUID?,
         @PluginActionProperty thirdTemplateGroupId: UUID?,
         @PluginActionProperty eventMessageName: String,
+        @PluginActionProperty test: String?,
         execution: DelegateExecution,
     ) {
         try {
