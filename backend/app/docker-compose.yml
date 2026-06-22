@@ -1,8 +1,8 @@
-name: xential-gzac
+name: xential-plugin
 
 services:
   plugin-keycloak:
-    container_name: xential-docker-compose-plugin-keycloak
+    container_name: xential-plugin-keycloak
     depends_on:
       - plugin-keycloak-database
     image: quay.io/keycloak/keycloak:26.2.2
@@ -35,7 +35,7 @@ services:
 
   plugin-keycloak-database:
     image: postgres:17.4
-    container_name: xential-docker-compose-plugin-keycloak-database
+    container_name: xential-plugin-keycloak-database
     ports:
       - "54329:5432"
     environment:
@@ -43,7 +43,7 @@ services:
       POSTGRES_PASSWORD: keycloak
 
   plugin-database:
-    container_name: xential-docker-compose-plugin-database
+    container_name: xential-plugin-gzac-database
     image: postgres:17.4
     ports:
       - "54320:5432"
@@ -56,7 +56,7 @@ services:
 
   plugin-rabbitmq:
     image: rabbitmq:4.1.0-management
-    container_name: xential-docker-compose-plugin-rabbitmq
+    container_name: xential-plugin-rabbitmq
     volumes:
       - ./imports/plugin-rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./imports/plugin-rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
@@ -75,7 +75,7 @@ services:
 
   openzaak:
     image: openzaak/open-zaak:1.25.0
-    container_name: xential-docker-compose-openzaak
+    container_name:  xential-openzaak
     platform: linux/amd64
     profiles:
       - zgw
@@ -119,7 +119,7 @@ services:
 
   openzaak-database:
     image: postgis/postgis:17-3.4
-    container_name: xential-docker-compose-openzaak-database
+    container_name:  xential-openzaak-database
     platform: linux/amd64
     profiles:
       - zgw
@@ -133,14 +133,14 @@ services:
 
   openzaak-redis:
     image: redis:8.2.2
-    container_name: xential-docker-compose-openzaak-redis
+    container_name:  xential-openzaak-redis
     profiles:
       - zgw
       - openzaak
 
   openzaak-celery:
     image: openzaak/open-zaak:1.25.0
-    container_name: xential-docker-compose-openzaak-celery
+    container_name:  xential-openzaak-celery
     platform: linux/amd64
     environment: *openzaak-env
     command: /celery_worker.sh
@@ -153,7 +153,7 @@ services:
 
   openzaak-import:
     image: openzaak/open-zaak:1.25.0
-    container_name: xential-docker-compose-openzaak-import
+    container_name:  xential-openzaak-import
     platform: linux/amd64
     environment: *openzaak-env
     command: sh /app/load_demodata.sh
@@ -166,7 +166,7 @@ services:
 
   objecten-api:
     image: maykinmedia/objects-api:2.4.4
-    container_name: xential-docker-compose-objecten-api
+    container_name:  xential-objecten-api
     platform: linux/amd64
     profiles:
       - zgw
@@ -206,7 +206,7 @@ services:
 
   objecten-api-database:
     image: postgis/postgis:17-3.4
-    container_name: xential-docker-compose-objecten-api-database
+    container_name:  xential-objecten-api-database
     platform: linux/amd64
     profiles:
       - zgw
@@ -220,7 +220,7 @@ services:
 
   objecten-api-import:
     image: maykinmedia/objects-api:2.4.4
-    container_name: xential-docker-compose-objects-api-import
+    container_name:  xential-objects-api-import
     platform: linux/amd64
     profiles:
       - zgw
@@ -238,7 +238,7 @@ services:
   objecten-api-redis:
     image: redis:7.4.3
     command: [ "redis-server", "--appendonly", "yes" ]
-    container_name: xential-docker-compose-objecten-api-redis
+    container_name:  xential-objecten-api-redis
     profiles:
       - zgw
       - objecten
@@ -263,7 +263,7 @@ services:
 
   objecttypen-api:
     image: maykinmedia/objecttypes-api:3.0.2
-    container_name: xential-docker-compose-objecttypen-api
+    container_name:  xential-objecttypen-api
     platform: linux/amd64
     profiles:
       - zgw
@@ -301,7 +301,7 @@ services:
 
   objecttypen-api-database:
     image: postgres:17.4
-    container_name: xential-docker-compose-objecttypen-api-database
+    container_name:  xential-objecttypen-api-database
     profiles:
       - zgw
       - objecten
@@ -314,7 +314,7 @@ services:
 
   objecttypen-api-import:
     image: maykinmedia/objecttypes-api:3.0.2
-    container_name: xential-docker-compose-objecttypen-api-import
+    container_name:  xential-objecttypen-api-import
     platform: linux/amd64
     profiles:
       - zgw
@@ -330,7 +330,7 @@ services:
 
   open-notificaties-rabbitmq:
     image: rabbitmq:4.1.0-management
-    container_name: xential-docker-compose-open-notificaties-rabbitmq
+    container_name:  xential-open-notificaties-rabbitmq
     profiles:
       - zgw
     ports:
@@ -339,7 +339,7 @@ services:
 
   open-notificaties-celery:
     image: openzaak/open-notificaties:1.8.2
-    container_name: xential-docker-compose-open-notificaties
+    container_name:  xential-open-notificaties
     platform: linux/amd64
     profiles:
       - zgw
@@ -372,7 +372,7 @@ services:
 
   open-notificaties:
     image: openzaak/open-notificaties:1.8.1
-    container_name: xential-docker-compose-open-notificaties-celery
+    container_name:  xential-open-notificaties-celery
     platform: linux/amd64
     profiles:
       - zgw
@@ -386,7 +386,7 @@ services:
 
   open-notificaties-database:
     image: postgres:17.4
-    container_name: xential-docker-compose-open-notificaties-database
+    container_name:  xential-open-notificaties-database
     profiles:
       - zgw
     ports:
@@ -400,13 +400,13 @@ services:
 
   open-notificaties-redis:
     image: redis:7.4.3
-    container_name: xential-docker-compose-open-notificaties-redis
+    container_name:  xential-open-notificaties-redis
     profiles:
       - zgw
 
   open-forms-database:
     image: postgres:17.4
-    container_name: xential-docker-compose-open-forms-database
+    container_name:  xential-open-forms-database
     profiles:
       - openformulieren
     ports:
@@ -419,14 +419,14 @@ services:
 
   open-forms-redis:
     image: redis:7.4.3
-    container_name: xential-docker-compose-open-forms-redis
+    container_name:  xential-open-forms-redis
     command: [ "redis-server", "--appendonly", "yes" ]
     profiles:
       - openformulieren
 
   open-forms-web:
     image: openformulieren/open-forms:3.1.6
-    container_name: xential-docker-compose-open-forms-web
+    container_name:  xential-open-forms-web
     platform: linux/amd64
     profiles:
       - openformulieren
@@ -463,7 +463,7 @@ services:
 
   open-forms-celery:
     image: openformulieren/open-forms:3.1.6
-    container_name: xential-docker-compose-open-forms-celery
+    container_name:  xential-open-forms-celery
     platform: linux/amd64
     profiles:
       - openformulieren
@@ -483,7 +483,7 @@ services:
 
   open-forms-celery-beat:
     image: openformulieren/open-forms:3.1.6
-    container_name: xential-docker-compose-open-forms-celery-beat
+    container_name:  xential-open-forms-celery-beat
     platform: linux/amd64
     profiles:
       - openformulieren
@@ -495,7 +495,7 @@ services:
 
   open-forms-celery-flower:
     image: openformulieren/open-forms:3.1.6
-    container_name: xential-docker-compose-open-forms-celery-flower
+    container_name:  xential-open-forms-celery-flower
     platform: linux/amd64
     profiles:
       - openformulieren
@@ -509,7 +509,7 @@ services:
 
   open-forms-busybox:
     image: busybox:1.37.0
-    container_name: xential-docker-compose-open-forms-busybox
+    container_name:  xential-open-forms-busybox
     profiles:
       - openformulieren
     command: /bin/chown -R 1000 /private_media
@@ -518,7 +518,7 @@ services:
 
   open-klant:
     image: maykinmedia/open-klant:2.10.0
-    container_name: xential-docker-compose-open-klant
+    container_name:  xential-open-klant
     platform: linux/amd64
     profiles:
       - openklant
@@ -540,7 +540,7 @@ services:
 
   open-klant-database:
     image: postgres:17.4
-    container_name: xential-docker-compose-open-klant-database
+    container_name:  xential-open-klant-database
     profiles:
       - openklant
     ports:
@@ -553,7 +553,7 @@ services:
 
   open-klant-redis:
     image: redis:7.4.3
-    container_name: xential-docker-compose-open-klant-redis
+    container_name:  xential-open-klant-redis
     profiles:
       - openklant
 
