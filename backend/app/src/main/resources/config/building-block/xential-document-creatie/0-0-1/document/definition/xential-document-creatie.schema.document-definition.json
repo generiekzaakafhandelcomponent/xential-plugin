@@ -1,0 +1,35 @@
+{
+  "$id": "xential-document-creatie.schema",
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "required": [
+    "informatieObjectTypeUrl",
+    "xentialGebruikersId",
+    "caseType"
+  ],
+  "properties": {
+    "xentialGebruikersId": {
+      "type": "string"
+    },
+    "caseType": {
+      "type": "string"
+    },
+    "informatieObjectTypeUrl": {
+      "type": "string",
+      "format": "uri"
+    },
+    "sjabloonGroepId": {
+      "type": "string"
+    },
+    "xentialResourceDocumentId": {
+      "type": "string"
+    },
+    "fileFormat": {
+      "enum": [
+        "DOCX",
+        "PDF"
+      ],
+      "type": "string"
+    }
+  }
+}

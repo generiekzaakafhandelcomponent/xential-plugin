@@ -1,0 +1,36 @@
+[
+  {
+    "activityId": "StartEvent",
+    "activityType": "bpmn:StartEvent:start",
+    "formDefinitionName": "xential.startformulier",
+    "viewModelEnabled": false,
+    "formDisplayType": "modal",
+    "formSize": "medium",
+    "subtitles": [],
+    "processLinkType": "form"
+  },
+  {
+    "activityId": "XentialDocumentCreateWaitTask",
+    "activityType": "bpmn:UserTask:create",
+    "formDefinitionName": "empty-form",
+    "viewModelEnabled": false,
+    "formDisplayType": "modal",
+    "formSize": "medium",
+    "subtitles": [],
+    "processLinkType": "form"
+  },
+  {
+    "activityId": "XentialTestMapToegangTask",
+    "activityType": "bpmn:ServiceTask:start",
+    "pluginConfigurationId": "6e034748-8ed5-43de-a5f2-f80e1a4b60dd",
+    "pluginActionDefinitionKey": "validate-xential-toegang",
+    "actionProperties": {
+      "toegangResultaatId": "toegangResultaat",
+      "xentialGebruikersId": "doc:xentialGebruikersId",
+      "sjabloonGroepNaam": "doc:caseType"
+    },
+    "referenceType": "FIXED",
+    "pluginDefinitionKey": "xential",
+    "processLinkType": "plugin"
+  }
+]

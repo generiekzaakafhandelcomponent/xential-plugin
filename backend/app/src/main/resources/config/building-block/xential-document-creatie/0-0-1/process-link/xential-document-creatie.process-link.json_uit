@@ -1,0 +1,28 @@
+[
+    {
+        "activityId": "DocumentVoorbereidenServiceTask",
+        "activityType": "bpmn:ServiceTask:start",
+        "pluginConfigurationId": null,
+        "pluginActionDefinitionKey": "prepare-content",
+        "actionProperties": {
+            "xentialDocumentPropertiesVariableName": "xentialDocumentProperties",
+            "eventMessageName": "XENTIAL_DOC_RECIEVED",
+            "firstTemplateGroupId": null,
+            "secondTemplateGroupId": null,
+            "thirdTemplateGroupId": null
+        },
+        "referenceType": "BUILDING_BLOCK",
+        "pluginDefinitionKey": "xential",
+        "processLinkType": "plugin"
+    },
+    {
+        "activityId": "StartEvent",
+        "activityType": "bpmn:StartEvent:start",
+        "formDefinitionName": "xential.startformulier",
+        "viewModelEnabled": false,
+        "formDisplayType": "modal",
+        "formSize": "medium",
+        "subtitles": [],
+        "processLinkType": "form"
+    }
+]
