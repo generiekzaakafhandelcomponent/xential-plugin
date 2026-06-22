@@ -1,85 +1,85 @@
 [
   {
-    "activityId" : "XentialSelectTemplateFolder",
-    "activityType" : "bpmn:ServiceTask:start",
-    "pluginConfigurationId" : "6e034748-8ed5-43de-a5f2-f80e1a4b60dd",
-    "pluginActionDefinitionKey" : "prepare-content",
-    "actionProperties" : {
-      "xentialDocumentPropertiesVariableName" : "xentialDocumentProperties",
-      "eventMessageName" : "XENTIAL_DOC_RECEIVED",
-      "firstTemplateGroupId" : "415cf276-2af0-4192-923d-4391c4d7b2a8",
-      "secondTemplateGroupId" : null,
-      "thirdTemplateGroupId" : null
+    "activityId": "XentialSelectTemplateFolder",
+    "activityType": "bpmn:ServiceTask:start",
+    "pluginConfigurationId": "6e034748-8ed5-43de-a5f2-f80e1a4b60dd",
+    "pluginActionDefinitionKey": "prepare-content",
+    "actionProperties": {
+      "xentialDocumentPropertiesVariableName": "xentialDocumentProperties",
+      "eventMessageName": "XENTIAL_DOC_RECEIVED",
+      "firstTemplateGroupId": "415cf276-2af0-4192-923d-4391c4d7b2a8",
+      "secondTemplateGroupId": null,
+      "thirdTemplateGroupId": null
     },
-    "referenceType" : "FIXED",
-    "pluginDefinitionKey" : null,
-    "processLinkType" : "plugin"
+    "referenceType": "FIXED",
+    "pluginDefinitionKey": null,
+    "processLinkType": "plugin"
   },
   {
-    "activityId" : "Activity_1fmnabf",
-    "activityType" : "bpmn:ServiceTask:start",
-    "pluginConfigurationId" : "6e034748-8ed5-43de-a5f2-f80e1a4b60dd",
-    "pluginActionDefinitionKey" : "prepare-content",
-    "actionProperties" : {
-      "xentialDocumentPropertiesVariableName" : "xentialDocumentProperties",
-      "eventMessageName" : "XENTIAL_DOC_RECEIVED",
-      "firstTemplateGroupId" : "a9b8c7d6-e5f4-3210-fedc-ba9876543210",
-      "secondTemplateGroupId" : null,
-      "thirdTemplateGroupId" : null
+    "activityId": "Activity_1fmnabf",
+    "activityType": "bpmn:ServiceTask:start",
+    "pluginConfigurationId": "6e034748-8ed5-43de-a5f2-f80e1a4b60dd",
+    "pluginActionDefinitionKey": "prepare-content",
+    "actionProperties": {
+      "xentialDocumentPropertiesVariableName": "xentialDocumentProperties",
+      "eventMessageName": "XENTIAL_DOC_RECEIVED",
+      "firstTemplateGroupId": "a9b8c7d6-e5f4-3210-fedc-ba9876543210",
+      "secondTemplateGroupId": null,
+      "thirdTemplateGroupId": null
     },
-    "referenceType" : "FIXED",
-    "pluginDefinitionKey" : null,
-    "processLinkType" : "plugin"
+    "referenceType": "FIXED",
+    "pluginDefinitionKey": null,
+    "processLinkType": "plugin"
   },
   {
-    "activityId" : "XentialStarten",
-    "activityType" : "bpmn:StartEvent:start",
-    "formDefinitionName" : "xential.start",
-    "viewModelEnabled" : false,
-    "formDisplayType" : "modal",
-    "formSize" : "medium",
-    "subtitles" : [],
-    "processLinkType" : "form"
+    "activityId": "XentialStarten",
+    "activityType": "bpmn:StartEvent:start",
+    "formDefinitionName": "xential.start",
+    "viewModelEnabled": false,
+    "formDisplayType": "modal",
+    "formSize": "medium",
+    "subtitles": [],
+    "processLinkType": "form"
   },
   {
-    "activityId" : "XentialFlowEindigen",
-    "activityType" : "bpmn:UserTask:create",
-    "formDefinitionName" : "xential.end",
-    "viewModelEnabled" : false,
-    "formDisplayType" : "modal",
-    "formSize" : "medium",
-    "subtitles" : [],
-    "processLinkType" : "form"
+    "activityId": "EffeWachtenBesluitBBTask",
+    "activityType": "bpmn:StartEvent:start",
+    "formDefinitionName": "empty-form",
+    "viewModelEnabled": false,
+    "formDisplayType": "modal",
+    "formSize": "medium",
+    "subtitles": [],
+    "processLinkType": "form"
   },
   {
-    "activityId" : "CallUitgaandeBriefMetBouwBlokActivity",
-    "activityType" : "bpmn:CallActivity:start",
-    "buildingBlockDefinitionKey" : "BB:xential-document-creatie:0.0.1",
-    "buildingBlockDefinitionVersionTag" : "0.0.1",
-    "pluginConfigurationMappings" : {
-      "xential" : "6e034748-8ed5-43de-a5f2-f80e1a4b60dd"
+    "activityId": "CallUitgaandeBriefMetBouwBlokActivity",
+    "activityType": "bpmn:CallActivity:start",
+    "buildingBlockDefinitionKey": "xential-document-creatie",
+    "buildingBlockDefinitionVersionTag": "0.0.1",
+    "pluginConfigurationMappings": {
+      "xential": "6e034748-8ed5-43de-a5f2-f80e1a4b60dd"
     },
-    "inputMappings" : [
+    "inputMappings": [
       {
-        "source" : "pv:informatieObjectTypeUrl",
-        "target" : "informatieObjectTypeUrl"
+        "source": "pv:informatieObjectTypeUrl",
+        "target": "informatieObjectTypeUrl"
       },
       {
-        "source" : "pv:xentialGebruikersId",
-        "target" : "xentialGebruikersId"
+        "source": "pv:xentialGebruikersId",
+        "target": "xentialGebruikersId"
       },
       {
-        "source" : "pv:xentialDocumentProperties",
-        "target" : "xentialDocumentProperties"
+        "source": "pv:caseType",
+        "target": "caseType"
       }
     ],
-    "outputMappings" : [
+    "outputMappings": [
       {
         "source": "resourceId",
         "target": "pv:resourceId",
         "syncTiming": "END"
       }
     ],
-    "processLinkType" : "building-block"
+    "processLinkType": "building-block"
   }
 ]

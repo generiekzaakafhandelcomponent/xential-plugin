@@ -32,7 +32,7 @@
       </bpmn:callActivity>
       <bpmn:startEvent id="CreeerDocumentMessageStartEvent" name="Genereer uitgaande brief" isInterrupting="false">
         <bpmn:outgoing>Flow_1kn4dmc</bpmn:outgoing>
-        <bpmn:messageEventDefinition id="MessageEventDefinition_0vzcno1" messageRef="Message_1m4frhu" />
+        <bpmn:messageEventDefinition id="MessageEventDefinition_0vzcno1" messageRef="Message_0c4rffd" />
       </bpmn:startEvent>
       <bpmn:sequenceFlow id="Flow_1kn4dmc" sourceRef="CreeerDocumentMessageStartEvent" targetRef="XentialSelectTemplateFolder" />
       <bpmn:sequenceFlow id="Flow_05i2wrx" sourceRef="XentialSelectTemplateFolder" targetRef="Activity_11kv02v" />
@@ -108,11 +108,11 @@
       <bpmn:sequenceFlow id="Flow_0nx625l" sourceRef="Event_0y6qiem" targetRef="Activity_13irzkq" />
       <bpmn:sequenceFlow id="Flow_0wcs64x" sourceRef="Activity_13irzkq" targetRef="Activity_0c3lnmd" />
     </bpmn:subProcess>
-    <bpmn:subProcess id="Activity_0euhm2a" name="Genereer uitgaande brief document met bouwblok" triggeredByEvent="true">
+    <bpmn:subProcess id="Activity_0euhm2a" name="Genereer besluit document met bouwblok" triggeredByEvent="true">
       <bpmn:endEvent id="Event_0f3joiv">
         <bpmn:incoming>Flow_0cpj0m7</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:callActivity id="CallUitgaandeBriefMetBouwBlokActivity" name="Document genereren met bb" calledElement="BB:xential-document-creatie:0.0.1">
+      <bpmn:callActivity id="CallUitgaandeBriefMetBouwBlokActivity" name="Document genereren met bb" calledElement="xential-document-creatie" camunda:calledElementBinding="versionTag" camunda:calledElementVersionTag="BB:xential-document-creatie:0.0.1">
         <bpmn:extensionElements>
           <camunda:in source="xentialGebruikersId" target="xentialGebruikersId" />
           <camunda:in businessKey="#{buildingBlockDocumentId}" />
@@ -122,11 +122,11 @@
         <bpmn:incoming>Flow_1pcyqgv</bpmn:incoming>
         <bpmn:outgoing>Flow_0cpj0m7</bpmn:outgoing>
       </bpmn:callActivity>
-      <bpmn:startEvent id="Event_0cicrpi" name="Genereer uitgaande brief" isInterrupting="false">
+      <bpmn:startEvent id="Event_0cicrpi" name="Genereer uitgaande besluit" isInterrupting="false">
         <bpmn:outgoing>Flow_0a2fxb0</bpmn:outgoing>
-        <bpmn:messageEventDefinition id="MessageEventDefinition_1nsb4f7" messageRef="Message_1m4frhu" />
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1nsb4f7" messageRef="Message_083fiob" />
       </bpmn:startEvent>
-      <bpmn:serviceTask id="Activity_0ishuko" name="Sjabloonmap selecteren" implementation="##WebService">
+      <bpmn:serviceTask id="Activity_0ishuko" name="Sjabloonmap selecteren" implementation="##WebService" camunda:expression="${execution.setVariable(&#39;caseType&#39;,documentDelegateService.getDocument(execution).definitionId().name())}">
         <bpmn:incoming>Flow_0a2fxb0</bpmn:incoming>
         <bpmn:outgoing>Flow_1nqscgw</bpmn:outgoing>
       </bpmn:serviceTask>
@@ -143,11 +143,14 @@
     <bpmn:sequenceFlow id="Flow_0lmrwga" sourceRef="XentialFlowEindigen" targetRef="Event_1hl2nsy" />
   </bpmn:process>
   <bpmn:message id="Message_22ttsno" name="GENEREER_BESLUIT_MESSAGE" />
-  <bpmn:message id="Message_1m4frhu" name="GENEREER_UITGAANDE_BRIEF_MESSAGE" />
+  <bpmn:message id="Message_1m4frhu" name="GENEREER_UITGAANDE_BRIEF_BB_MESSAGE" />
+  <bpmn:message id="Message_083fiob" name="GENEREER_BESLUIT_BB_MESSAGE" />
+  <bpmn:message id="Message_2ii1i2p" name="Message_2ii1i2p" />
+  <bpmn:message id="Message_0c4rffd" name="GENEREER_UITGAANDE_BRIEF_MESSAGE" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_15s7f2e">
       <bpmndi:BPMNShape id="Participant_06az24z_di" bpmnElement="Participant_06az24z" isHorizontal="true">
-        <dc:Bounds x="160" y="100" width="750" height="1190" />
+        <dc:Bounds x="160" y="100" width="1050" height="1190" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="XentialStarten">
@@ -192,10 +195,6 @@
         <di:waypoint x="730" y="440" />
         <di:waypoint x="792" y="440" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0k7r9wz_di" bpmnElement="Flow_0k7r9wz">
-        <di:waypoint x="590" y="440" />
-        <di:waypoint x="630" y="440" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1kn4dmc_di" bpmnElement="Flow_1kn4dmc">
         <di:waypoint x="306" y="440" />
         <di:waypoint x="350" y="440" />
@@ -203,6 +202,10 @@
       <bpmndi:BPMNEdge id="Flow_05i2wrx_di" bpmnElement="Flow_05i2wrx">
         <di:waypoint x="450" y="440" />
         <di:waypoint x="490" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k7r9wz_di" bpmnElement="Flow_0k7r9wz">
+        <di:waypoint x="590" y="440" />
+        <di:waypoint x="630" y="440" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0i80v4p" bpmnElement="Activity_0qii9iv" isExpanded="true">
         <dc:Bounds x="230" y="570" width="650" height="180" />
@@ -233,17 +236,17 @@
         <di:waypoint x="730" y="670" />
         <di:waypoint x="792" y="670" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1nc7emz_di" bpmnElement="Flow_1nc7emz">
-        <di:waypoint x="590" y="670" />
-        <di:waypoint x="630" y="670" />
+      <bpmndi:BPMNEdge id="BPMNEdge_0qrhiq3" bpmnElement="Flow_0eu5thi">
+        <di:waypoint x="450" y="670" />
+        <di:waypoint x="490" y="670" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1hq4k17" bpmnElement="Flow_1fzaide">
         <di:waypoint x="306" y="670" />
         <di:waypoint x="350" y="670" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_0qrhiq3" bpmnElement="Flow_0eu5thi">
-        <di:waypoint x="450" y="670" />
-        <di:waypoint x="490" y="670" />
+      <bpmndi:BPMNEdge id="Flow_1nc7emz_di" bpmnElement="Flow_1nc7emz">
+        <di:waypoint x="590" y="670" />
+        <di:waypoint x="630" y="670" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0l1utm7" bpmnElement="Activity_0ft4t00" isExpanded="true">
         <dc:Bounds x="230" y="780" width="650" height="180" />
@@ -290,17 +293,10 @@
         <dc:Bounds x="230" y="1010" width="650" height="180" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1grsv3n" bpmnElement="Event_0f3joiv">
-        <dc:Bounds x="792" y="1092" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1ooazn7" bpmnElement="CallUitgaandeBriefMetBouwBlokActivity">
-        <dc:Bounds x="630" y="1070" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_14d713t" bpmnElement="Event_0cicrpi">
         <dc:Bounds x="270" y="1092" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="255" y="1135" width="74" height="27" />
+          <dc:Bounds x="251" y="1135" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0vmrq6w" bpmnElement="Activity_0ishuko">
@@ -310,6 +306,13 @@
       <bpmndi:BPMNShape id="BPMNShape_1m6t084" bpmnElement="Activity_09b5h53">
         <dc:Bounds x="490" y="1070" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ooazn7" bpmnElement="CallUitgaandeBriefMetBouwBlokActivity">
+        <dc:Bounds x="630" y="1070" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1grsv3n" bpmnElement="Event_0f3joiv">
+        <dc:Bounds x="792" y="1092" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_1ey2ut0" bpmnElement="Flow_0cpj0m7">
         <di:waypoint x="730" y="1110" />
