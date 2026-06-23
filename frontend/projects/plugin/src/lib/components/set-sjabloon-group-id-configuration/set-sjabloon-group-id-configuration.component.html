@@ -1,0 +1,38 @@
+<v-form
+        (valueChange)="formValueChange($event)"
+        *ngIf="{
+        disabled: disabled$ | async,
+        prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null
+    } as obs"
+>
+
+    <div>
+        <v-input-label
+                [title]="'setting sjabloon group id'"
+        ></v-input-label>
+    </div>
+    <v-input
+            name="toegangResultaatId"
+            [title]="'toegangResultaatId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.toegangResultaatId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="xentialGebruikersId"
+            [title]="'xentialGebruikersId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.xentialGebruikersId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="sjabloonGroepNaam"
+            [title]="'sjabloonGroepNaam' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.sjabloonGroepNaam"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+</v-form>
