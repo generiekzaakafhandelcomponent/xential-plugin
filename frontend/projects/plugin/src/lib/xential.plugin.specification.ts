@@ -26,6 +26,9 @@ import {
 import {
     ValidateAccessConfigurationComponent
 } from "./components/validate-access-configuration/validate-access-configuration.component";
+import {
+    SetSjabloonGroupIdConfigurationComponent
+} from "./components/set-sjabloon-group-id-configuration/set-sjabloon-group-id-configuration.component";
 
 const XentialPluginSpecification: PluginSpecification = {
     pluginId: 'xential',
@@ -34,7 +37,8 @@ const XentialPluginSpecification: PluginSpecification = {
     functionConfigurationComponents: {
         'generate-document': GenerateDocumentConfigurationComponent,
         'prepare-content': PrepareContentConfigurationComponent,
-        'validate-xential-toegang': ValidateAccessConfigurationComponent
+        'validate-xential-toegang': ValidateAccessConfigurationComponent,
+        'set-sjabloon-group-id': SetSjabloonGroupIdConfigurationComponent
     },
     pluginTranslations: {
         nl: {
@@ -51,6 +55,8 @@ const XentialPluginSpecification: PluginSpecification = {
             'generate-document': 'Genereer document',
             'prepare-content': 'kies inhoud op basis van een template',
             'validate-xential-toegang': 'Valideer toegang tot Xential Sjablonen',
+            'set-sjabloon-group-id': 'Zet sjabloon groep id',
+            sjabloonGroepNaam: 'Sjabloon groep naam',
             templateId: 'Template ID',
             fileFormat: 'Bestandsformaat',
             documentId: 'Document kenmerk',
@@ -84,6 +90,8 @@ const XentialPluginSpecification: PluginSpecification = {
             'generate-document': 'Generate document',
             'prepare-content': 'Generate document content',
             'validate-xential-toegang': 'Validate access to Xential Sjablonen',
+            'set-sjabloon-group-id': 'Set sjabloon group id',
+            sjabloonGroepNaam: 'Sjabloon group name',
             templateId: 'Sjabloon ID',
             fileFormat: 'File format',
             documentFilename: 'document filename',
@@ -111,6 +119,8 @@ const XentialPluginSpecification: PluginSpecification = {
             clientPassword: 'Kundenpasswort',
             'generate-document': 'Dokument generieren',
             'validate-xential-toegang': 'Zugriff auf Xential-Vorlagen validieren',
+            'set-sjabloon-group-id': 'Sjabloon Gruppen-ID festlegen',
+            sjabloonGroepNaam: 'Sjabloon Gruppenname',
             templateId: 'Vorlage ID',
             fileFormat: 'Dateiformat',
             documentFilename: 'Dokumentdateiname',

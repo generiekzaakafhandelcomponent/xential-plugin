@@ -35,13 +35,17 @@ import {
 import {
     ValidateAccessConfigurationComponent
 } from "./components/validate-access-configuration/validate-access-configuration.component";
+import {
+    SetSjabloonGroupIdConfigurationComponent
+} from "./components/set-sjabloon-group-id-configuration/set-sjabloon-group-id-configuration.component";
 
 @NgModule({
     declarations: [
         XentialConfigurationComponent,
         GenerateDocumentConfigurationComponent,
         PrepareContentConfigurationComponent,
-        ValidateAccessConfigurationComponent
+        ValidateAccessConfigurationComponent,
+        SetSjabloonGroupIdConfigurationComponent
     ],
     imports: [
         CommonModule,
@@ -58,7 +62,8 @@ import {
         XentialConfigurationComponent,
         GenerateDocumentConfigurationComponent,
         PrepareContentConfigurationComponent,
-        ValidateAccessConfigurationComponent
+        ValidateAccessConfigurationComponent,
+        SetSjabloonGroupIdConfigurationComponent
     ],
 })
 export class XentialPluginModule {
