@@ -25,6 +25,7 @@ import com.ritense.plugin.annotation.PluginProperty
 import com.ritense.processlink.domain.ActivityTypeWithEventName
 import com.ritense.valtimoplugins.mtlssslcontext.MTlsSslContext
 import com.ritense.valtimoplugins.xential.domain.FileFormat
+import com.ritense.valtimoplugins.xential.domain.XentialAccessResult
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin.Companion.PLUGIN_KEY
 import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
@@ -33,7 +34,11 @@ import com.ritense.valtimoplugins.xential.service.XentialSjablonenService
 import com.ritense.valueresolver.ValueResolverService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.operaton.bpm.engine.delegate.DelegateExecution
+import org.springframework.core.env.Environment
+import org.springframework.core.env.Profiles
+import org.springframework.web.client.ResourceAccessException
 import org.springframework.web.client.RestClient
+import org.springframework.web.client.RestClientResponseException
 import java.net.URI
 import java.util.UUID
 
@@ -49,6 +54,7 @@ class XentialPlugin(
     private val valueResolverService: ValueResolverService,
     private val xentialSjablonenService: XentialSjablonenService,
     private val objectMapper: ObjectMapper,
+    private val environment: Environment,
 ) {
     @PluginProperty(key = "applicationName", secret = false, required = true)
     lateinit var applicationName: String
@@ -154,54 +160,71 @@ class XentialPlugin(
         @PluginActionProperty sjabloonGroepNaam: String,
         execution: DelegateExecution,
     ) {
-        val sjabloonGroupId = sjabloonGroepUuid(xentialGebruikersId, sjabloonGroepNaam)
-            ?: throw IllegalStateException("No sjabloongroep found with name: $sjabloonGroepNaam")
+        try {
+            val sjabloonGroupId = sjabloonGroepUuid(xentialGebruikersId, sjabloonGroepNaam)
+                ?: run {
+                    logger.debug { "No sjabloongroep found with name: $sjabloonGroepNaam for user: $xentialGebruikersId" }
+                    val notFoundResult = XentialAccessResult(
+                        statusCode = "404",
+                        statusMessage = "No sjabloon group found with name: $sjabloonGroepNaam",
+                    )
+                    execution.processInstance.setVariable(
+                        toegangResultaatId,
+                        objectMapper.convertValue(notFoundResult),
+                    )
+                    return
+                }
 
-        xentialSjablonenService
-            .testAccessToSjabloonGroep(
-                gebruikersId = xentialGebruikersId,
-                sjabloonGroepId = sjabloonGroupId,
-            ).let { accessResult ->
-                accessResult.sjabloonGroepId = sjabloonGroupId
-                execution.processInstance.setVariable(
-                    toegangResultaatId,
-                    objectMapper.convertValue(accessResult),
-                )
+            xentialSjablonenService
+                .testAccessToSjabloonGroep(
+                    gebruikersId = xentialGebruikersId,
+                    sjabloonGroepId = sjabloonGroupId,
+                ).let { accessResult ->
+                    accessResult.sjabloonGroepId = sjabloonGroupId
+                    execution.processInstance.setVariable(
+                        toegangResultaatId,
+                        objectMapper.convertValue(accessResult),
+                    )
+                }
+        } catch (e: RestClientResponseException ) {
+            logger.error(e) {
+                "Xential request failed while setting sjabloon group id for name: $sjabloonGroepNaam"
             }
+            val errorResult = XentialAccessResult(
+                statusCode = e.statusCode.value().toString(),
+                statusMessage = e.statusText,
+            )
+            execution.processInstance.setVariable(
+                toegangResultaatId,
+                objectMapper.convertValue(errorResult),
+            )
+        } catch (e: ResourceAccessException) {
+            logger.error(e) {
+                "Could not reach Xential while setting sjabloon group id for name: $sjabloonGroepNaam"
+            }
+            val errorResult = XentialAccessResult(
+                statusCode = "503",
+                statusMessage = e.message ?: "Could not reach Xential",
+            )
+            execution.processInstance.setVariable(
+                toegangResultaatId,
+                objectMapper.convertValue(errorResult),
+            )
+        }
     }
 
-    private fun sjabloonGroepUuid(xentialGebruikersId: String, caseType: String): String? =
-        xentialSjablonenService
+    private fun sjabloonGroepUuid(xentialGebruikersId: String, caseType: String): String? {
+        val sjabloongroepen = xentialSjablonenService
             .getTemplateList(xentialGebruikersId, null)
             .sjabloongroepen
+        return sjabloongroepen
             .firstOrNull { it.naam == caseType }
             ?.id
-
-    @PluginAction(
-        key = "validate-xential-toegang1",
-        title = "Valideer xential toegang",
-        description = "Valideer toegang tot xential gebasseerd op configuratie proceskoppeling.",
-        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
-    )
-    fun validateAccess1(
-        @PluginActionProperty toegangResultaatId: String,
-        @PluginActionProperty xentialGebruikersId: String,
-        @PluginActionProperty xentialDocumentPropertiesVariableName: String,
-        execution: DelegateExecution,
-    ) {
-        val props = getXentialDocumentProperties(execution, xentialDocumentPropertiesVariableName)
-        logger.info {
-            "Validate access for user: $xentialGebruikersId on template group: ${props.xentialTemplateGroupId}"
-        }
-        xentialSjablonenService
-            .testAccessToSjabloonGroep(
-                gebruikersId = xentialGebruikersId,
-                sjabloonGroepId = props.xentialTemplateGroupId.toString(),
-            ).let { accessResult ->
-                execution.processInstance.setVariable(
-                    toegangResultaatId,
-                    objectMapper.convertValue(accessResult),
-                )
+            ?: if (environment.acceptsProfiles(Profiles.of("dev"))) {
+                logger.debug { "Dev profile active, falling back to first sjabloongroep for: $caseType" }
+                sjabloongroepen.firstOrNull()?.id
+            } else {
+                null
             }
     }
 

@@ -18,8 +18,8 @@
         <terminateEventDefinition id="TerminateEventDefinition_0z61uif" />
       </endEvent>
     </subProcess>
-    <sequenceFlow id="sequenceFlow_bca37c66-be4c-46fd-bacd-e7496f7dafdc" sourceRef="StartEvent" targetRef="XentialTestMapToegangTask" />
-    <sequenceFlow id="Flow_1hi8qkw" sourceRef="XentialTestMapToegangTask" targetRef="XentialDocumentCreateWaitTask" />
+    <sequenceFlow id="sequenceFlow_bca37c66-be4c-46fd-bacd-e7496f7dafdc" sourceRef="StartEvent" targetRef="XentialSetGroepIdTask" />
+    <sequenceFlow id="Flow_1hi8qkw" sourceRef="XentialSetGroepIdTask" targetRef="XentialDocumentCreateWaitTask" />
     <sequenceFlow id="Flow_0qw8q8c" sourceRef="Gateway_0sw7p7i" targetRef="SelecteerXentialSjabloonUserTask" />
     <sequenceFlow id="Flow_18408fd" sourceRef="Gateway_0sw7p7i" targetRef="GebruikerGeenToegangServiceTask">
       <conditionExpression xsi:type="tFormalExpression">${execution.hasVariable("toegangResultaat") &amp;&amp; execution.getVariable("toegangResultaat").statusCode != "200 OK" }</conditionExpression>
@@ -43,7 +43,7 @@
     <sequenceFlow id="Flow_0kamyj4" sourceRef="GebruikerGeenToegangServiceTask" targetRef="ErrorFoundEndEvent" />
     <sequenceFlow id="Flow_0035xqe" sourceRef="ToonXentialErrorStatusUserTask" targetRef="ErrorFoundEndEvent" />
     <sequenceFlow id="Flow_1gey4f8" sourceRef="XentialDocumentCreateWaitTask" targetRef="Gateway_0sw7p7i" />
-    <serviceTask id="XentialTestMapToegangTask" name="Toegang tot Xential Testen" camunda:asyncAfter="true" implementation="##WebService" camunda:expression="${true}">
+    <serviceTask id="XentialSetGroepIdTask" name="Set Xential Groep" camunda:asyncAfter="true" implementation="##WebService" camunda:expression="${true}">
       <incoming>sequenceFlow_bca37c66-be4c-46fd-bacd-e7496f7dafdc</incoming>
       <outgoing>Flow_1hi8qkw</outgoing>
     </serviceTask>
@@ -131,7 +131,26 @@
           <dc:Bounds x="223" y="226" width="52" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0wgtggx_di" bpmnElement="XentialTestMapToegangTask">
+      <bpmndi:BPMNShape id="Activity_098in2g_di" bpmnElement="Activity_10pmdps" isExpanded="true">
+        <dc:Bounds x="210" y="482" width="168" height="128" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1esik6r_di" bpmnElement="DocumentCancelledMessageStartEvent">
+        <dc:Bounds x="250" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="244" y="545" width="51" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1nbvee4_di" bpmnElement="DocumentCancelledMessageTerminateEndEvent">
+        <dc:Bounds x="322" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="311" y="545" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0c2ymjl_di" bpmnElement="Flow_0c2ymjl">
+        <di:waypoint x="286" y="520" />
+        <di:waypoint x="322" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0wgtggx_di" bpmnElement="XentialSetGroepIdTask">
         <dc:Bounds x="328" y="168" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -182,25 +201,6 @@
       <bpmndi:BPMNShape id="BPMNShape_1io21z9" bpmnElement="XentialDocumentCreateWaitTask">
         <dc:Bounds x="488" y="168" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_098in2g_di" bpmnElement="Activity_10pmdps" isExpanded="true">
-        <dc:Bounds x="210" y="482" width="168" height="128" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1esik6r_di" bpmnElement="DocumentCancelledMessageStartEvent">
-        <dc:Bounds x="250" y="502" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="244" y="545" width="51" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1nbvee4_di" bpmnElement="DocumentCancelledMessageTerminateEndEvent">
-        <dc:Bounds x="322" y="502" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="311" y="545" width="60" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_0c2ymjl_di" bpmnElement="Flow_0c2ymjl">
-        <di:waypoint x="286" y="520" />
-        <di:waypoint x="322" y="520" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1896n1b_di" bpmnElement="Event_1en2t52">
         <dc:Bounds x="1430" y="452" width="36" height="36" />
       </bpmndi:BPMNShape>
