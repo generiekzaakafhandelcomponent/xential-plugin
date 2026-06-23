@@ -123,6 +123,34 @@ class XentialPlugin(
     fun validateAccess(
         @PluginActionProperty toegangResultaatId: String,
         @PluginActionProperty xentialGebruikersId: String,
+        @PluginActionProperty xentialDocumentPropertiesVariableName: String,
+        execution: DelegateExecution,
+    ) {
+        val props = getXentialDocumentProperties(execution, xentialDocumentPropertiesVariableName)
+        logger.info {
+            "Validate access for user: $xentialGebruikersId on template group: ${props.xentialTemplateGroupId}"
+        }
+        xentialSjablonenService
+            .testAccessToSjabloonGroep(
+                gebruikersId = xentialGebruikersId,
+                sjabloonGroepId = props.xentialTemplateGroupId.toString(),
+            ).let { accessResult ->
+                execution.processInstance.setVariable(
+                    toegangResultaatId,
+                    objectMapper.convertValue(accessResult),
+                )
+            }
+    }
+
+    @PluginAction(
+        key = "set-sjabloon-group-id",
+        title = "Set sjabloon group id",
+        description = "Zet sjabloon groep id op basis van zaaptype naam en valideer toegang tot xential.",
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
+    )
+    fun setSjabloonGroepId(
+        @PluginActionProperty toegangResultaatId: String,
+        @PluginActionProperty xentialGebruikersId: String,
         @PluginActionProperty sjabloonGroepNaam: String,
         execution: DelegateExecution,
     ) {
@@ -134,6 +162,7 @@ class XentialPlugin(
                 gebruikersId = xentialGebruikersId,
                 sjabloonGroepId = sjabloonGroupId,
             ).let { accessResult ->
+                accessResult.sjabloonGroepId = sjabloonGroupId
                 execution.processInstance.setVariable(
                     toegangResultaatId,
                     objectMapper.convertValue(accessResult),

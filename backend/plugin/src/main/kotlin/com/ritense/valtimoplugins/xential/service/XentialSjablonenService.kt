@@ -55,6 +55,7 @@ class XentialSjablonenService(
             }
     }
 
+
     fun testAccessToSjabloonGroep(
         gebruikersId: String,
         sjabloonGroepId: String,
@@ -68,7 +69,6 @@ class XentialSjablonenService(
                         sjabloongroepId = sjabloonGroepId,
                     ).let { response ->
                         return XentialAccessResult(
-                            sjabloonGroepId = sjabloonGroepId,
                             statusCode = response.statusCode.toString(),
                             statusMessage = "",
                         )
