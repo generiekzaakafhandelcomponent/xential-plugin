@@ -1,96 +1,43 @@
 {
   "components": [
     {
-      "label": "HTML",
-      "refreshOnChange": false,
       "key": "html",
       "type": "htmlelement",
       "input": false,
-      "content": "Fields below are related to document upload and linking to zaak"
-    },
-    {
-        "key": "pv:documentTitle",
-        "type": "textfield",
-        "label": "Document titel",
-        "validate": {
-            "required": true
-        },
-        "input": true
-    },
-    {
       "label": "HTML",
-      "refreshOnChange": false,
-      "key": "html",
-      "type": "htmlelement",
-      "input": false,
-      "content": "Fields below are related to Xential document generation"
+      "content": "Fields below are related to Xential document generation",
+      "refreshOnChange": false
     },
     {
-      "key": "xentialDocumentProperties",
-      "type": "hidden",
-      "input": true,
-      "label": "Xential document properties",
-      "properties": {
-        "sourceKey": "pv:xentialDocumentProperties"
-      },
-      "persistent": "client-only"
-    },
-    {
-      "key": "xentialGebruikersId",
-      "type": "hidden",
-      "input": true,
-      "label": "Xential gebruikersId",
-      "properties": {
-        "sourceKey": "pv:xentialGebruikersId"
-      },
-      "persistent": "client-only"
-    },
-    {
-      "key": "documentDefinitionName",
+      "key": "caseDefinitionName",
       "type": "hidden",
       "input": true,
       "label": "Document definition name",
+      "attributes": {
+        "data-testid": "xential-genereren.kies-sjabloon-caseDefinitionName"
+      },
       "properties": {
         "sourceKey": "case:documentDefinitionId.name",
-        "targetKey": "pv:document"
+        "targetKey": "pv:caseType"
       }
     },
     {
-      "key": "pv:xentialSjabloonId",
-      "type": "select",
-      "label": "Sjabloon",
+      "key": "caseDefinitionVersionTag",
+      "type": "hidden",
       "input": true,
-      "data": {
-        "url": "../api/v1/xential/sjablonen?gebruikersId={{ data.xentialGebruikersId }}&sjabloonGroupId={{ data.xentialDocumentProperties.xentialTemplateGroupId }}",
-        "method": "GET",
-        "headers": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer {{localStorage.getItem('formioToken')}}"
-          }
-        ]
+      "label": "Case definition version tag",
+      "attributes": {
+        "data-testid": "xential-genereren.kies-sjabloon-caseDefinitionVersionTag"
       },
-      "widget": "choicesjs",
-      "dataSrc": "url",
-      "lazyLoad": false,
-      "template": "<span>{{ item.naam }}</span>",
-      "validate": {
-        "required": true
-      },
-      "selectValues": "sjablonen",
-      "valueProperty": "id"
+      "properties": {
+        "sourceKey": "case:definitionId.versionTag",
+        "targetKey": "pv:caseTypeVersion"
+      }
     },
     {
       "key": "tempcontent",
-      "type": "select",
-      "label": "Template",
-      "input": true,
       "data": {
-        "url": "../api/management/v1/template?caseDefinitionName={{ data.documentDefinitionName }}&templateType=text&page=0&size=10000",
+        "url": "../api/management/v1/template?caseDefinitionKey={{ data.caseDefinitionName }}&caseDefinitionVersionTag={{ data.caseDefinitionVersionTag }}&templateType=text&page=0&size=10000",
         "method": "GET",
         "headers": [
           {
@@ -103,6 +50,9 @@
           }
         ]
       },
+      "type": "select",
+      "input": true,
+      "label": "Template",
       "widget": "choicesjs",
       "dataSrc": "url",
       "lazyLoad": false,
@@ -111,40 +61,24 @@
         "required": true
       },
       "refreshOn": "document",
+      "attributes": {
+        "data-testid": "xential-genereren.kies-sjabloon-tempcontent"
+      },
+      "persistent": "client-only",
       "selectValues": "content",
       "valueProperty": "key",
-      "clearOnRefresh": true,
-      "persistent": "client-only"
+      "clearOnRefresh": true
     },
     {
       "key": "pv:xentialData",
       "type": "hidden",
       "input": true,
       "label": "Set template",
+      "attributes": {
+        "data-testid": "xential-genereren.kies-sjabloon-pv-xentialData"
+      },
       "defaultValue": false,
       "calculateValue": "value = 'template:' + data.tempcontent"
-    },
-    {
-      "key": "pv:fileFormat",
-      "type": "select",
-      "input": true,
-      "label": "File format",
-      "data": {
-        "values": [
-          {
-            "label": "PDF",
-            "value": "PDF"
-          },
-          {
-            "label": "WORD",
-            "value": "WORD"
-          }
-        ]
-      },
-      "template": "<span>{{ item.label }}</span>",
-      "validate": {
-        "required": true
-      }
     },
     {
       "key": "submit",
