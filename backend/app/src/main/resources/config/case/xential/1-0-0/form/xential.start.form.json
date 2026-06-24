@@ -1,13 +1,46 @@
 {
-  "components" : [
+  "display": "form",
+  "components": [
     {
-      "key" : "submit",
-      "type" : "button",
-      "input" : true,
-      "label" : "starten",
-      "tableView" : false,
-      "showValidations" : false,
-      "disableOnInvalid" : true
+      "key": "html",
+      "type": "htmlelement",
+      "input": false,
+      "label": "start-xential",
+      "content": "start xential",
+      "tableView": false,
+      "refreshOnChange": false
+    },
+    {
+      "key": "voornaam",
+      "type": "textfield",
+      "input": true,
+      "label": "voornaam",
+      "tableView": true,
+      "attributes": {
+        "data-testid": "start-form-voornaam"
+      },
+      "applyMaskOn": "change",
+      "defaultValue": "pietje"
+    },
+    {
+      "key": "achternaam",
+      "type": "textfield",
+      "input": true,
+      "label": "achtnaam",
+      "tableView": true,
+      "attributes": {
+        "data-testid": "start-form-achternaam"
+      },
+      "applyMaskOn": "change",
+      "defaultValue": "Klaassen"
+    },
+    {
+      "key": "submit",
+      "type": "button",
+      "input": true,
+      "label": "start",
+      "tableView": false,
+      "disableOnInvalid": true
     }
   ]
 }

@@ -4,17 +4,11 @@
   "title" : "Xential flow",
   "$schema" : "http://json-schema.org/draft-07/schema#",
   "properties" : {
-    "persoon" : {
-      "type" : "object",
-      "properties" : {
-        "voornaam" : {
-          "type" : "string"
-        },
-        "achternaam" : {
-          "type" : "string"
-        }
-      },
-      "additionalProperties" : false
+    "voornaam" : {
+      "type" : "string"
+    },
+    "achternaam" : {
+      "type" : "string"
     },
     "openzaak" : {
       "$ref" : "openzaak.schema.json#/definitions/openzaakgegevens"
