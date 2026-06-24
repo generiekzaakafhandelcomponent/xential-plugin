@@ -36,8 +36,8 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.operaton.bpm.engine.delegate.DelegateExecution
 import org.springframework.core.env.Environment
 import org.springframework.core.env.Profiles
-import org.springframework.web.client.ResourceAccessException
 import org.springframework.web.client.RestClient
+import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
 import java.net.URI
 import java.util.UUID
@@ -160,55 +160,37 @@ class XentialPlugin(
         @PluginActionProperty sjabloonGroepNaam: String,
         execution: DelegateExecution,
     ) {
+        fun storeResult(result: XentialAccessResult) =
+            execution.processInstance.setVariable(toegangResultaatId, objectMapper.convertValue(result))
+
         try {
             val sjabloonGroupId = sjabloonGroepUuid(xentialGebruikersId, sjabloonGroepNaam)
                 ?: run {
                     logger.debug { "No sjabloongroep found with name: $sjabloonGroepNaam for user: $xentialGebruikersId" }
-                    val notFoundResult = XentialAccessResult(
-                        statusCode = "404",
-                        statusMessage = "No sjabloon group found with name: $sjabloonGroepNaam",
-                    )
-                    execution.processInstance.setVariable(
-                        toegangResultaatId,
-                        objectMapper.convertValue(notFoundResult),
+                    storeResult(
+                        XentialAccessResult(
+                            statusCode = "404",
+                            statusMessage = "No sjabloon group found with name: $sjabloonGroepNaam",
+                        ),
                     )
                     return
                 }
 
-            xentialSjablonenService
-                .testAccessToSjabloonGroep(
-                    gebruikersId = xentialGebruikersId,
-                    sjabloonGroepId = sjabloonGroupId,
-                ).let { accessResult ->
-                    accessResult.sjabloonGroepId = sjabloonGroupId
-                    execution.processInstance.setVariable(
-                        toegangResultaatId,
-                        objectMapper.convertValue(accessResult),
-                    )
-                }
-        } catch (e: RestClientResponseException ) {
+            val accessResult = xentialSjablonenService.testAccessToSjabloonGroep(
+                gebruikersId = xentialGebruikersId,
+                sjabloonGroepId = sjabloonGroupId,
+            )
+            accessResult.sjabloonGroepId = sjabloonGroupId
+            storeResult(accessResult)
+        } catch (e: RestClientException) {
             logger.error(e) {
                 "Xential request failed while setting sjabloon group id for name: $sjabloonGroepNaam"
             }
-            val errorResult = XentialAccessResult(
-                statusCode = e.statusCode.value().toString(),
-                statusMessage = e.statusText,
-            )
-            execution.processInstance.setVariable(
-                toegangResultaatId,
-                objectMapper.convertValue(errorResult),
-            )
-        } catch (e: ResourceAccessException) {
-            logger.error(e) {
-                "Could not reach Xential while setting sjabloon group id for name: $sjabloonGroepNaam"
-            }
-            val errorResult = XentialAccessResult(
-                statusCode = "503",
-                statusMessage = e.message ?: "Could not reach Xential",
-            )
-            execution.processInstance.setVariable(
-                toegangResultaatId,
-                objectMapper.convertValue(errorResult),
+            storeResult(
+                XentialAccessResult(
+                    statusCode = (e as? RestClientResponseException)?.statusCode?.value()?.toString() ?: "503",
+                    statusMessage = (e as? RestClientResponseException)?.statusText ?: e.message ?: "Could not reach Xential",
+                ),
             )
         }
     }
