@@ -97,6 +97,10 @@ import {TeamsModule} from "@valtimo/teams";
 import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
 import {environment} from "../environments/environment";
 import {registerDocumentenApiFormioUploadComponent, ZgwModule} from "@valtimo/zgw";
+import {
+  MailTemplatePluginModule, mailTemplatePluginSpecification,
+  TextTemplatePluginModule, textTemplatePluginSpecification
+} from '@valtimo-plugins/freemarker';
 
 import {XentialPluginModule, XentialPluginSpecification,} from "@valtimo-plugins/xential";
 
@@ -141,6 +145,7 @@ export function tabsFactory() {
     LayoutModule,
     LoggerModule.forRoot(environment.logger),
     LoggingModule,
+    MailTemplatePluginModule,
     MenuModule,
     MigrationModule,
     MilestoneModule,
@@ -164,6 +169,7 @@ export function tabsFactory() {
     SwaggerModule,
     TaskModule,
     TeamsModule,
+    TextTemplatePluginModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -184,12 +190,14 @@ export function tabsFactory() {
         besluitenApiPluginSpecification,
         catalogiApiPluginSpecification,
         documentenApiPluginSpecification,
+        mailTemplatePluginSpecification,
         notificatiesApiPluginSpecification,
         objectTokenAuthenticationPluginSpecification,
         objectenApiPluginSpecification,
         objecttypenApiPluginSpecification,
         openNotificatiesPluginSpecification,
         openZaakPluginSpecification,
+        textTemplatePluginSpecification,
         XentialPluginSpecification,
         zakenApiPluginSpecification,
       ],
