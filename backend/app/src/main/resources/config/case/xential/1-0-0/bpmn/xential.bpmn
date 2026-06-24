@@ -59,6 +59,10 @@
           <camunda:in source="informatieObjectTypeUrl" target="informatieObjectTypeUrl" />
           <camunda:in source="caseType" target="caseType" />
           <camunda:in source="textContent" target="textContent" />
+          <camunda:inputOutput>
+            <camunda:inputParameter name="messageName">XENTIAL_DOC_RECIEVED</camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:in source="messageName" target="messageName" />
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0tube17</bpmn:incoming>
         <bpmn:outgoing>Flow_0cpj0m7</bpmn:outgoing>
@@ -227,13 +231,6 @@
         <dc:Bounds x="330" y="380" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1grsv3n" bpmnElement="Event_0f3joiv">
-        <dc:Bounds x="922" y="402" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1ooazn7" bpmnElement="CallUitgaandeBriefMetBouwBlokActivity">
-        <dc:Bounds x="770" y="380" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0mhe6ch_di" bpmnElement="GenerateTextFromTemplateTask">
         <dc:Bounds x="630" y="380" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -241,6 +238,13 @@
       <bpmndi:BPMNShape id="Activity_02xkv8i_di" bpmnElement="SetCaseTypeTask">
         <dc:Bounds x="480" y="380" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ooazn7" bpmnElement="CallUitgaandeBriefMetBouwBlokActivity">
+        <dc:Bounds x="790" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1grsv3n" bpmnElement="Event_0f3joiv">
+        <dc:Bounds x="932" y="402" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_113tw9v" bpmnElement="Flow_0a2fxb0">
         <di:waypoint x="296" y="420" />
@@ -251,12 +255,12 @@
         <di:waypoint x="480" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1ey2ut0" bpmnElement="Flow_0cpj0m7">
-        <di:waypoint x="870" y="420" />
-        <di:waypoint x="922" y="420" />
+        <di:waypoint x="890" y="420" />
+        <di:waypoint x="932" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0tube17_di" bpmnElement="Flow_0tube17">
         <di:waypoint x="730" y="420" />
-        <di:waypoint x="770" y="420" />
+        <di:waypoint x="790" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1gjb2h2_di" bpmnElement="Flow_1gjb2h2">
         <di:waypoint x="580" y="420" />

@@ -121,6 +121,57 @@ class XentialPlugin(
     }
 
     @PluginAction(
+        key = "generate-document-bb",
+        title = "Generate document with bb",
+        description = "Generate a document using xential with bb.",
+        activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
+    )
+    fun generateDocumentBB(
+        @PluginActionProperty textContent: String,
+        @PluginActionProperty sjabloonId: String,
+        @PluginActionProperty xentialGebruikersId: String,
+        @PluginActionProperty fileFormat: FileFormat,
+        @PluginActionProperty sjabloonGroepId: String,
+        @PluginActionProperty messageName: String,
+        execution: DelegateExecution,
+    ) {
+        logger.info { "Generating document from template: $sjabloonId for user: $xentialGebruikersId" }
+        logger.debug { "> XentialDate: $textContent" }
+
+        val xentialSjabloon =
+            xentialSjablonenService
+                .getTemplateList(
+                    gebruikersId = xentialGebruikersId,
+                    sjabloongroepId = sjabloonGroepId,
+                ).sjablonen
+                .single { it.id == sjabloonId }
+        logger.debug { "> Template: $xentialSjabloon" }
+
+        val xentialDocumentProperties = XentialDocumentProperties(
+            xentialTemplateGroupId = UUID.fromString(sjabloonGroepId),
+            xentialTemplateName = xentialSjabloon.naam,
+            fileFormat = fileFormat,
+            documentId = "documentId",
+            messageName = messageName,
+            content = textContent,
+        )
+
+        documentGenerationService
+            .generateDocument(
+                api = esbClient.documentApi(restClient(mTlsSslContextAutoConfigurationId)),
+                processId = UUID.fromString(execution.processInstanceId),
+                xentialGebruikersId = xentialGebruikersId,
+                sjabloonId = sjabloonId,
+                xentialDocumentProperties = xentialDocumentProperties,
+            ).let { result ->
+                execution.setVariable("xentialStatus", result.status)
+                result.resumeUrl?.let {
+                    execution.setVariable("xentialResumeUrl", it)
+                }
+            }
+    }
+
+    @PluginAction(
         key = "validate-xential-toegang",
         title = "Valideer xential toegang",
         description = "Valideer toegang tot xential gebasseerd op configuratie proceskoppeling.",

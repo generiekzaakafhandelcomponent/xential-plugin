@@ -1,0 +1,88 @@
+<v-form
+        (valueChange)="formValueChange($event)"
+        *ngIf="{
+        disabled: disabled$ | async,
+        prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null,
+        fileFormats: fileFormats$ | async,
+        selectedFileFormatInputType: selectedFileFormatInputType$ | async
+    } as obs"
+>
+
+    <div>
+        <v-input-label
+                [title]="'generate doc with bb'"
+        ></v-input-label>
+    </div>
+
+    <v-input
+            name="textContent"
+            [title]="'textContent' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.textContent"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="sjabloonGroepId"
+            [title]="'sjabloonGroepId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.sjabloonGroepId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="sjabloonId"
+            [title]="'sjabloonId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.sjabloonId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-input
+            name="xentialGebruikersId"
+            [title]="'xentialGebruikersId' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.xentialGebruikersId"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+    <v-radio
+            name="fileFormatInputType"
+            [disabled]="obs.disabled"
+            [title]="'fileFormatInputType' | pluginTranslate: pluginId | async"
+            [radioValues]="fileFormatInputTypeOptions$ | async"
+            [defaultValue]="obs.prefill?.fileFormatInputType || 'selection'"
+            [margin]="true"
+    ></v-radio>
+
+    <v-select
+            *ngIf="obs.selectedFileFormatInputType === 'selection'"
+            name="fileFormat"
+            [title]="'fileFormat' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultSelectionId]="obs.prefill?.fileFormat"
+            [disabled]="obs.disabled"
+            [required]="true"
+            [items]="obs.fileFormats"
+    />
+
+    <v-input
+            *ngIf="obs.selectedFileFormatInputType === 'text'"
+            name="fileFormat"
+            [title]="'fileFormat' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.fileFormat"
+            [disabled]="obs.disabled"
+            [required]="true"
+            [trim]="true"
+            placeholder="e.g. doc:fileFormat"
+    />
+    <v-input
+            name="messageName"
+            [title]="'messageName' | pluginTranslate: pluginId | async"
+            [margin]="true"
+            [defaultValue]="obs.prefill?.messageName"
+            [disabled]="obs.disabled"
+            [required]="true"
+    />
+</v-form>

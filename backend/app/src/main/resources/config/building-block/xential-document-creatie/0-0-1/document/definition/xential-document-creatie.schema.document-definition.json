@@ -15,6 +15,9 @@
     "caseType": {
       "type": "string"
     },
+    "messageName" : {
+      "type": "string"
+    },
     "informatieObjectTypeUrl": {
       "type": "string",
       "format": "uri"

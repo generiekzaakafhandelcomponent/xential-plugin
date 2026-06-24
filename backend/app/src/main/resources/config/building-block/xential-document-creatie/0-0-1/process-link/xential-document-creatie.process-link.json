@@ -32,5 +32,22 @@
     "referenceType": "FIXED",
     "pluginDefinitionKey": "xential",
     "processLinkType": "plugin"
+  },
+  {
+    "activityId": "StuurGenereerDocumentVerzoekNaarXentialServiceTask",
+    "activityType": "bpmn:ServiceTask:start",
+    "pluginConfigurationId": "6e034748-8ed5-43de-a5f2-f80e1a4b60dd",
+    "pluginActionDefinitionKey": "generate-document-bb",
+    "actionProperties": {
+      "textContent": "doc:textContent",
+      "sjabloonId": "doc:sjabloonId",
+      "xentialGebruikersId": "doc:xentialGebruikersId",
+      "fileFormat": "doc:fileFormat",
+      "sjabloonGroepId": "doc:sjabloonGroepId",
+      "messageName": "doc:messageName"
+    },
+    "referenceType": "FIXED",
+    "pluginDefinitionKey": "xential",
+    "processLinkType": "plugin"
   }
 ]

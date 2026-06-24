@@ -16,6 +16,7 @@
 
 export * from './xential-config';
 export * from './generate-document-config'
+export * from './generate-document-bb-config'
 export * from './prepare-content-config'
 export * from './validate-access-config'
 export * from './set-sjabloon-group-id-config'

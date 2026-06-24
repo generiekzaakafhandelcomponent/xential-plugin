@@ -21,6 +21,9 @@ import {
     GenerateDocumentConfigurationComponent
 } from "./components/generate-document-configuration/generate-document-configuration.component";
 import {
+    GenerateDocumentBBConfigurationComponent
+} from "./components/generate-document-bb-configuration/generate-document-bb-configuration.component";
+import {
     PrepareContentConfigurationComponent
 } from "./components/prepare-content-configuration/prepare-content-configuration.component";
 import {
@@ -36,6 +39,7 @@ const XentialPluginSpecification: PluginSpecification = {
     pluginLogoBase64: XENTIAL_PLUGIN_LOGO_BASE64,
     functionConfigurationComponents: {
         'generate-document': GenerateDocumentConfigurationComponent,
+        'generate-document-bb': GenerateDocumentBBConfigurationComponent,
         'prepare-content': PrepareContentConfigurationComponent,
         'validate-xential-toegang': ValidateAccessConfigurationComponent,
         'set-sjabloon-group-id': SetSjabloonGroupIdConfigurationComponent
@@ -53,6 +57,14 @@ const XentialPluginSpecification: PluginSpecification = {
             clientId: 'Taak applicatie naam',
             clientPassword: 'Taak applicatie wachtwoord',
             'generate-document': 'Genereer document',
+            'generate-document-bb': 'Genereer document met bouwblok',
+            textContent: 'inhoud voor het genereren van het document',
+            sjabloonGroepId: 'Sjabloon groep id',
+            sjabloonId: 'Sjabloon id van het te genereren document',
+            messageName: 'bpmn bericht naam als document is gegenereerd',
+            fileFormatInputType: 'Bestandsformaat invoertype',
+            fileFormatInputTypeSelection: 'Selectie',
+            fileFormatInputTypeText: 'Tekst',
             'prepare-content': 'kies inhoud op basis van een template',
             'validate-xential-toegang': 'Valideer toegang tot Xential Sjablonen',
             'set-sjabloon-group-id': 'Zet sjabloon groep id',
@@ -88,6 +100,14 @@ const XentialPluginSpecification: PluginSpecification = {
             clientId: 'Client ID',
             clientPassword: 'Client password',
             'generate-document': 'Generate document',
+            'generate-document-bb': 'Generate document with building block',
+            textContent: 'content for generating the document',
+            sjabloonGroepId: 'Sjabloon group id',
+            sjabloonId: 'Template ID of the document to be generated',
+            messageName: 'bpmn message name when document is generated',
+            fileFormatInputType: 'File format input type',
+            fileFormatInputTypeSelection: 'Selection',
+            fileFormatInputTypeText: 'Text',
             'prepare-content': 'Generate document content',
             'validate-xential-toegang': 'Validate access to Xential Sjablonen',
             'set-sjabloon-group-id': 'Set sjabloon group id',
@@ -118,6 +138,14 @@ const XentialPluginSpecification: PluginSpecification = {
             clientId: 'Kunden-ID',
             clientPassword: 'Kundenpasswort',
             'generate-document': 'Dokument generieren',
+            'generate-document-bb': 'Dokument mit Baustein generieren',
+            textContent: 'Inhalt zur Generierung des Dokuments',
+            sjabloonGroepId: 'Sjabloon Gruppen-ID',
+            sjabloonId: 'Vorlagen-ID des zu generierenden Dokuments',
+            messageName: 'bpmn Nachrichtenname, wenn das Dokument generiert wurde',
+            fileFormatInputType: 'Dateiformat-Eingabetyp',
+            fileFormatInputTypeSelection: 'Auswahl',
+            fileFormatInputTypeText: 'Text',
             'validate-xential-toegang': 'Zugriff auf Xential-Vorlagen validieren',
             'set-sjabloon-group-id': 'Sjabloon Gruppen-ID festlegen',
             sjabloonGroepNaam: 'Sjabloon Gruppenname',

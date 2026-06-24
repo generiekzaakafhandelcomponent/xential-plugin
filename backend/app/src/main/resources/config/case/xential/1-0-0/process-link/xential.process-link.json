@@ -36,6 +36,10 @@
         "target": "textContent"
       },
       {
+        "source": "pv:messageName",
+        "target": "messageName"
+      },
+      {
         "source": "pv:informatieObjectTypeUrl",
         "target": "informatieObjectTypeUrl"
       },

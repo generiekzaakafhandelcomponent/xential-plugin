@@ -22,12 +22,16 @@ import {
     CarbonMultiInputModule,
     FormModule, InputLabelModule,
     InputModule,
+    RadioModule,
     SelectModule,
     ValuePathSelectorComponent
 } from '@valtimo/components';
 import {
     GenerateDocumentConfigurationComponent
 } from "./components/generate-document-configuration/generate-document-configuration.component";
+import {
+    GenerateDocumentBBConfigurationComponent
+} from "./components/generate-document-bb-configuration/generate-document-bb-configuration.component";
 import {DropdownModule} from "carbon-components-angular";
 import {
     PrepareContentConfigurationComponent
@@ -43,6 +47,7 @@ import {
     declarations: [
         XentialConfigurationComponent,
         GenerateDocumentConfigurationComponent,
+        GenerateDocumentBBConfigurationComponent,
         PrepareContentConfigurationComponent,
         ValidateAccessConfigurationComponent,
         SetSjabloonGroupIdConfigurationComponent
@@ -52,6 +57,7 @@ import {
         PluginTranslatePipeModule,
         FormModule,
         InputModule,
+        RadioModule,
         SelectModule,
         DropdownModule,
         CarbonMultiInputModule,
@@ -61,6 +67,7 @@ import {
     exports: [
         XentialConfigurationComponent,
         GenerateDocumentConfigurationComponent,
+        GenerateDocumentBBConfigurationComponent,
         PrepareContentConfigurationComponent,
         ValidateAccessConfigurationComponent,
         SetSjabloonGroupIdConfigurationComponent
