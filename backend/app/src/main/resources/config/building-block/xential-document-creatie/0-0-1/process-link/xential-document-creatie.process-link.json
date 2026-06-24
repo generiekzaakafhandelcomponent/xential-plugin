@@ -10,9 +10,9 @@
     "processLinkType": "form"
   },
   {
-    "activityId": "XentialDocumentCreateWaitTask",
+    "activityId": "SelecteerSjabloonTask",
     "activityType": "bpmn:UserTask:create",
-    "formDefinitionName": "empty-form",
+    "formDefinitionName": "xential-genereren.kies-sjabloon",
     "viewModelEnabled": false,
     "formDisplayType": "modal",
     "formSize": "medium",

@@ -19,12 +19,12 @@
       </endEvent>
     </subProcess>
     <sequenceFlow id="sequenceFlow_bca37c66-be4c-46fd-bacd-e7496f7dafdc" sourceRef="StartEvent" targetRef="XentialSetGroepIdTask" />
-    <sequenceFlow id="Flow_1hi8qkw" sourceRef="XentialSetGroepIdTask" targetRef="XentialDocumentCreateWaitTask" />
-    <sequenceFlow id="Flow_0qw8q8c" sourceRef="Gateway_0sw7p7i" targetRef="SelecteerXentialSjabloonUserTask" />
+    <sequenceFlow id="Flow_1hi8qkw" sourceRef="XentialSetGroepIdTask" targetRef="Gateway_0sw7p7i" />
+    <sequenceFlow id="Flow_0qw8q8c" sourceRef="Gateway_0sw7p7i" targetRef="SelecteerSjabloonTask" />
     <sequenceFlow id="Flow_18408fd" sourceRef="Gateway_0sw7p7i" targetRef="GebruikerGeenToegangServiceTask">
       <conditionExpression xsi:type="tFormalExpression">${execution.hasVariable("toegangResultaat") &amp;&amp; execution.getVariable("toegangResultaat").statusCode != "200 OK" }</conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="Flow_17vfgya" sourceRef="SelecteerXentialSjabloonUserTask" targetRef="Gateway_0w9yz0b" />
+    <sequenceFlow id="Flow_17vfgya" sourceRef="SelecteerSjabloonTask" targetRef="Gateway_0w9yz0b" />
     <sequenceFlow id="Flow_0kyqh66" sourceRef="Gateway_0w9yz0b" targetRef="StuurGenereerDocumentVerzoekNaarXentialServiceTask" />
     <sequenceFlow id="Flow_11sgpk7" sourceRef="Gateway_0w9yz0b" targetRef="ToonXentialErrorStatusUserTask">
       <conditionExpression xsi:type="tFormalExpression">${execution.hasVariable('xentialStatus')                &amp;&amp; execution.getVariable('xentialStatus') == 'ERROR' }</conditionExpression>
@@ -42,13 +42,12 @@
     <sequenceFlow id="Flow_0fh16k7" sourceRef="Gateway_0qev1qk" targetRef="Event_1vf6rij" />
     <sequenceFlow id="Flow_0kamyj4" sourceRef="GebruikerGeenToegangServiceTask" targetRef="ErrorFoundEndEvent" />
     <sequenceFlow id="Flow_0035xqe" sourceRef="ToonXentialErrorStatusUserTask" targetRef="ErrorFoundEndEvent" />
-    <sequenceFlow id="Flow_1gey4f8" sourceRef="XentialDocumentCreateWaitTask" targetRef="Gateway_0sw7p7i" />
     <serviceTask id="XentialSetGroepIdTask" name="Set Xential Groep" camunda:asyncAfter="true" implementation="##WebService" camunda:expression="${true}">
       <incoming>sequenceFlow_bca37c66-be4c-46fd-bacd-e7496f7dafdc</incoming>
       <outgoing>Flow_1hi8qkw</outgoing>
     </serviceTask>
     <exclusiveGateway id="Gateway_0sw7p7i" default="Flow_0qw8q8c">
-      <incoming>Flow_1gey4f8</incoming>
+      <incoming>Flow_1hi8qkw</incoming>
       <outgoing>Flow_0qw8q8c</outgoing>
       <outgoing>Flow_18408fd</outgoing>
     </exclusiveGateway>
@@ -86,18 +85,10 @@
       <incoming>Flow_0kyqh66</incoming>
       <outgoing>Flow_03kvkn1</outgoing>
     </serviceTask>
-    <serviceTask id="GebruikerGeenToegangServiceTask" name="Gebruiker Geen Toegang" camunda:asyncAfter="true" implementation="##WebService" camunda:expression="${true}">
-      <incoming>Flow_18408fd</incoming>
-      <outgoing>Flow_0kamyj4</outgoing>
-    </serviceTask>
     <endEvent id="ErrorFoundEndEvent">
       <incoming>Flow_0kamyj4</incoming>
       <incoming>Flow_0035xqe</incoming>
     </endEvent>
-    <serviceTask id="SelecteerXentialSjabloonUserTask" name="Selecteer Xential Sjabloon" camunda:asyncAfter="true" implementation="##WebService" camunda:expression="${null}">
-      <incoming>Flow_0qw8q8c</incoming>
-      <outgoing>Flow_17vfgya</outgoing>
-    </serviceTask>
     <serviceTask id="ToonXentialErrorStatusUserTask" name="Toon Xential Error Status" camunda:asyncAfter="true" implementation="##WebService" camunda:expression="${null}">
       <incoming>Flow_11sgpk7</incoming>
       <outgoing>Flow_0035xqe</outgoing>
@@ -109,20 +100,29 @@
     <endEvent id="Event_1vf6rij">
       <incoming>Flow_0fh16k7</incoming>
     </endEvent>
-    <userTask id="XentialDocumentCreateWaitTask" name="nog effe">
-      <incoming>Flow_1hi8qkw</incoming>
-      <outgoing>Flow_1gey4f8</outgoing>
+    <userTask id="SelecteerSjabloonTask" name="Selecteer Sjabloon" camunda:asyncAfter="true" implementation="##WebService">
+      <extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="Input_3un07v9">${valueResolverDelegateService.handleValue(execution, 'doc:sjabloonGroepId', execution.getVariable('toegangResultaat').sjabloonGroepId)}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </extensionElements>
+      <incoming>Flow_0qw8q8c</incoming>
+      <outgoing>Flow_17vfgya</outgoing>
     </userTask>
     <boundaryEvent id="Event_1en2t52" attachedToRef="OpenXentialWizardUserTask">
       <messageEventDefinition id="MessageEventDefinition_0vljb6o" messageRef="Message_3dr2tjf" />
     </boundaryEvent>
+    <serviceTask id="GebruikerGeenToegangServiceTask" name="Gebruiker Geen Toegang" camunda:asyncAfter="true" implementation="##WebService" camunda:expression="${true}">
+      <incoming>Flow_18408fd</incoming>
+      <outgoing>Flow_0kamyj4</outgoing>
+    </serviceTask>
   </process>
   <message id="Message_3dr2tjf" name="XENTIAL_DOC_RECIEVED" />
   <message id="Message_1arcs68" name="XENTIAL_DOC_CANCELLED" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_01b1f79f-d060-4364-bcc5-75a21f8e17d8">
     <bpmndi:BPMNPlane id="BPMNPlane_4851f400-75c2-4941-9b28-fd31dd057433" bpmnElement="Collaboration_030j6vn">
       <bpmndi:BPMNShape id="Participant_0dbwaca_di" bpmnElement="XentialDocumentCreatieParticipant" isHorizontal="true">
-        <dc:Bounds x="160" y="83" width="1618" height="547" />
+        <dc:Bounds x="160" y="83" width="1398" height="547" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_adbc7809-5017-43a8-91fb-cba2151ec66c" bpmnElement="StartEvent">
@@ -130,6 +130,51 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="223" y="226" width="52" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0sw7p7i_di" bpmnElement="Gateway_0sw7p7i" isMarkerVisible="true">
+        <dc:Bounds x="475" y="183" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0w9yz0b_di" bpmnElement="Gateway_0w9yz0b" isMarkerVisible="true">
+        <dc:Bounds x="743" y="183" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1t2vcmy_di" bpmnElement="Gateway_0wvssau">
+        <dc:Bounds x="1023" y="183" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1yv13bk_di" bpmnElement="Gateway_1yv13bk" isMarkerVisible="true">
+        <dc:Bounds x="1023" y="295" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_17edvzn_di" bpmnElement="Gateway_17edvzn" isMarkerVisible="true">
+        <dc:Bounds x="1303" y="295" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0qev1qk_di" bpmnElement="Gateway_0qev1qk" isMarkerVisible="true">
+        <dc:Bounds x="1303" y="183" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0u5hkdn_di" bpmnElement="Event_111hkaf">
+        <dc:Bounds x="1160" y="190" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14kkksx_di" bpmnElement="StuurGenereerDocumentVerzoekNaarXentialServiceTask">
+        <dc:Bounds x="858" y="168" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18ztgf6_di" bpmnElement="ErrorFoundEndEvent">
+        <dc:Bounds x="750" y="412" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lj03wc_di" bpmnElement="ToonXentialErrorStatusUserTask">
+        <dc:Bounds x="718" y="280" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1rpgv2g_di" bpmnElement="OpenXentialWizardUserTask">
+        <dc:Bounds x="1128" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1vf6rij_di" bpmnElement="Event_1vf6rij">
+        <dc:Bounds x="1420" y="190" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0gg5l5h_di" bpmnElement="SelecteerSjabloonTask">
+        <dc:Bounds x="580" y="168" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0obwjpb_di" bpmnElement="GebruikerGeenToegangServiceTask">
+        <dc:Bounds x="580" y="390" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_098in2g_di" bpmnElement="Activity_10pmdps" isExpanded="true">
         <dc:Bounds x="210" y="482" width="168" height="128" />
@@ -154,55 +199,8 @@
         <dc:Bounds x="328" y="168" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0sw7p7i_di" bpmnElement="Gateway_0sw7p7i" isMarkerVisible="true">
-        <dc:Bounds x="683" y="183" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0w9yz0b_di" bpmnElement="Gateway_0w9yz0b" isMarkerVisible="true">
-        <dc:Bounds x="963" y="183" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1t2vcmy_di" bpmnElement="Gateway_0wvssau">
-        <dc:Bounds x="1243" y="183" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1yv13bk_di" bpmnElement="Gateway_1yv13bk" isMarkerVisible="true">
-        <dc:Bounds x="1243" y="295" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_17edvzn_di" bpmnElement="Gateway_17edvzn" isMarkerVisible="true">
-        <dc:Bounds x="1523" y="295" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0qev1qk_di" bpmnElement="Gateway_0qev1qk" isMarkerVisible="true">
-        <dc:Bounds x="1523" y="183" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0u5hkdn_di" bpmnElement="Event_111hkaf">
-        <dc:Bounds x="1380" y="190" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_14kkksx_di" bpmnElement="StuurGenereerDocumentVerzoekNaarXentialServiceTask">
-        <dc:Bounds x="1078" y="168" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0obwjpb_di" bpmnElement="GebruikerGeenToegangServiceTask">
-        <dc:Bounds x="798" y="390" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_18ztgf6_di" bpmnElement="ErrorFoundEndEvent">
-        <dc:Bounds x="970" y="412" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0lkmji7_di" bpmnElement="SelecteerXentialSjabloonUserTask">
-        <dc:Bounds x="798" y="168" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1lj03wc_di" bpmnElement="ToonXentialErrorStatusUserTask">
-        <dc:Bounds x="938" y="280" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1rpgv2g_di" bpmnElement="OpenXentialWizardUserTask">
-        <dc:Bounds x="1348" y="390" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1vf6rij_di" bpmnElement="Event_1vf6rij">
-        <dc:Bounds x="1640" y="190" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1io21z9" bpmnElement="XentialDocumentCreateWaitTask">
-        <dc:Bounds x="488" y="168" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1896n1b_di" bpmnElement="Event_1en2t52">
-        <dc:Bounds x="1430" y="452" width="36" height="36" />
+        <dc:Bounds x="1210" y="452" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_fc6d4205-9ada-4ab8-9494-bb87444de842" bpmnElement="sequenceFlow_bca37c66-be4c-46fd-bacd-e7496f7dafdc">
         <di:waypoint x="266" y="208" />
@@ -210,78 +208,74 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1hi8qkw_di" bpmnElement="Flow_1hi8qkw">
         <di:waypoint x="428" y="208" />
-        <di:waypoint x="488" y="208" />
+        <di:waypoint x="475" y="208" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0qw8q8c_di" bpmnElement="Flow_0qw8q8c">
-        <di:waypoint x="733" y="208" />
-        <di:waypoint x="798" y="208" />
+        <di:waypoint x="525" y="208" />
+        <di:waypoint x="580" y="208" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_18408fd_di" bpmnElement="Flow_18408fd">
-        <di:waypoint x="708" y="233" />
-        <di:waypoint x="708" y="430" />
-        <di:waypoint x="798" y="430" />
+        <di:waypoint x="500" y="233" />
+        <di:waypoint x="500" y="430" />
+        <di:waypoint x="580" y="430" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_17vfgya_di" bpmnElement="Flow_17vfgya">
-        <di:waypoint x="898" y="208" />
-        <di:waypoint x="963" y="208" />
+        <di:waypoint x="680" y="208" />
+        <di:waypoint x="743" y="208" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0kyqh66_di" bpmnElement="Flow_0kyqh66">
-        <di:waypoint x="1013" y="208" />
-        <di:waypoint x="1078" y="208" />
+        <di:waypoint x="793" y="208" />
+        <di:waypoint x="858" y="208" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_11sgpk7_di" bpmnElement="Flow_11sgpk7">
-        <di:waypoint x="988" y="233" />
-        <di:waypoint x="988" y="280" />
+        <di:waypoint x="768" y="233" />
+        <di:waypoint x="768" y="280" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_03kvkn1_di" bpmnElement="Flow_03kvkn1">
-        <di:waypoint x="1178" y="208" />
-        <di:waypoint x="1243" y="208" />
+        <di:waypoint x="958" y="208" />
+        <di:waypoint x="1023" y="208" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1sc29ei_di" bpmnElement="Flow_1sc29ei">
-        <di:waypoint x="1268" y="233" />
-        <di:waypoint x="1268" y="295" />
+        <di:waypoint x="1048" y="233" />
+        <di:waypoint x="1048" y="295" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1w2dprb_di" bpmnElement="Flow_1w2dprb">
-        <di:waypoint x="1293" y="208" />
-        <di:waypoint x="1380" y="208" />
+        <di:waypoint x="1073" y="208" />
+        <di:waypoint x="1160" y="208" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0dd4sje_di" bpmnElement="Flow_0dd4sje">
-        <di:waypoint x="1293" y="320" />
-        <di:waypoint x="1523" y="320" />
+        <di:waypoint x="1073" y="320" />
+        <di:waypoint x="1303" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_054pwqx_di" bpmnElement="Flow_054pwqx">
-        <di:waypoint x="1268" y="345" />
-        <di:waypoint x="1268" y="430" />
-        <di:waypoint x="1348" y="430" />
+        <di:waypoint x="1048" y="345" />
+        <di:waypoint x="1048" y="430" />
+        <di:waypoint x="1128" y="430" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_16q851o_di" bpmnElement="Flow_16q851o">
-        <di:waypoint x="1448" y="430" />
-        <di:waypoint x="1548" y="430" />
-        <di:waypoint x="1548" y="345" />
+        <di:waypoint x="1228" y="430" />
+        <di:waypoint x="1328" y="430" />
+        <di:waypoint x="1328" y="345" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0cvrkae_di" bpmnElement="Flow_0cvrkae">
-        <di:waypoint x="1548" y="295" />
-        <di:waypoint x="1548" y="233" />
+        <di:waypoint x="1328" y="295" />
+        <di:waypoint x="1328" y="233" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1bw2jqu_di" bpmnElement="Flow_1bw2jqu">
-        <di:waypoint x="1416" y="208" />
-        <di:waypoint x="1523" y="208" />
+        <di:waypoint x="1196" y="208" />
+        <di:waypoint x="1303" y="208" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0fh16k7_di" bpmnElement="Flow_0fh16k7">
-        <di:waypoint x="1573" y="208" />
-        <di:waypoint x="1640" y="208" />
+        <di:waypoint x="1353" y="208" />
+        <di:waypoint x="1420" y="208" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0kamyj4_di" bpmnElement="Flow_0kamyj4">
-        <di:waypoint x="898" y="430" />
-        <di:waypoint x="970" y="430" />
+        <di:waypoint x="680" y="430" />
+        <di:waypoint x="750" y="430" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0035xqe_di" bpmnElement="Flow_0035xqe">
-        <di:waypoint x="988" y="360" />
-        <di:waypoint x="988" y="412" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1gey4f8_di" bpmnElement="Flow_1gey4f8">
-        <di:waypoint x="588" y="208" />
-        <di:waypoint x="683" y="208" />
+        <di:waypoint x="768" y="360" />
+        <di:waypoint x="768" y="412" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

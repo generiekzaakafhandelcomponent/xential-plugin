@@ -5,7 +5,8 @@
   "required": [
     "informatieObjectTypeUrl",
     "xentialGebruikersId",
-    "caseType"
+    "caseType",
+    "textContent"
   ],
   "properties": {
     "xentialGebruikersId": {
@@ -18,10 +19,19 @@
       "type": "string",
       "format": "uri"
     },
+    "sjabloonId": {
+      "type": "string"
+    },
+    "textContent": {
+      "type": "string"
+    },
     "sjabloonGroepId": {
       "type": "string"
     },
     "xentialResourceDocumentId": {
+      "type": "string"
+    },
+    "documentTitle": {
       "type": "string"
     },
     "fileFormat": {
