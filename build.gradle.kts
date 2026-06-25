@@ -74,6 +74,7 @@ subprojects {
 
         dependencies {
             implementation(platform("com.ritense.valtimo:valtimo-dependency-versions:$valtimoVersion"))
+            implementation("com.ritense.valtimo:smartdocuments:$valtimoVersion")
             implementation("cn.lalaki.central:central:$lalakiCentralVersion")
         }
 
