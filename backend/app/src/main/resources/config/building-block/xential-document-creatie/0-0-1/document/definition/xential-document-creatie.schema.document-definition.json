@@ -3,9 +3,9 @@
   "type": "object",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "required": [
-    "informatieObjectTypeUrl",
     "xentialGebruikersId",
     "caseType",
+    "messageName",
     "textContent"
   ],
   "properties": {
@@ -18,10 +18,6 @@
     "messageName" : {
       "type": "string"
     },
-    "informatieObjectTypeUrl": {
-      "type": "string",
-      "format": "uri"
-    },
     "sjabloonId": {
       "type": "string"
     },
@@ -31,15 +27,12 @@
     "sjabloonGroepId": {
       "type": "string"
     },
-    "xentialResourceDocumentId": {
-      "type": "string"
-    },
-    "documentTitle": {
+    "xentialResourceId": {
       "type": "string"
     },
     "fileFormat": {
       "enum": [
-        "DOCX",
+        "WORD",
         "PDF"
       ],
       "type": "string"

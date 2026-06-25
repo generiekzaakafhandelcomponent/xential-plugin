@@ -56,13 +56,15 @@
         <bpmn:extensionElements>
           <camunda:in source="xentialGebruikersId" target="xentialGebruikersId" />
           <camunda:in businessKey="#{buildingBlockDocumentId}" />
-          <camunda:in source="informatieObjectTypeUrl" target="informatieObjectTypeUrl" />
           <camunda:in source="caseType" target="caseType" />
           <camunda:in source="textContent" target="textContent" />
           <camunda:inputOutput>
             <camunda:inputParameter name="messageName">XENTIAL_DOC_RECIEVED</camunda:inputParameter>
+            <camunda:inputParameter name="fileFormat">PDF</camunda:inputParameter>
+            <camunda:inputParameter name="caseType">${documentDelegateService.getDocument(execution).definitionId().name()}</camunda:inputParameter>
           </camunda:inputOutput>
           <camunda:in source="messageName" target="messageName" />
+          <camunda:in source="fileFormat" target="fileFormat" />
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0tube17</bpmn:incoming>
         <bpmn:outgoing>Flow_0cpj0m7</bpmn:outgoing>
@@ -71,22 +73,12 @@
         <bpmn:outgoing>Flow_0a2fxb0</bpmn:outgoing>
         <bpmn:messageEventDefinition id="MessageEventDefinition_1nsb4f7" messageRef="Message_083fiob" />
       </bpmn:startEvent>
-      <bpmn:serviceTask id="Activity_09b5h53" name="Informatieobjecttype Url" implementation="##WebService" camunda:expression="${execution.setVariable(&#39;informatieObjectTypeUrl&#39;, &#39;http://localhost:8001/catalogi/api/v1/informatieobjecttypen/efc332f2-be3b-4bad-9e3c-49a6219c92ad&#39;)}">
-        <bpmn:incoming>Flow_0a2fxb0</bpmn:incoming>
-        <bpmn:outgoing>Flow_1pcyqgv</bpmn:outgoing>
-      </bpmn:serviceTask>
       <bpmn:sequenceFlow id="Flow_0cpj0m7" sourceRef="CallUitgaandeBriefMetBouwBlokActivity" targetRef="Event_0f3joiv" />
-      <bpmn:sequenceFlow id="Flow_1pcyqgv" sourceRef="Activity_09b5h53" targetRef="SetCaseTypeTask" />
-      <bpmn:sequenceFlow id="Flow_0a2fxb0" sourceRef="Event_0cicrpi" targetRef="Activity_09b5h53" />
+      <bpmn:sequenceFlow id="Flow_0a2fxb0" sourceRef="Event_0cicrpi" targetRef="GenerateTextFromTemplateTask" />
       <bpmn:sequenceFlow id="Flow_0tube17" sourceRef="GenerateTextFromTemplateTask" targetRef="CallUitgaandeBriefMetBouwBlokActivity" />
       <bpmn:serviceTask id="GenerateTextFromTemplateTask" name="Genereer template" camunda:expression="${true}">
-        <bpmn:incoming>Flow_1gjb2h2</bpmn:incoming>
+        <bpmn:incoming>Flow_0a2fxb0</bpmn:incoming>
         <bpmn:outgoing>Flow_0tube17</bpmn:outgoing>
-      </bpmn:serviceTask>
-      <bpmn:sequenceFlow id="Flow_1gjb2h2" sourceRef="SetCaseTypeTask" targetRef="GenerateTextFromTemplateTask" />
-      <bpmn:serviceTask id="SetCaseTypeTask" name="set case type" camunda:expression="${execution.setVariable(&#39;caseType&#39;,documentDelegateService.getDocument(execution).definitionId().name())}">
-        <bpmn:incoming>Flow_1pcyqgv</bpmn:incoming>
-        <bpmn:outgoing>Flow_1gjb2h2</bpmn:outgoing>
       </bpmn:serviceTask>
     </bpmn:subProcess>
     <bpmn:subProcess id="Activity_1ou4nzq" name="Genereer uitgaande brief document" triggeredByEvent="true">
@@ -163,19 +155,6 @@
         <dc:Bounds x="160" y="100" width="1140" height="1420" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="XentialStarten">
-        <dc:Bounds x="248" y="198" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="240" y="241" width="54" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1i4q8j9" bpmnElement="XentialFlowEindigen">
-        <dc:Bounds x="360" y="176" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0e6lsg4_di" bpmnElement="Event_1hl2nsy">
-        <dc:Bounds x="542" y="198" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0l1utm7" bpmnElement="Activity_0ft4t00" isExpanded="true">
         <dc:Bounds x="230" y="780" width="650" height="180" />
         <bpmndi:BPMNLabel />
@@ -217,8 +196,21 @@
         <di:waypoint x="450" y="880" />
         <di:waypoint x="490" y="880" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0e6lsg4_di" bpmnElement="Event_1hl2nsy">
+        <dc:Bounds x="542" y="198" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1i4q8j9" bpmnElement="XentialFlowEindigen">
+        <dc:Bounds x="360" y="176" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="XentialStarten">
+        <dc:Bounds x="248" y="198" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="240" y="241" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0nfnekg" bpmnElement="Activity_0euhm2a" isExpanded="true">
-        <dc:Bounds x="220" y="320" width="820" height="180" />
+        <dc:Bounds x="220" y="320" width="640" height="180" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_14d713t" bpmnElement="Event_0cicrpi">
@@ -227,43 +219,27 @@
           <dc:Bounds x="241" y="445" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1m6t084" bpmnElement="Activity_09b5h53">
-        <dc:Bounds x="330" y="380" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0mhe6ch_di" bpmnElement="GenerateTextFromTemplateTask">
-        <dc:Bounds x="630" y="380" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_02xkv8i_di" bpmnElement="SetCaseTypeTask">
-        <dc:Bounds x="480" y="380" width="100" height="80" />
+        <dc:Bounds x="470" y="380" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1ooazn7" bpmnElement="CallUitgaandeBriefMetBouwBlokActivity">
-        <dc:Bounds x="790" y="380" width="100" height="80" />
+        <dc:Bounds x="630" y="380" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1grsv3n" bpmnElement="Event_0f3joiv">
-        <dc:Bounds x="932" y="402" width="36" height="36" />
+        <dc:Bounds x="762" y="402" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_1ey2ut0" bpmnElement="Flow_0cpj0m7">
+        <di:waypoint x="730" y="420" />
+        <di:waypoint x="762" y="420" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_113tw9v" bpmnElement="Flow_0a2fxb0">
         <di:waypoint x="296" y="420" />
-        <di:waypoint x="330" y="420" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_0wokj24" bpmnElement="Flow_1pcyqgv">
-        <di:waypoint x="430" y="420" />
-        <di:waypoint x="480" y="420" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_1ey2ut0" bpmnElement="Flow_0cpj0m7">
-        <di:waypoint x="890" y="420" />
-        <di:waypoint x="932" y="420" />
+        <di:waypoint x="470" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0tube17_di" bpmnElement="Flow_0tube17">
-        <di:waypoint x="730" y="420" />
-        <di:waypoint x="790" y="420" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1gjb2h2_di" bpmnElement="Flow_1gjb2h2">
-        <di:waypoint x="580" y="420" />
+        <di:waypoint x="570" y="420" />
         <di:waypoint x="630" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Activity_0b99i5k_di" bpmnElement="Activity_1ou4nzq" isExpanded="true">
@@ -295,10 +271,6 @@
         <di:waypoint x="735" y="1080" />
         <di:waypoint x="797" y="1080" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0k7r9wz_di" bpmnElement="Flow_0k7r9wz">
-        <di:waypoint x="595" y="1080" />
-        <di:waypoint x="635" y="1080" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1kn4dmc_di" bpmnElement="Flow_1kn4dmc">
         <di:waypoint x="311" y="1080" />
         <di:waypoint x="355" y="1080" />
@@ -306,6 +278,10 @@
       <bpmndi:BPMNEdge id="Flow_05i2wrx_di" bpmnElement="Flow_05i2wrx">
         <di:waypoint x="455" y="1080" />
         <di:waypoint x="495" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k7r9wz_di" bpmnElement="Flow_0k7r9wz">
+        <di:waypoint x="595" y="1080" />
+        <di:waypoint x="635" y="1080" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0i80v4p" bpmnElement="Activity_0qii9iv" isExpanded="true">
         <dc:Bounds x="220" y="540" width="650" height="180" />
@@ -336,25 +312,25 @@
         <di:waypoint x="720" y="640" />
         <di:waypoint x="782" y="640" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1nc7emz_di" bpmnElement="Flow_1nc7emz">
-        <di:waypoint x="580" y="640" />
-        <di:waypoint x="620" y="640" />
+      <bpmndi:BPMNEdge id="BPMNEdge_0qrhiq3" bpmnElement="Flow_0eu5thi">
+        <di:waypoint x="440" y="640" />
+        <di:waypoint x="480" y="640" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1hq4k17" bpmnElement="Flow_1fzaide">
         <di:waypoint x="296" y="640" />
         <di:waypoint x="340" y="640" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_0qrhiq3" bpmnElement="Flow_0eu5thi">
-        <di:waypoint x="440" y="640" />
-        <di:waypoint x="480" y="640" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_02rzsdc_di" bpmnElement="Flow_02rzsdc">
-        <di:waypoint x="284" y="216" />
-        <di:waypoint x="360" y="216" />
+      <bpmndi:BPMNEdge id="Flow_1nc7emz_di" bpmnElement="Flow_1nc7emz">
+        <di:waypoint x="580" y="640" />
+        <di:waypoint x="620" y="640" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0lmrwga_di" bpmnElement="Flow_0lmrwga">
         <di:waypoint x="460" y="216" />
         <di:waypoint x="542" y="216" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02rzsdc_di" bpmnElement="Flow_02rzsdc">
+        <di:waypoint x="284" y="216" />
+        <di:waypoint x="360" y="216" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

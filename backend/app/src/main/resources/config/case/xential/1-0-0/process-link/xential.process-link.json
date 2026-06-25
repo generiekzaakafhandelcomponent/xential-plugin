@@ -32,16 +32,16 @@
     },
     "inputMappings": [
       {
+        "source": "pv:fileFormat",
+        "target": "fileFormat"
+      },
+      {
         "source": "pv:textContent",
         "target": "textContent"
       },
       {
         "source": "pv:messageName",
         "target": "messageName"
-      },
-      {
-        "source": "pv:informatieObjectTypeUrl",
-        "target": "informatieObjectTypeUrl"
       },
       {
         "source": "pv:xentialGebruikersId",
@@ -54,8 +54,8 @@
     ],
     "outputMappings": [
       {
-        "source": "resourceId",
-        "target": "pv:resourceId",
+        "source": "doc:xentialResourceId",
+        "target": "doc:xentialResourceId",
         "syncTiming": "END"
       }
     ],

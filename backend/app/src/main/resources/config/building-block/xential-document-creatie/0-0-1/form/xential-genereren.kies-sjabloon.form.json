@@ -1,31 +1,6 @@
 {
   "components": [
     {
-      "label": "HTML",
-      "refreshOnChange": false,
-      "key": "html",
-      "type": "htmlelement",
-      "input": false,
-      "content": "Fields below are related to document upload and linking to zaak"
-    },
-    {
-        "key": "doc:documentTitle",
-        "type": "textfield",
-        "label": "Document titel",
-        "validate": {
-            "required": true
-        },
-        "input": true
-    },
-    {
-      "label": "HTML",
-      "refreshOnChange": false,
-      "key": "html",
-      "type": "htmlelement",
-      "input": false,
-      "content": "Fields below are related to Xential document generation"
-    },
-    {
       "key": "xentialGebruikersId",
       "type": "hidden",
       "input": true,
@@ -73,28 +48,6 @@
       },
       "selectValues": "sjablonen",
       "valueProperty": "id"
-    },
-    {
-      "key": "pv:fileFormat",
-      "type": "select",
-      "input": true,
-      "label": "File format",
-      "data": {
-        "values": [
-          {
-            "label": "PDF",
-            "value": "PDF"
-          },
-          {
-            "label": "WORD",
-            "value": "WORD"
-          }
-        ]
-      },
-      "template": "<span>{{ item.label }}</span>",
-      "validate": {
-        "required": true
-      }
     },
     {
       "key": "submit",

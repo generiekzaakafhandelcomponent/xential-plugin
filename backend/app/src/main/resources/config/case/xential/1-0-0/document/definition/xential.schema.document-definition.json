@@ -15,6 +15,9 @@
     },
     "kvkNummer" : {
       "type" : "string"
+    },
+    "xentialResourceId": {
+      "type": "string"
     }
   },
   "definitions" : {},

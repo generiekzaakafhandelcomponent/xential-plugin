@@ -1,13 +1,14 @@
 {
   "components" : [
     {
-      "id" : "eke0lxo",
-      "key" : "pv:generateDocumentEventMessage",
-      "data" : {
-        "url" : "",
-        "json" : "",
-        "custom" : "",
-        "values" : [
+      "id": "eke0lxo",
+      "key": "pv:generateDocumentEventMessage",
+      "type": "select",
+      "input": true,
+      "label": "Document soort",
+      "dataSrc": "values",
+      "data": {
+        "values": [
           {
             "label": "Uitgaande brief",
             "value": "GENEREER_UITGAANDE_BRIEF_MESSAGE"
@@ -24,102 +25,27 @@
             "label": "Besluit met bouwblok",
             "value": "GENEREER_BESLUIT_BB_MESSAGE"
           }
-        ],
-        "resource" : ""
+        ]
       },
-      "type" : "select",
-      "input" : true,
-      "label" : "Document soort",
-      "limit" : 100,
-      "addons" : [],
-      "filter" : "",
-      "hidden" : false,
-      "idPath" : "id",
-      "prefix" : "",
-      "suffix" : "",
-      "unique" : false,
-      "widget" : "choicesjs",
-      "dataSrc" : "values",
-      "dbIndex" : false,
-      "overlay" : {
-        "top" : "",
-        "left" : "",
-        "style" : "",
-        "width" : "",
-        "height" : ""
+      "defaultValue": "GENEREER_BESLUIT_BB_MESSAGE",
+      "widget": "choicesjs",
+      "tableView": true,
+      "validate": {
+        "required": true
       },
-      "tooltip" : "",
-      "disabled" : false,
-      "lazyLoad" : true,
-      "multiple" : false,
-      "redrawOn" : "",
-      "tabindex" : "",
-      "template" : "<span>{{ item.label }}</span>",
-      "validate" : {
-        "custom" : "",
-        "unique" : false,
-        "multiple" : false,
-        "required" : true,
-        "customPrivate" : false,
-        "onlyAvailableItems" : false,
-        "strictDateValidation" : false
+      "attributes": {
+        "data-testid": "xential-document-genereren-start-pv:generateDocumentEventMessage"
       },
-      "autofocus" : false,
-      "encrypted" : false,
-      "hideLabel" : false,
-      "indexeddb" : {
-        "filter" : {}
+      "persistent": true,
+      "validateOn": "change",
+      "clearOnHide": true,
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
       },
-      "minSearch" : 0,
-      "modalEdit" : false,
-      "protected" : false,
-      "refreshOn" : "",
-      "tableView" : true,
-      "attributes" : {
-        "data-testid" : "xential-document-genereren-start-pv:generateDocumentEventMessage"
-      },
-      "errorLabel" : "",
-      "persistent" : true,
-      "properties" : {},
-      "validateOn" : "change",
-      "clearOnHide" : true,
-      "conditional" : {
-        "eq" : "",
-        "show" : null,
-        "when" : null
-      },
-      "customClass" : "",
-      "description" : "",
-      "fuseOptions" : {
-        "include" : "score",
-        "threshold" : 0.3
-      },
-      "ignoreCache" : false,
-      "placeholder" : "",
-      "searchField" : "",
-      "authenticate" : false,
-      "defaultValue" : null,
-      "selectFields" : "",
-      "customOptions" : {},
-      "dataGridLabel" : false,
-      "labelPosition" : "top",
-      "readOnlyValue" : false,
-      "searchEnabled" : false,
-      "showCharCount" : false,
-      "showWordCount" : false,
-      "uniqueOptions" : false,
-      "valueProperty" : "",
-      "calculateValue" : "",
-      "clearOnRefresh" : false,
-      "searchDebounce" : 0.3,
-      "useExactSearch" : false,
-      "calculateServer" : false,
-      "selectThreshold" : 0.3,
-      "allowMultipleMasks" : false,
-      "customDefaultValue" : "",
-      "allowCalculateOverride" : false
-    },
-    {
+      "labelPosition": "top"
+    },    {
       "id" : "ehurbom",
       "key" : "submit",
       "size" : "md",
