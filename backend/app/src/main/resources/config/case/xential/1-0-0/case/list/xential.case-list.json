@@ -23,27 +23,5 @@
     "defaultSort" : "DESC",
     "order" : 1,
     "exportable" : false
-  },
-  {
-    "key" : "assigneeFullName",
-    "path" : "case:assigneeFullName",
-    "displayType" : {
-      "type" : "string",
-      "displayTypeParameters" : {}
-    },
-    "sortable" : true,
-    "order" : 2,
-    "exportable" : false
-  },
-  {
-    "key" : "zaakstatus",
-    "path" : "doc:openzaak.statusOmschrijving",
-    "displayType" : {
-      "type" : "string",
-      "displayTypeParameters" : {}
-    },
-    "sortable" : true,
-    "order" : 3,
-    "exportable" : false
   }
 ]

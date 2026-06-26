@@ -50,7 +50,7 @@
     </bpmn:startEvent>
     <bpmn:subProcess id="Activity_0euhm2a" name="Genereer besluit document met bouwblok" triggeredByEvent="true">
       <bpmn:endEvent id="Event_0f3joiv">
-        <bpmn:incoming>Flow_0cpj0m7</bpmn:incoming>
+        <bpmn:incoming>Flow_0y5x1ks</bpmn:incoming>
       </bpmn:endEvent>
       <bpmn:callActivity id="CallUitgaandeBriefMetBouwBlokActivity" name="Document genereren met bb" calledElement="xential-document-creatie" camunda:calledElementBinding="versionTag" camunda:calledElementVersionTag="BB:xential-document-creatie:0.0.1">
         <bpmn:extensionElements>
@@ -68,13 +68,31 @@
         <bpmn:outgoing>Flow_0a2fxb0</bpmn:outgoing>
         <bpmn:messageEventDefinition id="MessageEventDefinition_1nsb4f7" messageRef="Message_083fiob" />
       </bpmn:startEvent>
-      <bpmn:sequenceFlow id="Flow_0cpj0m7" sourceRef="CallUitgaandeBriefMetBouwBlokActivity" targetRef="Event_0f3joiv" />
+      <bpmn:sequenceFlow id="Flow_0cpj0m7" sourceRef="CallUitgaandeBriefMetBouwBlokActivity" targetRef="CallUploadAndLinkActivity" />
       <bpmn:sequenceFlow id="Flow_0a2fxb0" sourceRef="Event_0cicrpi" targetRef="GenerateTextFromTemplateTask" />
       <bpmn:sequenceFlow id="Flow_0tube17" sourceRef="GenerateTextFromTemplateTask" targetRef="CallUitgaandeBriefMetBouwBlokActivity" />
       <bpmn:serviceTask id="GenerateTextFromTemplateTask" name="Genereer template" camunda:expression="${true}">
         <bpmn:incoming>Flow_0a2fxb0</bpmn:incoming>
         <bpmn:outgoing>Flow_0tube17</bpmn:outgoing>
       </bpmn:serviceTask>
+      <bpmn:callActivity id="CallUploadAndLinkActivity" name="Document uploaden met bb" calledElement="upload-and-link-document-process" camunda:calledElementBinding="versionTag" camunda:calledElementVersionTag="BB:upload-and-link-document:1.0.0">
+        <bpmn:extensionElements>
+          <camunda:in businessKey="#{buildingBlockDocumentId}" />
+          <camunda:inputOutput>
+            <camunda:inputParameter name="language">NLD</camunda:inputParameter>
+            <camunda:inputParameter name="title">de test titel</camunda:inputParameter>
+            <camunda:inputParameter name="status">in_bewerking</camunda:inputParameter>
+            <camunda:inputParameter name="description">de test beschrijving</camunda:inputParameter>
+            <camunda:inputParameter name="confidentialityLevel">vertrouwelijk</camunda:inputParameter>
+            <camunda:inputParameter name="informationObjectTypeUrl">http://localhost:8001/catalogi/api/v1/informatieobjecttypen/efc332f2-be3b-4bad-9e3c-49a6219c92ad</camunda:inputParameter>
+            <camunda:inputParameter name="fileName">testje.pdf</camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:in source="localDocumentLocation" target="localDocumentLocation" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0cpj0m7</bpmn:incoming>
+        <bpmn:outgoing>Flow_0y5x1ks</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:sequenceFlow id="Flow_0y5x1ks" sourceRef="CallUploadAndLinkActivity" targetRef="Event_0f3joiv" />
     </bpmn:subProcess>
     <bpmn:subProcess id="Activity_1ou4nzq" name="Genereer uitgaande brief document" triggeredByEvent="true">
       <bpmn:endEvent id="Event_10pbmt9">
@@ -225,9 +243,13 @@
       <bpmndi:BPMNShape id="BPMNShape_1grsv3n" bpmnElement="Event_0f3joiv">
         <dc:Bounds x="782" y="402" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1fs24wt" bpmnElement="CallUploadAndLinkActivity">
+        <dc:Bounds x="620" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_1ey2ut0" bpmnElement="Flow_0cpj0m7">
         <di:waypoint x="580" y="420" />
-        <di:waypoint x="782" y="420" />
+        <di:waypoint x="620" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_113tw9v" bpmnElement="Flow_0a2fxb0">
         <di:waypoint x="296" y="420" />
@@ -236,6 +258,10 @@
       <bpmndi:BPMNEdge id="Flow_0tube17_di" bpmnElement="Flow_0tube17">
         <di:waypoint x="440" y="420" />
         <di:waypoint x="480" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0y5x1ks_di" bpmnElement="Flow_0y5x1ks">
+        <di:waypoint x="720" y="420" />
+        <di:waypoint x="782" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Activity_0b99i5k_di" bpmnElement="Activity_1ou4nzq" isExpanded="true">
         <dc:Bounds x="235" y="980" width="650" height="180" />
