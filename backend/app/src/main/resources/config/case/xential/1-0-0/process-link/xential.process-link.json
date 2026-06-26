@@ -54,9 +54,8 @@
     ],
     "outputMappings": [
       {
-        "source": "doc:xentialResourceId",
-        "target": "doc:xentialResourceId",
-        "syncTiming": "END"
+        "source": "xentialResourceId",
+        "target": "pv:xentialResourceId"
       }
     ],
     "processLinkType": "building-block"

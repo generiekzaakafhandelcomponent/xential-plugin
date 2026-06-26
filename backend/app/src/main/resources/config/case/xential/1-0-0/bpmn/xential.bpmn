@@ -54,17 +54,12 @@
       </bpmn:endEvent>
       <bpmn:callActivity id="CallUitgaandeBriefMetBouwBlokActivity" name="Document genereren met bb" calledElement="xential-document-creatie" camunda:calledElementBinding="versionTag" camunda:calledElementVersionTag="BB:xential-document-creatie:0.0.1">
         <bpmn:extensionElements>
-          <camunda:in source="xentialGebruikersId" target="xentialGebruikersId" />
           <camunda:in businessKey="#{buildingBlockDocumentId}" />
-          <camunda:in source="caseType" target="caseType" />
-          <camunda:in source="textContent" target="textContent" />
           <camunda:inputOutput>
             <camunda:inputParameter name="messageName">XENTIAL_DOC_RECIEVED</camunda:inputParameter>
             <camunda:inputParameter name="fileFormat">PDF</camunda:inputParameter>
             <camunda:inputParameter name="caseType">${documentDelegateService.getDocument(execution).definitionId().name()}</camunda:inputParameter>
           </camunda:inputOutput>
-          <camunda:in source="messageName" target="messageName" />
-          <camunda:in source="fileFormat" target="fileFormat" />
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0tube17</bpmn:incoming>
         <bpmn:outgoing>Flow_0cpj0m7</bpmn:outgoing>
@@ -210,7 +205,7 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0nfnekg" bpmnElement="Activity_0euhm2a" isExpanded="true">
-        <dc:Bounds x="220" y="320" width="640" height="180" />
+        <dc:Bounds x="220" y="320" width="650" height="180" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_14d713t" bpmnElement="Event_0cicrpi">
@@ -220,27 +215,27 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0mhe6ch_di" bpmnElement="GenerateTextFromTemplateTask">
-        <dc:Bounds x="470" y="380" width="100" height="80" />
+        <dc:Bounds x="340" y="380" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1ooazn7" bpmnElement="CallUitgaandeBriefMetBouwBlokActivity">
-        <dc:Bounds x="630" y="380" width="100" height="80" />
+        <dc:Bounds x="480" y="380" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1grsv3n" bpmnElement="Event_0f3joiv">
-        <dc:Bounds x="762" y="402" width="36" height="36" />
+        <dc:Bounds x="782" y="402" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_1ey2ut0" bpmnElement="Flow_0cpj0m7">
-        <di:waypoint x="730" y="420" />
-        <di:waypoint x="762" y="420" />
+        <di:waypoint x="580" y="420" />
+        <di:waypoint x="782" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_113tw9v" bpmnElement="Flow_0a2fxb0">
         <di:waypoint x="296" y="420" />
-        <di:waypoint x="470" y="420" />
+        <di:waypoint x="340" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0tube17_di" bpmnElement="Flow_0tube17">
-        <di:waypoint x="570" y="420" />
-        <di:waypoint x="630" y="420" />
+        <di:waypoint x="440" y="420" />
+        <di:waypoint x="480" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Activity_0b99i5k_di" bpmnElement="Activity_1ou4nzq" isExpanded="true">
         <dc:Bounds x="235" y="980" width="650" height="180" />

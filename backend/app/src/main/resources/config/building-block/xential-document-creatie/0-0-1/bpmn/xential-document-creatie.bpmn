@@ -91,7 +91,7 @@
       <messageEventDefinition id="MessageEventDefinition_0vljb6o" messageRef="Message_3dr2tjf" />
     </boundaryEvent>
     <sequenceFlow id="sequenceFlow_bca37c66-be4c-46fd-bacd-e7496f7dafdc" sourceRef="StartEvent" targetRef="XentialSetGroepIdTask" />
-    <sequenceFlow id="Flow_0fh16k7" sourceRef="Gateway_0qev1qk" targetRef="Activity_00hm0by" />
+    <sequenceFlow id="Flow_0fh16k7" sourceRef="Gateway_0qev1qk" targetRef="SaveResourceIdTask" />
     <sequenceFlow id="Flow_1hi8qkw" sourceRef="XentialSetGroepIdTask" targetRef="Gateway_0sw7p7i" />
     <sequenceFlow id="Flow_0qw8q8c" sourceRef="Gateway_0sw7p7i" targetRef="SelecteerSjabloonTask" />
     <sequenceFlow id="Flow_18408fd" sourceRef="Gateway_0sw7p7i" targetRef="GebruikerGeenToegangServiceTask">
@@ -114,21 +114,21 @@
     <sequenceFlow id="Flow_1bw2jqu" sourceRef="Event_111hkaf" targetRef="Gateway_0qev1qk" />
     <sequenceFlow id="Flow_0kamyj4" sourceRef="GebruikerGeenToegangServiceTask" targetRef="ErrorFoundEndEvent" />
     <sequenceFlow id="Flow_0035xqe" sourceRef="ToonXentialErrorStatusUserTask" targetRef="ErrorFoundEndEvent" />
-    <sequenceFlow id="Flow_0tkpm6a" sourceRef="Activity_00hm0by" targetRef="Event_1vf6rij" />
-    <endEvent id="Event_1vf6rij">
-      <incoming>Flow_0tkpm6a</incoming>
-    </endEvent>
-    <serviceTask id="Activity_00hm0by" name="saveResource" camunda:expression="${execution.hasVariable(&#39;xentialResourceId&#39;) &#38;&#38; valueResolverDelegateService.handleValue(execution, &#34;doc:xentialResourceId&#34;,xentialResourceId)}">
+    <sequenceFlow id="Flow_0tkpm6a" sourceRef="SaveResourceIdTask" targetRef="Event_1vf6rij" />
+    <serviceTask id="SaveResourceIdTask" name="Save Resource ID" camunda:expression="${execution.hasVariable(&#39;xentialResourceId&#39;) &#38;&#38; valueResolverDelegateService.handleValue(execution, &#34;doc:xentialResourceId&#34;,xentialResourceId)}">
       <incoming>Flow_0fh16k7</incoming>
       <outgoing>Flow_0tkpm6a</outgoing>
     </serviceTask>
+    <endEvent id="Event_1vf6rij">
+      <incoming>Flow_0tkpm6a</incoming>
+    </endEvent>
   </process>
   <message id="Message_3dr2tjf" name="XENTIAL_DOC_RECIEVED" />
   <message id="Message_1arcs68" name="XENTIAL_DOC_CANCELLED" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_01b1f79f-d060-4364-bcc5-75a21f8e17d8">
     <bpmndi:BPMNPlane id="BPMNPlane_4851f400-75c2-4941-9b28-fd31dd057433" bpmnElement="Collaboration_030j6vn">
       <bpmndi:BPMNShape id="Participant_0dbwaca_di" bpmnElement="XentialDocumentCreatieParticipant" isHorizontal="true">
-        <dc:Bounds x="170" y="83" width="1870" height="547" />
+        <dc:Bounds x="170" y="83" width="1560" height="547" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_adbc7809-5017-43a8-91fb-cba2151ec66c" bpmnElement="StartEvent">
@@ -137,6 +137,28 @@
           <dc:Bounds x="233" y="226" width="52" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1vf6rij_di" bpmnElement="Event_1vf6rij">
+        <dc:Bounds x="1602" y="190" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_098in2g_di" bpmnElement="Activity_10pmdps" isExpanded="true">
+        <dc:Bounds x="220" y="482" width="168" height="128" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1esik6r_di" bpmnElement="DocumentCancelledMessageStartEvent">
+        <dc:Bounds x="260" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="254" y="545" width="51" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1nbvee4_di" bpmnElement="DocumentCancelledMessageTerminateEndEvent">
+        <dc:Bounds x="332" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="321" y="545" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0c2ymjl_di" bpmnElement="Flow_0c2ymjl">
+        <di:waypoint x="296" y="520" />
+        <di:waypoint x="332" y="520" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Activity_0wgtggx_di" bpmnElement="XentialSetGroepIdTask">
         <dc:Bounds x="338" y="168" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -183,32 +205,10 @@
         <dc:Bounds x="590" y="390" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1vf6rij_di" bpmnElement="Event_1vf6rij">
-        <dc:Bounds x="1762" y="190" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_186wqwj_di" bpmnElement="Activity_00hm0by">
+      <bpmndi:BPMNShape id="Activity_186wqwj_di" bpmnElement="SaveResourceIdTask">
         <dc:Bounds x="1430" y="168" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_098in2g_di" bpmnElement="Activity_10pmdps" isExpanded="true">
-        <dc:Bounds x="220" y="482" width="168" height="128" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1esik6r_di" bpmnElement="DocumentCancelledMessageStartEvent">
-        <dc:Bounds x="260" y="502" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="254" y="545" width="51" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1nbvee4_di" bpmnElement="DocumentCancelledMessageTerminateEndEvent">
-        <dc:Bounds x="332" y="502" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="321" y="545" width="60" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_0c2ymjl_di" bpmnElement="Flow_0c2ymjl">
-        <di:waypoint x="296" y="520" />
-        <di:waypoint x="332" y="520" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1896n1b_di" bpmnElement="Event_1en2t52">
         <dc:Bounds x="1220" y="452" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -289,7 +289,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0tkpm6a_di" bpmnElement="Flow_0tkpm6a">
         <di:waypoint x="1530" y="208" />
-        <di:waypoint x="1762" y="208" />
+        <di:waypoint x="1602" y="208" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
