@@ -1,13 +1,24 @@
 [
   {
-    "key" : "zaaknummer",
-    "path" : "doc:openzaak.identificatie",
+    "key" : "voornaam",
+    "path" : "doc:voornaam",
     "displayType" : {
       "type" : "string",
       "displayTypeParameters" : {}
     },
     "sortable" : true,
     "order" : 0,
+    "exportable" : false
+  },
+  {
+    "key" : "achternaam",
+    "path" : "doc:achternaam",
+    "displayType" : {
+      "type" : "string",
+      "displayTypeParameters" : {}
+    },
+    "sortable" : true,
+    "order" : 1,
     "exportable" : false
   },
   {
@@ -21,7 +32,7 @@
     },
     "sortable" : true,
     "defaultSort" : "DESC",
-    "order" : 1,
+    "order" : 2,
     "exportable" : false
   }
 ]
