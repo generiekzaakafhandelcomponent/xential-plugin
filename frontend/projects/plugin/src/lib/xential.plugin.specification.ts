@@ -21,8 +21,8 @@ import {
     GenerateDocumentConfigurationComponent
 } from "./components/generate-document-configuration/generate-document-configuration.component";
 import {
-    GenerateDocumentBBConfigurationComponent
-} from "./components/generate-document-bb-configuration/generate-document-bb-configuration.component";
+    GenerateDocumentWithBuildingBlockConfigurationComponent
+} from "./components/generate-document-with-buildingblock-configuration/generate-document-with-building-block-configuration.component";
 import {
     PrepareContentConfigurationComponent
 } from "./components/prepare-content-configuration/prepare-content-configuration.component";
@@ -39,7 +39,7 @@ const XentialPluginSpecification: PluginSpecification = {
     pluginLogoBase64: XENTIAL_PLUGIN_LOGO_BASE64,
     functionConfigurationComponents: {
         'generate-document': GenerateDocumentConfigurationComponent,
-        'generate-document-bb': GenerateDocumentBBConfigurationComponent,
+        'generate-document-with-building-block': GenerateDocumentWithBuildingBlockConfigurationComponent,
         'prepare-content': PrepareContentConfigurationComponent,
         'validate-xential-toegang': ValidateAccessConfigurationComponent,
         'set-sjabloon-group-id': SetSjabloonGroupIdConfigurationComponent
@@ -57,7 +57,7 @@ const XentialPluginSpecification: PluginSpecification = {
             clientId: 'Taak applicatie naam',
             clientPassword: 'Taak applicatie wachtwoord',
             'generate-document': 'Genereer document',
-            'generate-document-bb': 'Genereer document met bouwblok',
+            'generate-document-with-building-block': 'Genereer document met bouwblok',
             textContent: 'inhoud voor het genereren van het document',
             sjabloonGroepId: 'Sjabloon groep id',
             sjabloonId: 'Sjabloon id van het te genereren document',
@@ -100,7 +100,7 @@ const XentialPluginSpecification: PluginSpecification = {
             clientId: 'Client ID',
             clientPassword: 'Client password',
             'generate-document': 'Generate document',
-            'generate-document-bb': 'Generate document with building block',
+            'generate-document-with-building-block': 'Generate document with building block',
             textContent: 'content for generating the document',
             sjabloonGroepId: 'Sjabloon group id',
             sjabloonId: 'Template ID of the document to be generated',
@@ -130,45 +130,7 @@ const XentialPluginSpecification: PluginSpecification = {
             xentialData: 'content for generating the document',
             xentialSjabloonId: 'Template ID of the document to be generated',
             toegangResultaatId: 'Access to xential test result process variable',
-        },
-        de: {
-            title: 'Xential',
-            description: 'Con il plugin Xential vengono generati i documenti',
-            configurationTitle: 'Konfigurationsname',
-            clientId: 'Kunden-ID',
-            clientPassword: 'Kundenpasswort',
-            'generate-document': 'Dokument generieren',
-            'generate-document-bb': 'Dokument mit Baustein generieren',
-            textContent: 'Inhalt zur Generierung des Dokuments',
-            sjabloonGroepId: 'Sjabloon Gruppen-ID',
-            sjabloonId: 'Vorlagen-ID des zu generierenden Dokuments',
-            messageName: 'bpmn Nachrichtenname, wenn das Dokument generiert wurde',
-            fileFormatInputType: 'Dateiformat-Eingabetyp',
-            fileFormatInputTypeSelection: 'Auswahl',
-            fileFormatInputTypeText: 'Text',
-            'validate-xential-toegang': 'Zugriff auf Xential-Vorlagen validieren',
-            'set-sjabloon-group-id': 'Sjabloon Gruppen-ID festlegen',
-            sjabloonGroepNaam: 'Sjabloon Gruppenname',
-            templateId: 'Vorlage ID',
-            fileFormat: 'Dateiformat',
-            documentFilename: 'Dokumentdateiname',
-            xentialGebruikersId: 'Default Xential Benutzer Id',
-            informationObjectType: 'Informationsobjekttyp',
-            documentId: 'Dokument-ID',
-            templateData: 'Vorlagendaten',
-            applicationName: 'Xential Taakapplicatie Name',
-            applicationPassword: 'Xential Taakapplicatie Passwort',
-            baseUrl: 'Base url nach Xential via ESB',
-            serverCertificate: 'Server Zertifikat als Base64 kodierter String',
-            clientPrivateKey: 'Client private key als Base64 kodierter String',
-            clientCertificate: 'Client Zertifikat als Base64 kodierter String',
-            xentialDocumentPropertiesId: 'Dokumenteigenschaften generieren Prozessvariable',
-            xentialDocumentProperties: 'Dokumenteigenschaften generieren',
-            xentialData: 'Inhalt zur Generierung des Dokuments',
-            xentialSjabloonId: 'Vorlagen-ID des zu generierenden Dokuments',
-            toegangResultaatId: 'Zugriff auf die Prozessvariable Xential Test Results',
-            'prepare-content': 'Inhalte basierend auf einer Vorlage auswählen'
-        },
+        }
     },
 };
 

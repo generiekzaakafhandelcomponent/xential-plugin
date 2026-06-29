@@ -1,6 +1,6 @@
 import {PluginConfigurationData} from "@valtimo/plugin";
 
-export interface GenerateDocumentBBConfig extends PluginConfigurationData {
+export interface GenerateDocumentWithBuildingBlockConfig extends PluginConfigurationData {
     textContent: string;
     sjabloonGroepId: string;
     sjabloonId: string;

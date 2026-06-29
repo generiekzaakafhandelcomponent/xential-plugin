@@ -1,26 +1,26 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FunctionConfigurationComponent} from '@valtimo/plugin';
 import {BehaviorSubject, combineLatest, Observable, Subscription, take} from 'rxjs';
-import {FileFormatInputType, GenerateDocumentBBConfig} from "../../models";
+import {FileFormatInputType, GenerateDocumentWithBuildingBlockConfig} from "../../models";
 import {RadioValue, SelectItem, ValuePathSelectorPrefix} from "@valtimo/components";
 
 @Component({
   standalone: false,
-    selector: 'xential-generate-document-bb-configuration',
-    templateUrl: './generate-document-bb-configuration.component.html'
+    selector: 'xential-generate-document-with-building-block-configuration',
+    templateUrl: './generate-document-with-building-block-configuration.component.html'
 })
-export class GenerateDocumentBBConfigurationComponent implements FunctionConfigurationComponent, OnInit, OnDestroy {
+export class GenerateDocumentWithBuildingBlockConfigurationComponent implements FunctionConfigurationComponent, OnInit, OnDestroy {
     @Input() save$: Observable<void>;
     @Input() disabled$: Observable<boolean>;
     @Input() pluginId: string;
-    @Input() prefillConfiguration$: Observable<GenerateDocumentBBConfig>;
+    @Input() prefillConfiguration$: Observable<GenerateDocumentWithBuildingBlockConfig>;
     @Output() valid: EventEmitter<boolean> = new EventEmitter<boolean>();
-    @Output() configuration: EventEmitter<GenerateDocumentBBConfig> =
-        new EventEmitter<GenerateDocumentBBConfig>();
+    @Output() configuration: EventEmitter<GenerateDocumentWithBuildingBlockConfig> =
+        new EventEmitter<GenerateDocumentWithBuildingBlockConfig>();
 
     private saveSubscription!: Subscription;
 
-    private readonly formValue$ = new BehaviorSubject<GenerateDocumentBBConfig | null>(null);
+    private readonly formValue$ = new BehaviorSubject<GenerateDocumentWithBuildingBlockConfig | null>(null);
     private readonly valid$ = new BehaviorSubject<boolean>(false);
 
     public fileFormats$ = new BehaviorSubject<SelectItem[]>(
@@ -48,13 +48,13 @@ export class GenerateDocumentBBConfigurationComponent implements FunctionConfigu
         this.saveSubscription?.unsubscribe();
     }
 
-    formValueChange(formValue: GenerateDocumentBBConfig): void {
+    formValueChange(formValue: GenerateDocumentWithBuildingBlockConfig): void {
         this.selectedFileFormatInputType$.next(formValue.fileFormatInputType || 'selection');
         this.formValue$.next(formValue);
         this.handleValid(formValue);
     }
 
-    private handleValid(formValue: GenerateDocumentBBConfig): void {
+    private handleValid(formValue: GenerateDocumentWithBuildingBlockConfig): void {
         const valid = !!(
             formValue.textContent &&
             formValue.sjabloonGroepId &&

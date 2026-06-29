@@ -30,8 +30,8 @@ import {
     GenerateDocumentConfigurationComponent
 } from "./components/generate-document-configuration/generate-document-configuration.component";
 import {
-    GenerateDocumentBBConfigurationComponent
-} from "./components/generate-document-bb-configuration/generate-document-bb-configuration.component";
+    GenerateDocumentWithBuildingBlockConfigurationComponent
+} from "./components/generate-document-with-buildingblock-configuration/generate-document-with-building-block-configuration.component";
 import {DropdownModule} from "carbon-components-angular";
 import {
     PrepareContentConfigurationComponent
@@ -47,7 +47,7 @@ import {
     declarations: [
         XentialConfigurationComponent,
         GenerateDocumentConfigurationComponent,
-        GenerateDocumentBBConfigurationComponent,
+        GenerateDocumentWithBuildingBlockConfigurationComponent,
         PrepareContentConfigurationComponent,
         ValidateAccessConfigurationComponent,
         SetSjabloonGroupIdConfigurationComponent
@@ -67,7 +67,7 @@ import {
     exports: [
         XentialConfigurationComponent,
         GenerateDocumentConfigurationComponent,
-        GenerateDocumentBBConfigurationComponent,
+        GenerateDocumentWithBuildingBlockConfigurationComponent,
         PrepareContentConfigurationComponent,
         ValidateAccessConfigurationComponent,
         SetSjabloonGroupIdConfigurationComponent
