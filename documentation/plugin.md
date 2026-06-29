@@ -55,8 +55,10 @@ You can find more information about Xential [here](https://www.xential.com/docum
 ### Included plugin actions:
 
 - <b>validate-xential-toegang</b>
+- <b>set-sjabloon-group-id</b>
 - <b>prepare-content</b>
 - <b>generate-document</b>
+- <b>generate-document-with-building-block</b>
 
 ### Included xential endpoints:
 
@@ -74,7 +76,7 @@ Plugin actions can be linked to BPMN service tasks. Using the plugin comes down 
   * `applicationPassword` - Is the password for basic authentication at Xential.
 * Create process link between a BPMN service task and the desired plugin action.
 
-### Plugin action: Toegamg tot Xential toetsen
+### Plugin action: Toegang tot Xential toetsen
 
 `validate-xential-toegang` checks if the current user has access to Xential and the template folders. It will use the
 username of the current user as 'gebruikersId' to access the xential API
@@ -83,6 +85,15 @@ username of the current user as 'gebruikersId' to access the xential API
 * `xentialGebruikersId` - process variable with the gebruikersId needed to get access to Xential
 * `xentialDocumentProperties` - properties object that includes the UUID of the sjabloon (templates) folder the user
   needs to have access too
+
+### Plugin action: set sjabloon group id
+
+`set-sjabloon-group-id` set the sjabloon group id based on caseType name. First the root map is requested, and the map with the name that is similar to the case type map is selected as the sjabloon map. En passant access to Xential and the template folders for the current user is checked. It will use the
+username of the current user as 'gebruikersId' to access the xential API
+
+* `toegangResultaatId` - process variable id to store the result of the test call to Xential
+* `xentialGebruikersId` - process variable with the gebruikersId needed to get access to Xential
+* `sjabloonGroepNaam` - case type name and the sjabloon map name is used to find the sjabloon map
 
 ### Plugin action: Prepare content
 
@@ -108,6 +119,19 @@ a job to generate the document.
 * `xentialData` - the data xml template that includes the data to be used in the template
 * `xentialSjabloonId` - the UUID of the sjabloon (template) used to generate the document
 * `xentialGebruikersId` - the gebruikersId to validate access to the xential service
+
+### Plugin action: Generate document with building block
+
+`generate-content-with-building-block` sends the request to Xential with the content to generate a document. When not all content is present
+to generate the document, Xential will send a link that opens a wizard to complete the request, otherwise it will start
+a job to generate the document.
+
+* `textContent` - the data xml template that includes the data to be used in the template
+* `sjabloonId` - the UUID of the sjabloon (template) used to generate the document
+* `xentialGebruikersId` - the gebruikersId to validate access to the xential service
+* `fileFormat` - FileFormat
+* `sjabloonGroepId` - the UUID of the sjabloon (template) map used to generate the document
+* `messageName` - Event thrown in BPMN when the document is received via the callback url
 
 ### Endpoint: /xential/document
 
