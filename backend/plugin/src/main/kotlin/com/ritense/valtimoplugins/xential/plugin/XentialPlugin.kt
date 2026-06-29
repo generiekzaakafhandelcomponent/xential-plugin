@@ -87,14 +87,11 @@ class XentialPlugin(
         logger.debug { "> XentialDocumentProperties: $originalProps" }
         logger.debug { "> XentialDate: $xentialData" }
 
-        val xentialSjabloon =
-            xentialSjablonenService
-                .getTemplateList(
-                    gebruikersId = xentialGebruikersId,
-                    sjabloongroepId = originalProps.xentialTemplateGroupId.toString(),
-                ).sjablonen
-                .single { it.id == xentialSjabloonId }
-        logger.debug { "> Template: $xentialSjabloon" }
+        val xentialSjabloon = getSjabloon(
+            xentialGebruikersId = xentialGebruikersId,
+            sjabloonGroepId = originalProps.xentialTemplateGroupId.toString(),
+            sjabloonId = xentialSjabloonId,
+        )
 
         val resolvedValues = resolveValuesFor(execution, mapOf("content" to xentialData))
         val modifiedProps =
@@ -105,28 +102,16 @@ class XentialPlugin(
             )
         storeXentialDocumentProperties(execution, xentialDocumentPropertiesVariableName, modifiedProps)
 
-        documentGenerationService
-            .generateDocument(
-                api = esbClient.documentApi(restClient(mTlsSslContextAutoConfigurationId)),
-                processId = UUID.fromString(execution.processInstanceId),
-                xentialGebruikersId = xentialGebruikersId,
-                sjabloonId = xentialSjabloonId,
-                xentialDocumentProperties = modifiedProps,
-            ).let { result ->
-                execution.setVariable("xentialStatus", result.status)
-                result.resumeUrl?.let {
-                    execution.setVariable("xentialResumeUrl", it)
-                }
-            }
+        generateDocumentAndStoreResult(execution, xentialGebruikersId, xentialSjabloonId, modifiedProps)
     }
 
     @PluginAction(
-        key = "generate-document-bb",
-        title = "Generate document with bb",
-        description = "Generate a document using xential with bb.",
+        key = "generate-document-with-building-block",
+        title = "Generate document with building block",
+        description = "Generate a document using xential with building block.",
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
     )
-    fun generateDocumentBB(
+    fun generateDocumentWithBuildingBlock(
         @PluginActionProperty textContent: String,
         @PluginActionProperty sjabloonId: String,
         @PluginActionProperty xentialGebruikersId: String,
@@ -138,14 +123,11 @@ class XentialPlugin(
         logger.info { "Generating document from template: $sjabloonId for user: $xentialGebruikersId" }
         logger.debug { "> XentialDate: $textContent" }
 
-        val xentialSjabloon =
-            xentialSjablonenService
-                .getTemplateList(
-                    gebruikersId = xentialGebruikersId,
-                    sjabloongroepId = sjabloonGroepId,
-                ).sjablonen
-                .single { it.id == sjabloonId }
-        logger.debug { "> Template: $xentialSjabloon" }
+        val xentialSjabloon = getSjabloon(
+            xentialGebruikersId = xentialGebruikersId,
+            sjabloonGroepId = sjabloonGroepId,
+            sjabloonId = sjabloonId,
+        )
 
         val xentialDocumentProperties = XentialDocumentProperties(
             xentialTemplateGroupId = UUID.fromString(sjabloonGroepId),
@@ -156,6 +138,27 @@ class XentialPlugin(
             content = textContent,
         )
 
+        generateDocumentAndStoreResult(execution, xentialGebruikersId, sjabloonId, xentialDocumentProperties)
+    }
+
+    private fun getSjabloon(
+        xentialGebruikersId: String,
+        sjabloonGroepId: String,
+        sjabloonId: String,
+    ) = xentialSjablonenService
+        .getTemplateList(
+            gebruikersId = xentialGebruikersId,
+            sjabloongroepId = sjabloonGroepId,
+        ).sjablonen
+        .single { it.id == sjabloonId }
+        .also { logger.debug { "> Template: $it" } }
+
+    private fun generateDocumentAndStoreResult(
+        execution: DelegateExecution,
+        xentialGebruikersId: String,
+        sjabloonId: String,
+        xentialDocumentProperties: XentialDocumentProperties,
+    ) {
         documentGenerationService
             .generateDocument(
                 api = esbClient.documentApi(restClient(mTlsSslContextAutoConfigurationId)),
