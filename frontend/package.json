@@ -1,6 +1,6 @@
 {
   "name": "xential-plugin",
-  "version": "1.5.2",
+  "version": "2.4.0",
   "engines": {
     "node": ">=20.0.0 <23.0.0"
   },
