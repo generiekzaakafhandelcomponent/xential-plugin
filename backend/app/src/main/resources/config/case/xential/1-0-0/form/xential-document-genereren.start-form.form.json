@@ -18,16 +18,11 @@
             "value": "GENEREER_BESLUIT_MESSAGE"
           },
           {
-            "label": "Uitgaande brief met bouwblok",
-            "value": "GENEREER_UITGAANDE_BRIEF_BB_MESSAGE"
-          },
-          {
             "label": "Besluit met bouwblok",
             "value": "GENEREER_BESLUIT_BB_MESSAGE"
           }
         ]
       },
-      "defaultValue": "GENEREER_BESLUIT_BB_MESSAGE",
       "widget": "choicesjs",
       "tableView": true,
       "validate": {

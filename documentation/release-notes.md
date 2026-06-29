@@ -2,6 +2,9 @@
 
 Overzicht van wijzigingen per versie van de Xential-plugin.
 
+## 2.4.0
+Voorzien van een bouwblok voor het genereren van documenten via Xential templates.
+
 ## 1.5.2
 Ondergebracht in een eigen repository met voorbeeldapplicatie en aparte documentatie.
 
