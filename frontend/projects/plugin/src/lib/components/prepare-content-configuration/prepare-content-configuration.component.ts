@@ -63,7 +63,7 @@ export class PrepareContentConfigurationComponent implements FunctionConfigurati
   ) {
     this.getFirstLevelTemplate();
     this.keycloakUserService.getUserSubject().subscribe(userIdentity => {
-          this.username$.next(userIdentity.username);
+      this.username$.next(userIdentity.username);
     });
   }
 

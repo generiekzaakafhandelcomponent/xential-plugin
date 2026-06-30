@@ -60,7 +60,7 @@ class XentialSjablonenService(
         gebruikersId: String,
         sjabloonGroepId: String,
     ): XentialAccessResult {
-        logger.debug { "testing sjabloongroep with $sjabloonGroepId" }
+        logger.debug { "testing access with $sjabloonGroepId" }
         generateApi().let {
             try {
                 it

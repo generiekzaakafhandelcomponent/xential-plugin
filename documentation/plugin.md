@@ -9,9 +9,11 @@
     * [Included plugin actions:](#included-plugin-actions)
     * [Included xential endpoints:](#included-xential-endpoints)
   * [Usage](#usage)
-    * [Plugin action: Toegamg tot Xential toetsen](#plugin-action-toegamg-tot-xential-toetsen)
+    * [Plugin action: Testing access tot Xential](#plugin-action-testing-access-tot-xential)
+    * [Plugin action: set sjabloon group id](#plugin-action-set-sjabloon-group-id)
     * [Plugin action: Prepare content](#plugin-action-prepare-content)
     * [Plugin action: Generate document](#plugin-action-generate-document)
+    * [Plugin action: Generate document with building block](#plugin-action-generate-document-with-building-block)
     * [Endpoint: /xential/document](#endpoint-xentialdocument)
     * [Endpoint: /xential/sjablonen](#endpoint-xentialsjablonen)
   * [Running the example application](#running-the-example-application)
@@ -76,7 +78,7 @@ Plugin actions can be linked to BPMN service tasks. Using the plugin comes down 
   * `applicationPassword` - Is the password for basic authentication at Xential.
 * Create process link between a BPMN service task and the desired plugin action.
 
-### Plugin action: Toegang tot Xential toetsen
+### Plugin action: Testing access tot Xential
 
 `validate-xential-toegang` checks if the current user has access to Xential and the template folders. It will use the
 username of the current user as 'gebruikersId' to access the xential API

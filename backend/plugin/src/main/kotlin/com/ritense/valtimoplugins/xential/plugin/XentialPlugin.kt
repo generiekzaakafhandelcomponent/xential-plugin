@@ -49,12 +49,12 @@ import java.util.UUID
 )
 @Suppress("UNUSED")
 class XentialPlugin(
-    private val esbClient: OpentunnelEsbClient,
     private val documentGenerationService: DocumentGenerationService,
+    private val environment: Environment,
+    private val esbClient: OpentunnelEsbClient,
+    private val objectMapper: ObjectMapper,
     private val valueResolverService: ValueResolverService,
     private val xentialSjablonenService: XentialSjablonenService,
-    private val objectMapper: ObjectMapper,
-    private val environment: Environment,
 ) {
     @PluginProperty(key = "applicationName", secret = false, required = true)
     lateinit var applicationName: String
@@ -75,11 +75,11 @@ class XentialPlugin(
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
     )
     fun generateDocument(
-        @PluginActionProperty xentialDocumentPropertiesVariableName: String,
-        @PluginActionProperty xentialData: String,
-        @PluginActionProperty xentialSjabloonId: String,
-        @PluginActionProperty xentialGebruikersId: String,
         @PluginActionProperty fileFormat: FileFormat,
+        @PluginActionProperty xentialData: String,
+        @PluginActionProperty xentialDocumentPropertiesVariableName: String,
+        @PluginActionProperty xentialGebruikersId: String,
+        @PluginActionProperty xentialSjabloonId: String,
         execution: DelegateExecution,
     ) {
         val originalProps = getXentialDocumentProperties(execution, xentialDocumentPropertiesVariableName)
@@ -112,16 +112,16 @@ class XentialPlugin(
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
     )
     fun generateDocumentWithBuildingBlock(
-        @PluginActionProperty textContent: String,
-        @PluginActionProperty sjabloonId: String,
-        @PluginActionProperty xentialGebruikersId: String,
         @PluginActionProperty fileFormat: FileFormat,
-        @PluginActionProperty sjabloonGroepId: String,
         @PluginActionProperty messageName: String,
+        @PluginActionProperty sjabloonGroepId: String,
+        @PluginActionProperty sjabloonId: String,
+        @PluginActionProperty textContent: String,
+        @PluginActionProperty xentialGebruikersId: String,
         execution: DelegateExecution,
     ) {
         logger.info { "Generating document from template: $sjabloonId for user: $xentialGebruikersId" }
-        logger.debug { "> XentialDate: $textContent" }
+        logger.debug { "> Xential data: $textContent" }
 
         val xentialSjabloon = getSjabloon(
             xentialGebruikersId = xentialGebruikersId,
@@ -156,7 +156,7 @@ class XentialPlugin(
     private fun generateDocumentAndStoreResult(
         execution: DelegateExecution,
         xentialGebruikersId: String,
-        sjabloonId: String,
+        xentialSjabloonId: String,
         xentialDocumentProperties: XentialDocumentProperties,
     ) {
         documentGenerationService
@@ -164,7 +164,7 @@ class XentialPlugin(
                 api = esbClient.documentApi(restClient(mTlsSslContextAutoConfigurationId)),
                 processId = UUID.fromString(execution.processInstanceId),
                 xentialGebruikersId = xentialGebruikersId,
-                sjabloonId = sjabloonId,
+                sjabloonId = xentialSjabloonId,
                 xentialDocumentProperties = xentialDocumentProperties,
             ).let { result ->
                 execution.setVariable("xentialStatus", result.status)
@@ -182,8 +182,8 @@ class XentialPlugin(
     )
     fun validateAccess(
         @PluginActionProperty toegangResultaatId: String,
-        @PluginActionProperty xentialGebruikersId: String,
         @PluginActionProperty xentialDocumentPropertiesVariableName: String,
+        @PluginActionProperty xentialGebruikersId: String,
         execution: DelegateExecution,
     ) {
         val props = getXentialDocumentProperties(execution, xentialDocumentPropertiesVariableName)
@@ -209,9 +209,9 @@ class XentialPlugin(
         activityTypes = [ActivityTypeWithEventName.SERVICE_TASK_START],
     )
     fun setSjabloonGroepId(
+        @PluginActionProperty sjabloonGroepNaam: String,
         @PluginActionProperty toegangResultaatId: String,
         @PluginActionProperty xentialGebruikersId: String,
-        @PluginActionProperty sjabloonGroepNaam: String,
         execution: DelegateExecution,
     ) {
         fun storeResult(result: XentialAccessResult) =
@@ -243,13 +243,16 @@ class XentialPlugin(
             storeResult(
                 XentialAccessResult(
                     statusCode = (e as? RestClientResponseException)?.statusCode?.value()?.toString() ?: "503",
-                    statusMessage = (e as? RestClientResponseException)?.statusText ?: e.message ?: "Could not reach Xential",
+                    statusMessage = (e as? RestClientResponseException)?.statusText ?: e.message
+                    ?: "Could not reach Xential",
                 ),
             )
         }
     }
 
-    private fun sjabloonGroepUuid(xentialGebruikersId: String, caseType: String): String? {
+    private fun sjabloonGroepUuid(
+        xentialGebruikersId: String,
+        caseType: String): String? {
         val sjabloongroepen = xentialSjablonenService
             .getTemplateList(xentialGebruikersId, null)
             .sjabloongroepen
@@ -276,7 +279,6 @@ class XentialPlugin(
         @PluginActionProperty secondTemplateGroupId: UUID?,
         @PluginActionProperty thirdTemplateGroupId: UUID?,
         @PluginActionProperty eventMessageName: String,
-        @PluginActionProperty test: String?,
         execution: DelegateExecution,
     ) {
         try {
@@ -314,9 +316,7 @@ class XentialPlugin(
             value.startsWith("case:") ||
                 value.startsWith("doc:") ||
                 value.startsWith("template:") ||
-                value.startsWith("pv:")
-        )
-
+                value.startsWith("pv:"))
     private fun resolveValuesFor(
         execution: DelegateExecution,
         params: Map<String, Any?>,

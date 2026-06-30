@@ -46,7 +46,6 @@ export class ValidateAccessConfigurationComponent implements FunctionConfigurati
   }
 
   formValueChange(formValue: ValidateAccessConfig): void {
-
     this.formValue$.next(formValue);
     this.handleValid(formValue);
   }

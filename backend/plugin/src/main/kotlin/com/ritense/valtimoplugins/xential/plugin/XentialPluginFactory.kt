@@ -36,11 +36,11 @@ class XentialPluginFactory(
 ) : PluginFactory<XentialPlugin>(pluginService) {
     override fun create() =
         XentialPlugin(
-            esbClient,
             documentGenerationService,
+            environment,
+            esbClient,
+            objectMapper,
             valueResolverService,
             xentialSjablonenService,
-            objectMapper,
-            environment,
         )
 }

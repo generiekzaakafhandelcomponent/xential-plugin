@@ -101,7 +101,7 @@ import {
   MailTemplatePluginModule, mailTemplatePluginSpecification,
   TextTemplatePluginModule, textTemplatePluginSpecification
 } from '@valtimo-plugins/freemarker';
-
+import {AdminSettingsModule} from '@valtimo/admin-settings';
 import {XentialPluginModule, XentialPluginSpecification,} from "@valtimo-plugins/xential";
 
 export function tabsFactory() {
@@ -119,6 +119,7 @@ export function tabsFactory() {
     environment.authentication.module,
     AccessControlManagementModule,
     AccountModule,
+    AdminSettingsModule,
     AnalyseModule,
     AppRoutingModule,
     BootstrapModule,

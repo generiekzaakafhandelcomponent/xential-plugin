@@ -1,5 +1,5 @@
 export interface SetSjabloonGroupIdConfig {
-    toegangResultaatId: string;
-    xentialGebruikersId: string;
-    sjabloonGroepNaam: string;
+  toegangResultaatId: string;
+  xentialGebruikersId: string;
+  sjabloonGroepNaam: string;
 }

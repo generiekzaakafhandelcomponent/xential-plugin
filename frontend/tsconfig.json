@@ -1,49 +1,49 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-        "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "baseUrl": "./",
-        "outDir": "./out-tsc",
-        "sourceMap": true,
-        "declaration": false,
-        "module": "es2020",
-        "moduleResolution": "bundler",
-        "experimentalDecorators": true,
-        "importHelpers": true,
-        "esModuleInterop": true,
-        "target": "es2022",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
-        "lib": [
-            "es2021",
-            "dom",
-            "dom.iterable"
-        ],
-        "useDefineForClassFields": false,
-        "paths": {
-            "@src": [
-                "src"
-            ],
-            "@src/*": [
-                "src/*"
-            ],
-            "@valtimo-plugins/xential": [
-                "projects/plugin/src/public_api.ts"
-            ]
-        }
-    },
-    "include": [
-        "***.tsx"
+  "compileOnSave": false,
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "outDir": "./out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "module": "es2020",
+    "moduleResolution": "bundler",
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "target": "es2022",
+    "typeRoots": [
+      "node_modules/@types"
     ],
-    "exclude": [
-        "node_modules"
+    "lib": [
+      "es2021",
+      "dom",
+      "dom.iterable"
     ],
-    "files": [],
-    "references": [
-        {
-            "path": "./src/tsconfig.app.json"
-        }
-    ]
+    "useDefineForClassFields": false,
+    "paths": {
+      "@src": [
+        "src"
+      ],
+      "@src/*": [
+        "src/*"
+      ],
+      "@valtimo-plugins/xential": [
+        "projects/plugin/src/public_api.ts"
+      ]
+    }
+  },
+  "include": [
+    "***.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "files": [],
+  "references": [
+    {
+      "path": "./src/tsconfig.app.json"
+    }
+  ]
 }

@@ -19,59 +19,60 @@ import {XentialConfigurationComponent} from './components/xential-configuration/
 import {CommonModule} from '@angular/common';
 import {PluginTranslatePipeModule} from '@valtimo/plugin';
 import {
-    CarbonMultiInputModule,
-    FormModule, InputLabelModule,
-    InputModule,
-    RadioModule,
-    SelectModule,
-    ValuePathSelectorComponent
+  CarbonMultiInputModule,
+  FormModule,
+  InputLabelModule,
+  InputModule,
+  RadioModule,
+  SelectModule,
+  ValuePathSelectorComponent
 } from '@valtimo/components';
 import {
-    GenerateDocumentConfigurationComponent
+  GenerateDocumentConfigurationComponent
 } from "./components/generate-document-configuration/generate-document-configuration.component";
 import {
-    GenerateDocumentWithBuildingBlockConfigurationComponent
+  GenerateDocumentWithBuildingBlockConfigurationComponent
 } from "./components/generate-document-with-buildingblock-configuration/generate-document-with-building-block-configuration.component";
 import {DropdownModule} from "carbon-components-angular";
 import {
-    PrepareContentConfigurationComponent
+  PrepareContentConfigurationComponent
 } from "./components/prepare-content-configuration/prepare-content-configuration.component";
 import {
-    ValidateAccessConfigurationComponent
+  ValidateAccessConfigurationComponent
 } from "./components/validate-access-configuration/validate-access-configuration.component";
 import {
-    SetSjabloonGroupIdConfigurationComponent
+  SetSjabloonGroupIdConfigurationComponent
 } from "./components/set-sjabloon-group-id-configuration/set-sjabloon-group-id-configuration.component";
 
 @NgModule({
-    declarations: [
-        XentialConfigurationComponent,
-        GenerateDocumentConfigurationComponent,
-        GenerateDocumentWithBuildingBlockConfigurationComponent,
-        PrepareContentConfigurationComponent,
-        ValidateAccessConfigurationComponent,
-        SetSjabloonGroupIdConfigurationComponent
-    ],
-    imports: [
-        CommonModule,
-        PluginTranslatePipeModule,
-        FormModule,
-        InputModule,
-        RadioModule,
-        SelectModule,
-        DropdownModule,
-        CarbonMultiInputModule,
-        ValuePathSelectorComponent,
-        InputLabelModule
-    ],
-    exports: [
-        XentialConfigurationComponent,
-        GenerateDocumentConfigurationComponent,
-        GenerateDocumentWithBuildingBlockConfigurationComponent,
-        PrepareContentConfigurationComponent,
-        ValidateAccessConfigurationComponent,
-        SetSjabloonGroupIdConfigurationComponent
-    ],
+  declarations: [
+    XentialConfigurationComponent,
+    GenerateDocumentConfigurationComponent,
+    GenerateDocumentWithBuildingBlockConfigurationComponent,
+    PrepareContentConfigurationComponent,
+    ValidateAccessConfigurationComponent,
+    SetSjabloonGroupIdConfigurationComponent
+  ],
+  imports: [
+    CommonModule,
+    PluginTranslatePipeModule,
+    FormModule,
+    InputModule,
+    RadioModule,
+    SelectModule,
+    DropdownModule,
+    CarbonMultiInputModule,
+    ValuePathSelectorComponent,
+    InputLabelModule
+  ],
+  exports: [
+    XentialConfigurationComponent,
+    GenerateDocumentConfigurationComponent,
+    GenerateDocumentWithBuildingBlockConfigurationComponent,
+    PrepareContentConfigurationComponent,
+    ValidateAccessConfigurationComponent,
+    SetSjabloonGroupIdConfigurationComponent
+  ],
 })
 export class XentialPluginModule {
 }
