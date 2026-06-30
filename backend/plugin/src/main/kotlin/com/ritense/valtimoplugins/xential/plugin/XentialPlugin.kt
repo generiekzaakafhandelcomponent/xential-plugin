@@ -34,8 +34,6 @@ import com.ritense.valtimoplugins.xential.service.XentialSjablonenService
 import com.ritense.valueresolver.ValueResolverService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.operaton.bpm.engine.delegate.DelegateExecution
-import org.springframework.core.env.Environment
-import org.springframework.core.env.Profiles
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
@@ -50,7 +48,6 @@ import java.util.UUID
 @Suppress("UNUSED")
 class XentialPlugin(
     private val documentGenerationService: DocumentGenerationService,
-    private val environment: Environment,
     private val esbClient: OpentunnelEsbClient,
     private val objectMapper: ObjectMapper,
     private val valueResolverService: ValueResolverService,

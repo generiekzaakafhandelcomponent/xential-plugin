@@ -23,7 +23,6 @@ import com.ritense.valtimoplugins.xential.service.DocumentGenerationService
 import com.ritense.valtimoplugins.xential.service.OpentunnelEsbClient
 import com.ritense.valtimoplugins.xential.service.XentialSjablonenService
 import com.ritense.valueresolver.ValueResolverService
-import org.springframework.core.env.Environment
 
 class XentialPluginFactory(
     pluginService: PluginService,
@@ -31,13 +30,11 @@ class XentialPluginFactory(
     private val documentGenerationService: DocumentGenerationService,
     private val valueResolverService: ValueResolverService,
     private val xentialSjablonenService: XentialSjablonenService,
-    private val objectMapper: ObjectMapper,
-    private val environment: Environment,
+    private val objectMapper: ObjectMapper
 ) : PluginFactory<XentialPlugin>(pluginService) {
     override fun create() =
         XentialPlugin(
             documentGenerationService,
-            environment,
             esbClient,
             objectMapper,
             valueResolverService,

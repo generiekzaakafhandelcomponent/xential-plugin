@@ -41,7 +41,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.core.annotation.Order
-import org.springframework.core.env.Environment
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @AutoConfiguration
@@ -56,16 +55,14 @@ class XentialAutoConfiguration {
         documentGenerationService: DocumentGenerationService,
         valueResolverService: ValueResolverService,
         xentialSjablonenService: XentialSjablonenService,
-        objectMapper: ObjectMapper,
-        environment: Environment,
+        objectMapper: ObjectMapper
     ) = XentialPluginFactory(
         pluginService,
         esbClient,
         documentGenerationService,
         valueResolverService,
         xentialSjablonenService,
-        objectMapper,
-        environment,
+        objectMapper
     )
 
     @Bean
