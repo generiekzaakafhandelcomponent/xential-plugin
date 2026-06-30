@@ -85,6 +85,56 @@
       "path": "/sjablonenlijst",
       "queryStringParameters": {
         "gebruikersId": [ "admin" ],
+        "sjabloongroepId": [ "2226f2ed-a544-4795-88d9-709d6d32f077" ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [ "application/json" ]
+      },
+      "body": {
+        "sjablonen": [
+          {
+            "id": "e0a8ace5-06df-4ef7-bcbb-9d694d25e03b",
+            "naam": "Xential brief"
+          }
+        ],
+        "sjabloongroepen": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/sjablonenlijst",
+      "queryStringParameters": {
+        "gebruikersId": [ "admin" ],
+        "sjabloongroepId": [ "415cf276-2af0-4192-923d-4391c4d7b2a8" ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [ "application/json" ]
+      },
+      "body": {
+        "sjablonen": [
+          {
+            "id": "e0a8ace5-06df-4ef7-bcbb-9d694d25e03b",
+            "naam": "Standaard brief"
+          }
+        ],
+        "sjabloongroepen": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/sjablonenlijst",
+      "queryStringParameters": {
+        "gebruikersId": [ "admin" ],
         "sjabloongroepId": [ "a9b8c7d6-e5f4-3210-fedc-ba9876543210" ]
       }
     },
@@ -123,6 +173,10 @@
           {
             "id": "415cf276-2af0-4192-923d-4391c4d7b2a8",
             "naam": "Uitgaande brieven"
+          },
+          {
+            "id": "2226f2ed-a544-4795-88d9-709d6d32f077",
+            "naam": "xential"
           },
           {
             "id": "a9b8c7d6-e5f4-3210-fedc-ba9876543210",

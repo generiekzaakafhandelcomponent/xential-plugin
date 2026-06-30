@@ -253,18 +253,11 @@ class XentialPlugin(
     private fun sjabloonGroepUuid(
         xentialGebruikersId: String,
         caseType: String): String? {
-        val sjabloongroepen = xentialSjablonenService
+        return xentialSjablonenService
             .getTemplateList(xentialGebruikersId, null)
             .sjabloongroepen
-        return sjabloongroepen
             .firstOrNull { it.naam == caseType }
             ?.id
-            ?: if (environment.acceptsProfiles(Profiles.of("dev"))) {
-                logger.debug { "Dev profile active, falling back to first sjabloongroep for: $caseType" }
-                sjabloongroepen.firstOrNull()?.id
-            } else {
-                null
-            }
     }
 
     @PluginAction(
