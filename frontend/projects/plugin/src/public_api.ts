@@ -25,4 +25,5 @@ export * from './lib/components/xential-configuration/xential-configuration.comp
 export * from './lib/components/prepare-content-configuration/prepare-content-configuration.component';
 export * from './lib/components/validate-access-configuration/validate-access-configuration.component';
 export * from './lib/components/generate-document-configuration/generate-document-configuration.component';
+export * from './lib/components/set-sjabloon-group-id-configuration/set-sjabloon-group-id-configuration.component';
 export * from './lib/components/generate-document-with-buildingblock-configuration/generate-document-with-building-block-configuration.component';
