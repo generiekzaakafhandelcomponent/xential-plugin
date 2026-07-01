@@ -16,10 +16,12 @@ Copy `.env.properties.example` to `.env.properties` and fill in the required val
 
 ### 2. Start Docker dependencies
 
-Make sure Docker is running, then start the required services:
+Make sure Docker is running, then start the required services. First set the
+Compose profile, then start the containers:
 
 ```shell
-./gradlew :backend:app:composeUp
+export COMPOSE_PROFILES=zgw
+docker compose -f backend/app/docker-compose.yml up -d
 ```
 
 ### 3. Start the backend
