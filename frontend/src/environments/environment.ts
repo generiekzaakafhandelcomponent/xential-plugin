@@ -14,49 +14,38 @@
  * limitations under the License.
  */
 
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
-import {NgxLoggerLevel} from "ngx-logger";
-import {
-  DefinitionColumn,
-  IncludeFunction,
-  ROLE_ADMIN,
-  ROLE_DEVELOPER,
-  ROLE_USER,
-  UploadProvider,
-  ValtimoConfig
-} from "@valtimo/shared";
-import {authenticationKeycloak} from "./auth/keycloak-config.dev";
-import {DARK_MODE_LOGO_BASE_64, LOGO_BASE_64} from "./logo";
+import {DefinitionColumn, IncludeFunction, ROLE_ADMIN, ROLE_DEVELOPER, ROLE_USER, UploadProvider, ValtimoConfig,} from '@valtimo/shared';
+import {NgxLoggerLevel} from 'ngx-logger';
+import {authenticationKeycloak} from './auth/keycloak-config.dev';
+import {DARK_MODE_LOGO_BASE_64, LOGO_BASE_64} from './logo';
 
 const defaultDefinitionColumns: Array<DefinitionColumn> = [
   {
-    propertyName: "sequence",
-    translationKey: "referenceNumber",
+    propertyName: 'sequence',
+    translationKey: 'referenceNumber',
     sortable: true,
   },
   {
-    propertyName: "createdBy",
-    translationKey: "createdBy",
+    propertyName: 'createdBy',
+    translationKey: 'createdBy',
     sortable: true,
   },
   {
-    propertyName: "createdOn",
-    translationKey: "createdOn",
+    propertyName: 'createdOn',
+    translationKey: 'createdOn',
     sortable: true,
-    viewType: "date",
+    viewType: 'date',
     default: true,
   },
   {
-    propertyName: "modifiedOn",
-    translationKey: "lastModified",
+    propertyName: 'modifiedOn',
+    translationKey: 'lastModified',
     sortable: true,
-    viewType: "date",
+    viewType: 'date',
   },
   {
-    propertyName: "assigneeFullName",
-    translationKey: "assigneeFullName",
+    propertyName: 'assigneeFullName',
+    translationKey: 'assigneeFullName',
     sortable: true,
   },
 ];
@@ -70,84 +59,85 @@ export const environment: ValtimoConfig = {
     menuItems: [
       {
         roles: [ROLE_USER],
-        link: ["/"],
-        title: "Dashboard",
-        iconClass: "icon mdi mdi-view-dashboard",
-        sequence: 0,
+        link: ['/'],
+        title: 'Dashboard',
+        iconClass: 'icon mdi mdi-view-dashboard',
       },
-      {roles: [ROLE_USER], title: "Cases", iconClass: "icon mdi mdi-layers", sequence: 1, children: []},
       {
         roles: [ROLE_USER],
-        title: "Objects",
-        iconClass: "icon mdi mdi-archive",
-        sequence: 2,
+        title: 'Cases',
+        iconClass: 'icon mdi mdi-layers',
+        children: [],
+      },
+      {
+        roles: [ROLE_USER],
+        title: 'Objects',
+        iconClass: 'icon mdi mdi-archive',
         includeFunction: IncludeFunction.ObjectManagementEnabled,
       },
-      {roles: [ROLE_USER], link: ["/tasks"], title: "Tasks", iconClass: "icon mdi mdi-check-all", sequence: 3},
       {
         roles: [ROLE_USER],
-        link: ["/analysis"],
-        title: "Analysis",
-        iconClass: "icon mdi mdi-chart-bar",
-        sequence: 4,
+        link: ['/tasks'],
+        title: 'Tasks',
+        iconClass: 'icon mdi mdi-check-all',
       },
       {
         roles: [ROLE_USER],
-        link: ["/teams"],
-        title: "teams.title",
-        iconClass: "icon mdi mdi-account-group",
-        sequence: 5,
+        link: ['/analysis'],
+        title: 'Analysis',
+        iconClass: 'icon mdi mdi-chart-bar',
+      },
+      {
+        roles: [ROLE_USER],
+        link: ['/teams'],
+        title: 'teams.title',
+        iconClass: 'icon mdi mdi-account-group',
       },
       {
         roles: [ROLE_ADMIN],
-        title: "Admin",
-        iconClass: "icon mdi mdi-tune",
-        sequence: 6,
+        title: 'Admin',
+        iconClass: 'icon mdi mdi-tune',
         children: [
-          {title: "Configuration", textClass: "text-dark font-weight-bold c-default", sequence: 1},
-          {link: ["/building-block-management"], title: "buildingBlockManagement.title", sequence: 2},
-          {link: ["/case-management"], title: "Cases", sequence: 3},
-          {link: ["/plugins"], title: "Plugins", sequence: 4},
-          {link: ["/dashboard-management"], title: "Dashboard", sequence: 5},
-          {link: ["/access-control"], title: "Access Control", sequence: 6},
-          {link: ["/translation-management"], title: "Translations", sequence: 7},
-          {link: ["/choice-fields"], title: "Choice fields", sequence: 8},
-
-          {title: "Object management", textClass: "text-dark font-weight-bold c-default", sequence: 9},
-          {link: ["/object-management"], title: "Objects", sequence: 10},
-          {link: ["/form-management"], title: "Forms", sequence: 11},
-
-          {title: "System processes", textClass: "text-dark font-weight-bold c-default", sequence: 12},
-          {link: ["/processes"], title: "Processes", sequence: 13},
-          {link: ["/decision-tables"], title: "Decision tables", sequence: 14},
-
-          {title: "Migration", textClass: "text-dark font-weight-bold c-default", sequence: 15},
-          {link: ["/case-migration"], title: "Case migration (beta)", sequence: 16},
-          {link: ["/process-migration"], title: "Process migration", sequence: 17},
-
-          {title: "Other", textClass: "text-dark font-weight-bold c-default", sequence: 18},
-          {link: ["/logging"], title: "Logs", sequence: 19},
-          {link: ["/notifications-api/notifications/failed"], title: "Notifications", sequence: 20},
+          {title: 'Configuration', textClass: 'text-dark font-weight-bold c-default'},
+          {link: ['/admin-settings'], title: 'adminSettings.title'},
+          {link: ['/building-block-management'], title: 'buildingBlockManagement.title'},
+          {link: ['/case-management'], title: 'Cases'},
+          {link: ['/plugins'], title: 'Plugins'},
+          {link: ['/dashboard-management'], title: 'Dashboard'},
+          {link: ['/access-control'], title: 'Access Control'},
+          {link: ['/translation-management'], title: 'Translations'},
+          {link: ['/choice-fields'], title: 'Choice fields'},
+          {title: 'Object management', textClass: 'text-dark font-weight-bold c-default'},
+          {link: ['/object-management'], title: 'Objects'},
+          {link: ['/form-management'], title: 'Forms'},
+          {title: 'System processes', textClass: 'text-dark font-weight-bold c-default'},
+          {link: ['/processes'], title: 'Processes'},
+          {link: ['/decision-tables'], title: 'Decision tables'},
+          {title: 'Migration', textClass: 'text-dark font-weight-bold c-default'},
+          {link: ['/case-migration'], title: 'Case migration (beta)'},
+          {link: ['/process-migration'], title: 'Process migration'},
+          {title: 'Other', textClass: 'text-dark font-weight-bold c-default'},
+          {link: ['/logging'], title: 'Logs'},
+          {link: ['/notifications-api/notifications/failed'], title: 'Notifications'},
         ],
       },
       {
         roles: [ROLE_DEVELOPER],
-        title: "Development",
-        iconClass: "icon mdi mdi-code",
-        sequence: 7,
-        children: [{link: ["/swagger"], title: "Swagger", iconClass: "icon mdi mdi-dot-circle", sequence: 1}],
+        title: 'Development',
+        iconClass: 'icon mdi mdi-code',
+        children: [{link: ['/swagger'], title: 'Swagger', iconClass: 'icon mdi mdi-dot-circle'}],
       },
     ],
   },
-  whitelistedDomains: ["localhost:4200"],
+  whitelistedDomains: ['localhost:4200'],
   mockApi: {
-    endpointUri: "/mock-api/",
+    endpointUri: '/mock-api/',
   },
   valtimoApi: {
-    endpointUri: "/api/",
+    endpointUri: '/api/',
   },
   swagger: {
-    endpointUri: "/v3/api-docs",
+    endpointUri: '/v3/api-docs',
   },
   logger: {
     level: NgxLoggerLevel.TRACE,
@@ -156,7 +146,7 @@ export const environment: ValtimoConfig = {
     cases: [],
   },
   openZaak: {
-    catalogus: "00000000-0000-0000-0000-000000000000",
+    catalogus: '00000000-0000-0000-0000-000000000000',
   },
   uploadProvider: UploadProvider.DOCUMENTEN_API,
   caseFileSizeUploadLimitMB: 100,
@@ -165,14 +155,5 @@ export const environment: ValtimoConfig = {
     disableCaseCount: true,
     enableObjectManagement: true,
   },
-  translationResources: ["./assets/i18n", "./assets/i18n/open-klant"],
+  translationResources: ['./assets/i18n', './assets/i18n/open-klant'],
 };
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

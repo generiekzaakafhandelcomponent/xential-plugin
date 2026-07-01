@@ -1,0 +1,7 @@
+{
+  "key" : "xential-document-creatie",
+  "name" : "Xential document creatie",
+  "description" : "Plugin to create documents with xential",
+  "versionTag" : "0.0.1",
+  "final" : false
+}

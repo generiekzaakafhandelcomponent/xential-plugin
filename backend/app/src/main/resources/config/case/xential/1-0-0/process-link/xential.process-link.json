@@ -1,19 +1,110 @@
 [
   {
-    "activityId" : "XentialSelectTemplateFolder",
-    "activityType" : "bpmn:ServiceTask:start",
-    "pluginConfigurationId" : "6e034748-8ed5-43de-a5f2-f80e1a4b60dd",
-    "pluginActionDefinitionKey" : "prepare-content",
-    "actionProperties" : {
-      "xentialDocumentPropertiesVariableName" : "xentialDocumentProperties",
-      "eventMessageName" : "XENTIAL_DOC_RECEIVED",
-      "firstTemplateGroupId" : "415cf276-2af0-4192-923d-4391c4d7b2a8",
-      "secondTemplateGroupId" : null,
-      "thirdTemplateGroupId" : null
+    "activityId": "GenerateTextFromTemplateTask",
+    "activityType": "bpmn:ServiceTask:start",
+    "pluginConfigurationId": "4ac9a49e-4aeb-4f91-86d9-853fd95a1b33",
+    "pluginActionDefinitionKey": "generate-text",
+    "actionProperties": {
+      "textTemplateKey": "xential-template",
+      "processVariableName": "textContent"
     },
-    "referenceType" : "FIXED",
-    "pluginDefinitionKey" : null,
-    "processLinkType" : "plugin"
+    "referenceType": "FIXED",
+    "pluginDefinitionKey": null,
+    "processLinkType": "plugin"
+  },
+  {
+    "activityId": "XentialStarten",
+    "activityType": "bpmn:StartEvent:start",
+    "formDefinitionName": "xential.start",
+    "viewModelEnabled": false,
+    "formDisplayType": "modal",
+    "formSize": "medium",
+    "subtitles": [],
+    "processLinkType": "form"
+  },
+  {
+    "activityId": "CallUitgaandeBriefMetBouwBlokActivity",
+    "activityType": "bpmn:CallActivity:start",
+    "buildingBlockDefinitionKey": "xential-document-creatie",
+    "buildingBlockDefinitionVersionTag": "0.0.1",
+    "pluginConfigurationMappings": {
+      "xential": "6e034748-8ed5-43de-a5f2-f80e1a4b60dd"
+    },
+    "inputMappings": [
+      {
+        "source": "pv:fileFormat",
+        "target": "fileFormat"
+      },
+      {
+        "source": "pv:textContent",
+        "target": "textContent"
+      },
+      {
+        "source": "pv:messageName",
+        "target": "messageName"
+      },
+      {
+        "source": "pv:xentialGebruikersId",
+        "target": "xentialGebruikersId"
+      },
+      {
+        "source": "pv:caseType",
+        "target": "caseType"
+      }
+    ],
+    "outputMappings": [
+      {
+        "source": "xentialResourceId",
+        "target": "pv:localDocumentLocation"
+      }
+    ],
+    "processLinkType": "building-block"
+  },
+  {
+    "activityId": "CallUploadAndLinkActivity",
+    "activityType": "bpmn:CallActivity:start",
+    "buildingBlockDefinitionKey": "upload-and-link-document",
+    "buildingBlockDefinitionVersionTag": "1.0.0",
+    "pluginConfigurationMappings": {
+      "zakenapi": "3079d6fe-42e3-4f8f-a9db-52ce2507b7ee",
+      "documentenapi": "5474fe57-532a-4050-8d89-32e62ca3e895"
+    },
+    "inputMappings": [
+      {
+        "source": "pv:title",
+        "target": "title"
+      },
+      {
+        "source": "pv:status",
+        "target": "status"
+      },
+      {
+        "source": "pv:fileName",
+        "target": "fileName"
+      },
+      {
+        "source": "pv:language",
+        "target": "language"
+      },
+      {
+        "source": "pv:description",
+        "target": "description"
+      },
+      {
+        "source": "pv:confidentialityLevel",
+        "target": "confidentialityLevel"
+      },
+      {
+        "source": "pv:informationObjectTypeUrl",
+        "target": "informationObjectTypeUrl"
+      },
+      {
+        "source": "pv:localDocumentLocation",
+        "target": "localDocumentLocation"
+      }
+    ],
+    "outputMappings": [],
+    "processLinkType": "building-block"
   },
   {
     "activityId" : "Activity_1fmnabf",
@@ -32,23 +123,19 @@
     "processLinkType" : "plugin"
   },
   {
-    "activityId" : "XentialStarten",
-    "activityType" : "bpmn:StartEvent:start",
-    "formDefinitionName" : "xential.start",
-    "viewModelEnabled" : false,
-    "formDisplayType" : "modal",
-    "formSize" : "medium",
-    "subtitles" : [],
-    "processLinkType" : "form"
-  },
-  {
-    "activityId" : "XentialFlowEindigen",
-    "activityType" : "bpmn:UserTask:create",
-    "formDefinitionName" : "xential.end",
-    "viewModelEnabled" : false,
-    "formDisplayType" : "modal",
-    "formSize" : "medium",
-    "subtitles" : [],
-    "processLinkType" : "form"
+    "activityId" : "XentialSelectTemplateFolder",
+    "activityType" : "bpmn:ServiceTask:start",
+    "pluginConfigurationId" : "6e034748-8ed5-43de-a5f2-f80e1a4b60dd",
+    "pluginActionDefinitionKey" : "prepare-content",
+    "actionProperties" : {
+      "xentialDocumentPropertiesVariableName" : "xentialDocumentProperties",
+      "eventMessageName" : "XENTIAL_DOC_RECEIVED",
+      "firstTemplateGroupId" : "415cf276-2af0-4192-923d-4391c4d7b2a8",
+      "secondTemplateGroupId" : null,
+      "thirdTemplateGroupId" : null
+    },
+    "referenceType" : "FIXED",
+    "pluginDefinitionKey" : null,
+    "processLinkType" : "plugin"
   }
 ]

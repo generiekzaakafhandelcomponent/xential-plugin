@@ -30,14 +30,14 @@ class XentialPluginFactory(
     private val documentGenerationService: DocumentGenerationService,
     private val valueResolverService: ValueResolverService,
     private val xentialSjablonenService: XentialSjablonenService,
-    private val objectMapper: ObjectMapper,
+    private val objectMapper: ObjectMapper
 ) : PluginFactory<XentialPlugin>(pluginService) {
     override fun create() =
         XentialPlugin(
-            esbClient,
             documentGenerationService,
+            esbClient,
+            objectMapper,
             valueResolverService,
             xentialSjablonenService,
-            objectMapper,
         )
 }

@@ -1,0 +1,105 @@
+<!--
+  ~ Copyright 2015-2026 Ritense BV, the Netherlands.
+  ~
+  ~ Licensed under EUPL, Version 1.2 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" basis,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+@if ({
+  disabled: disabled$ | async,
+  prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null,
+  fileFormats: fileFormats$ | async,
+  selectedFileFormatInputType: selectedFileFormatInputType$ | async
+}; as obs) {
+  <v-form (valueChange)="formValueChange($event)">
+
+    <div>
+      <v-input-label
+        [title]="'generate doc with bb'"
+      ></v-input-label>
+    </div>
+
+    <v-input
+      name="textContent"
+      [title]="'textContent' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [defaultValue]="obs.prefill?.textContent"
+      [disabled]="obs.disabled"
+      [required]="true"
+    />
+    <v-input
+      name="sjabloonGroepId"
+      [title]="'sjabloonGroepId' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [defaultValue]="obs.prefill?.sjabloonGroepId"
+      [disabled]="obs.disabled"
+      [required]="true"
+    />
+    <v-input
+      name="sjabloonId"
+      [title]="'sjabloonId' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [defaultValue]="obs.prefill?.sjabloonId"
+      [disabled]="obs.disabled"
+      [required]="true"
+    />
+    <v-input
+      name="xentialGebruikersId"
+      [title]="'xentialGebruikersId' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [defaultValue]="obs.prefill?.xentialGebruikersId"
+      [disabled]="obs.disabled"
+      [required]="true"
+    />
+    <v-radio
+      name="fileFormatInputType"
+      [disabled]="obs.disabled"
+      [title]="'fileFormatInputType' | pluginTranslate: pluginId | async"
+      [radioValues]="fileFormatInputTypeOptions$ | async"
+      [defaultValue]="obs.prefill?.fileFormatInputType || 'selection'"
+      [margin]="true"
+    ></v-radio>
+
+    @if (obs.selectedFileFormatInputType === 'selection') {
+      <v-select
+        name="fileFormat"
+        [title]="'fileFormat' | pluginTranslate: pluginId | async"
+        [margin]="true"
+        [defaultSelectionId]="obs.prefill?.fileFormat"
+        [disabled]="obs.disabled"
+        [required]="true"
+        [items]="obs.fileFormats"
+      />
+    }
+
+    @if (obs.selectedFileFormatInputType === 'text') {
+      <v-input
+        name="fileFormat"
+        [title]="'fileFormat' | pluginTranslate: pluginId | async"
+        [margin]="true"
+        [defaultValue]="obs.prefill?.fileFormat"
+        [disabled]="obs.disabled"
+        [required]="true"
+        [trim]="true"
+        placeholder="e.g. doc:fileFormat"
+      />
+    }
+    <v-input
+      name="messageName"
+      [title]="'messageName' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [defaultValue]="obs.prefill?.messageName"
+      [disabled]="obs.disabled"
+      [required]="true"
+    />
+  </v-form>
+}

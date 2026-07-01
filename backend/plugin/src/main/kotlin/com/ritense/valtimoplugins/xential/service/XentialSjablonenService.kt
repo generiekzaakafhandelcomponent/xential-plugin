@@ -55,17 +55,18 @@ class XentialSjablonenService(
             }
     }
 
-    fun testAccessToSjabloongroep(
+
+    fun testAccessToSjabloonGroep(
         gebruikersId: String,
-        sjabloongroepId: String,
+        sjabloonGroepId: String,
     ): XentialAccessResult {
-        logger.debug { "testing sjabloongroep with $sjabloongroepId" }
+        logger.debug { "testing access with $sjabloonGroepId" }
         generateApi().let {
             try {
                 it
                     .geefSjablonenlijstWithHttpInfo(
                         gebruikersId = gebruikersId,
-                        sjabloongroepId = sjabloongroepId,
+                        sjabloongroepId = sjabloonGroepId,
                     ).let { response ->
                         return XentialAccessResult(
                             statusCode = response.statusCode.toString(),

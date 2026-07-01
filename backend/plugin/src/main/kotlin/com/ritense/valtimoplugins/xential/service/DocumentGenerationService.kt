@@ -67,7 +67,7 @@ class DocumentGenerationService(
                         sjabloonVulData = xentialDocumentProperties.content,
                     ),
             )
-        logger.debug { "found something: $result" }
+        logger.debug { "xential creeer document response: $result" }
 
         val xentialToken =
             XentialToken(

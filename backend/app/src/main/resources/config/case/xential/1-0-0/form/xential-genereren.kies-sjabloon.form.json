@@ -9,13 +9,13 @@
       "content": "Fields below are related to document upload and linking to zaak"
     },
     {
-        "key": "pv:documentTitle",
-        "type": "textfield",
-        "label": "Document titel",
-        "validate": {
-            "required": true
-        },
-        "input": true
+      "key": "pv:documentTitle",
+      "type": "textfield",
+      "label": "Document titel",
+      "validate": {
+        "required": true
+      },
+      "input": true
     },
     {
       "label": "HTML",

@@ -4,9 +4,9 @@
         "title": "mTLS SSLContext (Autodeployed)",
         "pluginDefinitionKey": "mTLS-SSLContext",
         "properties": {
-            "base64ServerCert": "PLACEHOLDER_SERVER_CERT",
-            "base64PrivateKey": "PLACEHOLDER_PRIVATE_KEY",
-            "base64ClientCert": "PLACEHOLDER_CLIENT_CERT"
+            "base64ServerCert": "${MTLS_SSLCTX_SERVER_CERT_BASE64}",
+            "base64PrivateKey": "${MTLS_SSLCTX_PRIVATE_KEY_BASE64}",
+            "base64ClientCert": "${MTLS_SSLCTX_CLIENT_CERT_BASE64}"
         }
     }
 ]

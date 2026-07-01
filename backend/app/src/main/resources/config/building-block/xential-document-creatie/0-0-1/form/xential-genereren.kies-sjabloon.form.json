@@ -1,0 +1,61 @@
+{
+  "components": [
+    {
+      "key": "xentialGebruikersId",
+      "type": "hidden",
+      "input": true,
+      "label": "Xential gebruikersId",
+      "properties": {
+        "sourceKey": "doc:xentialGebruikersId"
+      },
+      "persistent": "client-only"
+    },
+    {
+      "key": "sjabloonGroepId",
+      "type": "hidden",
+      "input": true,
+      "label": "sjabloon Groep Id",
+      "properties": {
+        "sourceKey": "doc:sjabloonGroepId"
+      },
+      "persistent": "client-only"
+    },
+    {
+      "key": "doc:sjabloonId",
+      "type": "select",
+      "label": "Sjabloon",
+      "input": true,
+      "data": {
+        "url": "../api/v1/xential/sjablonen?gebruikersId={{ data.xentialGebruikersId }}&sjabloonGroupId={{ data.sjabloonGroepId }}",
+        "method": "GET",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{localStorage.getItem('formioToken')}}"
+          }
+        ]
+      },
+      "widget": "choicesjs",
+      "dataSrc": "url",
+      "lazyLoad": false,
+      "template": "<span>{{ item.naam }}</span>",
+      "validate": {
+        "required": true
+      },
+      "selectValues": "sjablonen",
+      "valueProperty": "id"
+    },
+    {
+      "key": "submit",
+      "type": "button",
+      "input": true,
+      "label": "Afronden",
+      "showValidations": false,
+      "disableOnInvalid": true
+    }
+  ]
+}

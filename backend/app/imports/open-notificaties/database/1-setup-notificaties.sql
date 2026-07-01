@@ -50,7 +50,7 @@ VALUES (3, 'openzaak', 'openzaak');
 SELECT setval(pg_get_serial_sequence('vng_api_common_jwtsecret', 'id'), 3, true);
 
 INSERT INTO datamodel_kanaal
-VALUES (1, 'e069e3f0-6d5b-40ac-91fb-ad16384c5851', 'zaken', '', '{}');
+VALUES (1, 'e069e3f0-6d5b-40ac-91fb-ad16384c5851', 'zaken', '', '{bronorganisatie,zaaktype,vertrouwelijkheidaanduiding}');
 INSERT INTO datamodel_kanaal
 VALUES (2, '132e72c8-59b4-46c3-ab77-3c9b43738d51', 'documenten', '', '{}');
 INSERT INTO datamodel_kanaal

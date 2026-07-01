@@ -55,14 +55,14 @@ class XentialAutoConfiguration {
         documentGenerationService: DocumentGenerationService,
         valueResolverService: ValueResolverService,
         xentialSjablonenService: XentialSjablonenService,
-        objectMapper: ObjectMapper,
+        objectMapper: ObjectMapper
     ) = XentialPluginFactory(
         pluginService,
         esbClient,
         documentGenerationService,
         valueResolverService,
         xentialSjablonenService,
-        objectMapper,
+        objectMapper
     )
 
     @Bean
