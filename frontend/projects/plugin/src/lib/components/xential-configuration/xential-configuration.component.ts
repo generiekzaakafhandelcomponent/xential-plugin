@@ -15,12 +15,7 @@
  */
 
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {
-  PluginConfigurationComponent,
-  PluginConfigurationData,
-  PluginManagementService,
-  PluginTranslationService
-} from '@valtimo/plugin';
+import {PluginConfigurationComponent, PluginConfigurationData, PluginManagementService, PluginTranslationService} from '@valtimo/plugin';
 import {BehaviorSubject, combineLatest, map, Observable, Subscription, take} from 'rxjs';
 import {XentialConfig} from '../../models';
 import {TranslateService} from "@ngx-translate/core";

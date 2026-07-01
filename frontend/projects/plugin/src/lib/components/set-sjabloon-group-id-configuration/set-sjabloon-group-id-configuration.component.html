@@ -15,9 +15,9 @@
   -->
 
 @if ({
-      disabled: disabled$ | async,
-      prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null
-    }; as obs) {
+  disabled: disabled$ | async,
+  prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null
+}; as obs) {
   <v-form (valueChange)="formValueChange($event)">
 
     <div>

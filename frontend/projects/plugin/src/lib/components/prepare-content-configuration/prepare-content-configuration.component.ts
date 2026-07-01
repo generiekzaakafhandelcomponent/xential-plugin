@@ -15,15 +15,8 @@
  */
 
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FunctionConfigurationComponent, FunctionConfigurationData} from '@valtimo/plugin';
-import {
-  BehaviorSubject,
-  combineLatest, filter,
-  map,
-  Observable,
-  Subscription,
-  take,
-} from 'rxjs';
+import {FunctionConfigurationComponent} from '@valtimo/plugin';
+import {BehaviorSubject, combineLatest, filter, map, Observable, Subscription, take,} from 'rxjs';
 import {PrepareContentConfig} from '../../models';
 import {SelectItem} from '@valtimo/components';
 import {XentialApiSjabloonService} from '../../modules/xential-api/services/xential-api-sjabloon.service';

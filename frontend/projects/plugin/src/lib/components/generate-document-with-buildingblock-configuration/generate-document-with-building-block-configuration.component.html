@@ -15,11 +15,11 @@
   -->
 
 @if ({
-      disabled: disabled$ | async,
-      prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null,
-      fileFormats: fileFormats$ | async,
-      selectedFileFormatInputType: selectedFileFormatInputType$ | async
-    }; as obs) {
+  disabled: disabled$ | async,
+  prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null,
+  fileFormats: fileFormats$ | async,
+  selectedFileFormatInputType: selectedFileFormatInputType$ | async
+}; as obs) {
   <v-form (valueChange)="formValueChange($event)">
 
     <div>

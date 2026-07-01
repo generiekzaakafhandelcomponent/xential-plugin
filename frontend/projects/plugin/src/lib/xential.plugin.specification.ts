@@ -23,12 +23,8 @@ import {
 import {
   GenerateDocumentWithBuildingBlockConfigurationComponent
 } from "./components/generate-document-with-buildingblock-configuration/generate-document-with-building-block-configuration.component";
-import {
-  PrepareContentConfigurationComponent
-} from "./components/prepare-content-configuration/prepare-content-configuration.component";
-import {
-  ValidateAccessConfigurationComponent
-} from "./components/validate-access-configuration/validate-access-configuration.component";
+import {PrepareContentConfigurationComponent} from "./components/prepare-content-configuration/prepare-content-configuration.component";
+import {ValidateAccessConfigurationComponent} from "./components/validate-access-configuration/validate-access-configuration.component";
 import {
   SetSjabloonGroupIdConfigurationComponent
 } from "./components/set-sjabloon-group-id-configuration/set-sjabloon-group-id-configuration.component";

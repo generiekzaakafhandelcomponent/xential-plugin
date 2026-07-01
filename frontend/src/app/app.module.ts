@@ -98,8 +98,10 @@ import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
 import {environment} from "../environments/environment";
 import {registerDocumentenApiFormioUploadComponent, ZgwModule} from "@valtimo/zgw";
 import {
-  MailTemplatePluginModule, mailTemplatePluginSpecification,
-  TextTemplatePluginModule, textTemplatePluginSpecification
+  MailTemplatePluginModule,
+  mailTemplatePluginSpecification,
+  TextTemplatePluginModule,
+  textTemplatePluginSpecification
 } from '@valtimo-plugins/freemarker';
 import {AdminSettingsModule} from '@valtimo/admin-settings';
 import {XentialPluginModule, XentialPluginSpecification,} from "@valtimo-plugins/xential";
