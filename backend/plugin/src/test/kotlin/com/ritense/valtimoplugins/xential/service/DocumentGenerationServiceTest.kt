@@ -2,6 +2,7 @@ package com.ritense.valtimoplugins.xential.service
 
 import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.valtimo.contract.authentication.UserManagementService
+import com.ritense.valtimoplugins.xential.BaseTest
 import com.ritense.valtimoplugins.xential.domain.XentialDocumentProperties
 import com.ritense.valtimoplugins.xential.domain.XentialToken
 import com.ritense.valtimoplugins.xential.repository.XentialTokenRepository
@@ -16,11 +17,10 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.operaton.bpm.engine.RuntimeService
-import org.operaton.bpm.engine.delegate.DelegateExecution
 import org.springframework.web.client.RestClient
 import java.util.UUID
 
-class DocumentGenerationServiceTest {
+class DocumentGenerationServiceTest : BaseTest() {
     @Mock
     lateinit var defaultApi: DefaultApi
 
