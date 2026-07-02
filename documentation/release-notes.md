@@ -2,6 +2,9 @@
 
 Overzicht van wijzigingen per versie van de Xential-plugin.
 
+## 2.4.2
+Casing aangepast van de plugin specificatie referentie.
+
 ## 2.4.0
 Voorzien van een bouwblok voor het genereren van documenten via Xential templates.
 
