@@ -55,7 +55,6 @@ class XentialSjablonenService(
             }
     }
 
-
     fun testAccessToSjabloonGroep(
         gebruikersId: String,
         sjabloonGroepId: String,

@@ -84,11 +84,12 @@ class XentialPlugin(
         logger.debug { "> XentialDocumentProperties: $originalProps" }
         logger.debug { "> XentialDate: $xentialData" }
 
-        val xentialSjabloon = getSjabloon(
-            xentialGebruikersId = xentialGebruikersId,
-            sjabloonGroepId = originalProps.xentialTemplateGroupId.toString(),
-            sjabloonId = xentialSjabloonId,
-        )
+        val xentialSjabloon =
+            getSjabloon(
+                xentialGebruikersId = xentialGebruikersId,
+                sjabloonGroepId = originalProps.xentialTemplateGroupId.toString(),
+                sjabloonId = xentialSjabloonId,
+            )
 
         val resolvedValues = resolveValuesFor(execution, mapOf("content" to xentialData))
         val modifiedProps =
@@ -120,20 +121,22 @@ class XentialPlugin(
         logger.info { "Generating document from template: $sjabloonId for user: $xentialGebruikersId" }
         logger.debug { "> Xential data: $textContent" }
 
-        val xentialSjabloon = getSjabloon(
-            xentialGebruikersId = xentialGebruikersId,
-            sjabloonGroepId = sjabloonGroepId,
-            sjabloonId = sjabloonId,
-        )
+        val xentialSjabloon =
+            getSjabloon(
+                xentialGebruikersId = xentialGebruikersId,
+                sjabloonGroepId = sjabloonGroepId,
+                sjabloonId = sjabloonId,
+            )
 
-        val xentialDocumentProperties = XentialDocumentProperties(
-            xentialTemplateGroupId = UUID.fromString(sjabloonGroepId),
-            xentialTemplateName = xentialSjabloon.naam,
-            fileFormat = fileFormat,
-            documentId = "documentId",
-            messageName = messageName,
-            content = textContent,
-        )
+        val xentialDocumentProperties =
+            XentialDocumentProperties(
+                xentialTemplateGroupId = UUID.fromString(sjabloonGroepId),
+                xentialTemplateName = xentialSjabloon.naam,
+                fileFormat = fileFormat,
+                documentId = "documentId",
+                messageName = messageName,
+                content = textContent,
+            )
 
         generateDocumentAndStoreResult(execution, xentialGebruikersId, sjabloonId, xentialDocumentProperties)
     }
@@ -215,22 +218,26 @@ class XentialPlugin(
             execution.processInstance.setVariable(toegangResultaatId, objectMapper.convertValue(result))
 
         try {
-            val sjabloonGroupId = sjabloonGroepUuid(xentialGebruikersId, sjabloonGroepNaam)
-                ?: run {
-                    logger.debug { "No sjabloongroep found with name: $sjabloonGroepNaam for user: $xentialGebruikersId" }
-                    storeResult(
-                        XentialAccessResult(
-                            statusCode = "404",
-                            statusMessage = "No sjabloon group found with name: $sjabloonGroepNaam",
-                        ),
-                    )
-                    return
-                }
+            val sjabloonGroupId =
+                sjabloonGroepUuid(xentialGebruikersId, sjabloonGroepNaam)
+                    ?: run {
+                        logger.debug {
+                            "No sjabloongroep found with name: $sjabloonGroepNaam for user: $xentialGebruikersId"
+                        }
+                        storeResult(
+                            XentialAccessResult(
+                                statusCode = "404",
+                                statusMessage = "No sjabloon group found with name: $sjabloonGroepNaam",
+                            ),
+                        )
+                        return
+                    }
 
-            val accessResult = xentialSjablonenService.testAccessToSjabloonGroep(
-                gebruikersId = xentialGebruikersId,
-                sjabloonGroepId = sjabloonGroupId,
-            )
+            val accessResult =
+                xentialSjablonenService.testAccessToSjabloonGroep(
+                    gebruikersId = xentialGebruikersId,
+                    sjabloonGroepId = sjabloonGroupId,
+                )
             accessResult.sjabloonGroepId = sjabloonGroupId
             storeResult(accessResult)
         } catch (e: RestClientException) {
@@ -240,8 +247,9 @@ class XentialPlugin(
             storeResult(
                 XentialAccessResult(
                     statusCode = (e as? RestClientResponseException)?.statusCode?.value()?.toString() ?: "503",
-                    statusMessage = (e as? RestClientResponseException)?.statusText ?: e.message
-                    ?: "Could not reach Xential",
+                    statusMessage =
+                        (e as? RestClientResponseException)?.statusText ?: e.message
+                            ?: "Could not reach Xential",
                 ),
             )
         }
@@ -249,13 +257,13 @@ class XentialPlugin(
 
     private fun sjabloonGroepUuid(
         xentialGebruikersId: String,
-        caseType: String): String? {
-        return xentialSjablonenService
+        caseType: String,
+    ): String? =
+        xentialSjablonenService
             .getTemplateList(xentialGebruikersId, null)
             .sjabloongroepen
             .firstOrNull { it.naam == caseType }
             ?.id
-    }
 
     @PluginAction(
         key = "prepare-content",
@@ -306,7 +314,9 @@ class XentialPlugin(
             value.startsWith("case:") ||
                 value.startsWith("doc:") ||
                 value.startsWith("template:") ||
-                value.startsWith("pv:"))
+                value.startsWith("pv:")
+        )
+
     private fun resolveValuesFor(
         execution: DelegateExecution,
         params: Map<String, Any?>,
