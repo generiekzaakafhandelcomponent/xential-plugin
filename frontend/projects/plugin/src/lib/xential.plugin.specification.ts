@@ -29,7 +29,7 @@ import {
   SetSjabloonGroupIdConfigurationComponent
 } from "./components/set-sjabloon-group-id-configuration/set-sjabloon-group-id-configuration.component";
 
-const XentialPluginSpecification: PluginSpecification = {
+const xentialPluginSpecification: PluginSpecification = {
   pluginId: 'xential',
   pluginConfigurationComponent: XentialConfigurationComponent,
   pluginLogoBase64: XENTIAL_PLUGIN_LOGO_BASE64,
@@ -130,4 +130,4 @@ const XentialPluginSpecification: PluginSpecification = {
   },
 };
 
-export {XentialPluginSpecification};
+export {xentialPluginSpecification};

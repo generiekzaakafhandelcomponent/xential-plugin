@@ -16,31 +16,22 @@
 
 import {AccessControlManagementModule} from "@valtimo/access-control-management";
 import {AccountModule} from "@valtimo/account";
+import {AdminSettingsModule} from '@valtimo/admin-settings';
 import {AnalyseModule} from "@valtimo/analyse";
 import {AppComponent} from "./app.component";
 import {AppRoutingModule} from "./app-routing.module";
 import {
-  BesluitenApiPluginModule,
-  besluitenApiPluginSpecification,
-  CatalogiApiPluginModule,
-  catalogiApiPluginSpecification,
-  DocumentenApiPluginModule,
-  documentenApiPluginSpecification,
-  NotificatiesApiPluginModule,
-  notificatiesApiPluginSpecification,
-  ObjectenApiPluginModule,
-  objectenApiPluginSpecification,
-  ObjectTokenAuthenticationPluginModule,
-  objectTokenAuthenticationPluginSpecification,
-  ObjecttypenApiPluginModule,
-  objecttypenApiPluginSpecification,
-  OpenNotificatiesPluginModule,
-  openNotificatiesPluginSpecification,
-  OpenZaakPluginModule,
-  openZaakPluginSpecification,
   PLUGINS_TOKEN,
-  ZakenApiPluginModule,
-  zakenApiPluginSpecification,
+  BesluitenApiPluginModule, besluitenApiPluginSpecification,
+  CatalogiApiPluginModule, catalogiApiPluginSpecification,
+  DocumentenApiPluginModule, documentenApiPluginSpecification,
+  NotificatiesApiPluginModule, notificatiesApiPluginSpecification,
+  ObjectenApiPluginModule, objectenApiPluginSpecification,
+  ObjectTokenAuthenticationPluginModule, objectTokenAuthenticationPluginSpecification,
+  ObjecttypenApiPluginModule, objecttypenApiPluginSpecification,
+  OpenNotificatiesPluginModule, openNotificatiesPluginSpecification,
+  OpenZaakPluginModule, openZaakPluginSpecification,
+  ZakenApiPluginModule, zakenApiPluginSpecification,
 } from "@valtimo/plugin";
 import {BootstrapModule} from "@valtimo/bootstrap";
 import {
@@ -98,13 +89,10 @@ import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
 import {environment} from "../environments/environment";
 import {registerDocumentenApiFormioUploadComponent, ZgwModule} from "@valtimo/zgw";
 import {
-  MailTemplatePluginModule,
-  mailTemplatePluginSpecification,
-  TextTemplatePluginModule,
-  textTemplatePluginSpecification
+  MailTemplatePluginModule, mailTemplatePluginSpecification,
+  TextTemplatePluginModule, textTemplatePluginSpecification
 } from '@valtimo-plugins/freemarker';
-import {AdminSettingsModule} from '@valtimo/admin-settings';
-import {XentialPluginModule, XentialPluginSpecification,} from "@valtimo-plugins/xential";
+import {XentialPluginModule, xentialPluginSpecification,} from "@valtimo-plugins/xential";
 
 export function tabsFactory() {
   return new Map<string, object>([
@@ -201,7 +189,7 @@ export function tabsFactory() {
         openNotificatiesPluginSpecification,
         openZaakPluginSpecification,
         textTemplatePluginSpecification,
-        XentialPluginSpecification,
+        xentialPluginSpecification,
         zakenApiPluginSpecification,
       ],
     },

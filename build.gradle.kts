@@ -124,7 +124,7 @@ allprojects {
         configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
             version.set(ktlintToolVersion)
             filter {
-                exclude("**/generated/**")
+                exclude { it.file.path.contains("/generated/") }
             }
         }
     }
