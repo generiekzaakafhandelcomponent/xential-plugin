@@ -2,6 +2,9 @@
 
 Overzicht van wijzigingen per versie van de Xential-plugin.
 
+## 2.5.1
+In de documentatie is vastgelegd dat de opgegeven documentinhoud onbewerkt aan Xential wordt doorgegeven: de plugin voegt er niets aan toe en controleert de inhoud niet. Verwijs daarom naar inhoud die het proces zelf bepaalt en niet rechtstreeks naar gegevens die door een eindgebruiker zijn ingevuld of aangeleverd. Verder is ongebruikte code verwijderd; dit heeft geen gevolgen voor bestaande configuraties.
+
 ## 2.4.2
 Casing aangepast van de plugin specificatie referentie.
 
