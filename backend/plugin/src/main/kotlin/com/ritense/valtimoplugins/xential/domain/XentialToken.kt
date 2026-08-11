@@ -37,4 +37,14 @@ class XentialToken(
     val resumeUrl: String?,
     @Column(name = "created_on", nullable = false, updatable = false)
     val createdOn: LocalDateTime = LocalDateTime.now(),
-)
+    /**
+     * The moment after which this document creation session is no longer accepted on the callback endpoint.
+     *
+     * Nullable because sessions created before expiry was introduced have no value; those are treated as
+     * non-expiring so that an upgrade does not invalidate documents that are still being generated.
+     */
+    @Column(name = "expires_on", nullable = true, updatable = false)
+    val expiresOn: LocalDateTime? = null,
+) {
+    fun isExpired(now: LocalDateTime): Boolean = expiresOn?.isBefore(now) ?: false
+}

@@ -15,6 +15,7 @@
     * [Plugin action: Generate document](#plugin-action-generate-document)
     * [Plugin action: Generate document with building block](#plugin-action-generate-document-with-building-block)
     * [Endpoint: /xential/document](#endpoint-xentialdocument)
+    * [Securing the document callback](#securing-the-document-callback)
     * [Endpoint: /xential/sjablonen](#endpoint-xentialsjablonen)
   * [Running the example application](#running-the-example-application)
   * [Development](#development)
@@ -76,6 +77,8 @@ Plugin actions can be linked to BPMN service tasks. Using the plugin comes down 
   * `mTlsSllContextConfigurationId` - The mTLS SSL Context configuration that should be used.
   * `applicationName` - Is the name for basic authentication at Xential.
   * `applicationPassword` - Is the password for basic authentication at Xential.
+  * `callbackSecret` - Shared secret used to verify incoming document callbacks. Optional, but required before
+    callback verification can be enforced. See [Securing the document callback](#securing-the-document-callback).
 * Create process link between a BPMN service task and the desired plugin action.
 
 ### Plugin action: Testing access tot Xential
@@ -145,6 +148,40 @@ a job to generate the document.
 * `formaat` - document format of the data retrieved
 * `documentkenmerk` - not used
 * `data` - the actual content of the generated document
+
+### Securing the document callback
+
+`/xential/document` is called by Xential rather than by a logged-in user, so it cannot require a Valtimo login.
+Instead, the caller proves it is genuine by signing the callback with a shared secret.
+
+The sender computes `HMAC-SHA256(callbackSecret, documentCreatieSessieId + data)`, hex encoded, and sends it in
+the `X-Xential-Signature` header. The session id is part of the signed material so that a captured signature
+cannot be replayed against a different document creation session. Signatures are compared in constant time.
+
+Enabling this is a coordinated change: Valtimo must not start rejecting callbacks before the sending side signs
+them. Roll it out in three steps.
+
+1. Set `callbackSecret` on the plugin configuration and configure the same secret on the sending side.
+2. Leave `valtimo.xential.callback.verification-mode` at its default of `LOG_ONLY` and check the logs. Every
+   callback that fails verification is logged as a warning while still being processed, so a running integration
+   keeps working.
+3. Once no warnings remain, set the mode to `ENFORCE`.
+
+| Property                                          | Default   | Description                                                                                                  |
+|---------------------------------------------------|-----------|--------------------------------------------------------------------------------------------------------------|
+| `valtimo.xential.callback.verification-mode`      | `LOG_ONLY` | `LOG_ONLY` logs an unverifiable callback and processes it anyway; `ENFORCE` rejects it.                      |
+| `valtimo.xential.callback.token-time-to-live`     | `P7D`     | How long a document creation session stays valid. Expired sessions are rejected and swept.                    |
+| `valtimo.xential.callback.rate-limit`             | `60`      | Callbacks accepted per window for the endpoint as a whole. `0` disables rate limiting.                        |
+| `valtimo.xential.callback.rate-limit-window`      | `PT1M`    | Length of the rate limiting window.                                                                           |
+| `valtimo.xential.callback.token-cleanup-cron`     | `0 0 * * * *` | Schedule on which expired document creation sessions are deleted.                                         |
+
+A document creation session is single use: it is deleted once its callback has been handled. The endpoint
+answers with an empty body and returns the same status for a malformed, unknown and expired session id, so it
+cannot be used to discover which session ids exist.
+
+An alternative to the shared secret is to verify a client certificate on the callback at the ingress, reusing the
+mTLS trust anchor this plugin already relies on for outbound traffic. That avoids managing a second secret, but
+it depends on the ingress passing the client certificate through, which has to be arranged per deployment.
 
 ### Endpoint: /xential/sjablonen
 

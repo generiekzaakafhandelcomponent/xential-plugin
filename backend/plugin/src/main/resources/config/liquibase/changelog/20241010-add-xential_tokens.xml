@@ -41,4 +41,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="add_expires_on_to_xential_tokens" author="Ritense">
+        <addColumn tableName="xential_tokens">
+            <column name="expires_on" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

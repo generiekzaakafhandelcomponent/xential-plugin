@@ -65,6 +65,15 @@ class XentialPlugin(
     @PluginProperty(key = "mTlsSslContextAutoConfigurationId", secret = false, required = true)
     private lateinit var mTlsSslContextAutoConfigurationId: MTlsSslContext
 
+    /**
+     * Shared secret used to verify the signature on incoming document callbacks.
+     *
+     * Optional so that existing plugin configurations keep working after an upgrade. Until it is set, callbacks
+     * cannot be verified - see `valtimo.xential.callback.verification-mode`.
+     */
+    @PluginProperty(key = "callbackSecret", secret = true, required = false)
+    var callbackSecret: String? = null
+
     @PluginAction(
         key = "generate-document",
         title = "Generate document",

@@ -2,6 +2,9 @@
 
 Overzicht van wijzigingen per versie van de Xential-plugin.
 
+## 2.5.0
+De callback waarmee Xential gegenereerde documenten aflevert, kan nu worden beveiligd met een gedeeld geheim dat bij de pluginconfiguratie wordt ingesteld. Zolang de verificatie nog niet is afgedwongen worden afwijkende callbacks alleen gelogd, zodat een bestaande koppeling blijft werken totdat het geheim aan beide zijden is ingesteld.
+
 ## 2.4.2
 Casing aangepast van de plugin specificatie referentie.
 
