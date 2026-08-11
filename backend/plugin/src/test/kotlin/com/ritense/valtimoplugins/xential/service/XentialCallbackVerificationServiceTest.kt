@@ -16,115 +16,173 @@
 
 package com.ritense.valtimoplugins.xential.service
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ritense.plugin.domain.PluginConfigurationId
 import com.ritense.plugin.service.PluginService
 import com.ritense.valtimoplugins.xential.BaseTest
-import com.ritense.valtimoplugins.xential.autoconfiguration.XentialCallbackProperties
-import com.ritense.valtimoplugins.xential.domain.CallbackVerificationMode
+import com.ritense.valtimoplugins.xential.domain.CallbackVerificationResult
 import com.ritense.valtimoplugins.xential.domain.DocumentCreatedMessage
 import com.ritense.valtimoplugins.xential.domain.FileFormat
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin
 import com.ritense.valtimoplugins.xential.service.XentialCallbackVerificationService.Companion.encodeHex
 import com.ritense.valtimoplugins.xential.service.XentialCallbackVerificationService.Companion.sign
 import com.ritense.valueresolver.ValueResolverService
-import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.security.MessageDigest
 import java.util.UUID
 
 class XentialCallbackVerificationServiceTest : BaseTest() {
     private val pluginService: PluginService = mock()
+    private val service = XentialCallbackVerificationService(pluginService)
+
     private val sessionId = UUID.randomUUID().toString()
     private val payload = "cGF5bG9hZA=="
 
+    /** The configuration that started the document creation session under test. */
+    private val ownConfigurationId = UUID.randomUUID()
+
+    /** A second, unrelated Xential configuration with a different secret. */
+    private val otherConfigurationId = UUID.randomUUID()
+
     @BeforeEach
     fun setUp() {
-        configureSecret(SECRET)
+        givenConfiguration(ownConfigurationId, OWN_SECRET)
+        givenConfiguration(otherConfigurationId, OTHER_SECRET)
     }
 
     @Test
     fun `should accept a correctly signed callback`() {
-        val service = service(CallbackVerificationMode.ENFORCE)
+        assertEquals(CallbackVerificationResult.VERIFIED, verifyWith(signatureUsing(OWN_SECRET)))
+    }
 
-        assertTrue(service.isCallbackAllowed(message(), validSignature()))
+    /**
+     * The regression this whole change exists for.
+     *
+     * The previous implementation resolved the secret with a `{ true }` filter, which returns whichever Xential
+     * configuration the repository happens to hand back first. With two configurations that is a coin flip: a
+     * genuine callback gets checked against a secret its sender never held.
+     */
+    @Test
+    fun `should verify against the configuration that created the session and not another one`() {
+        assertEquals(
+            CallbackVerificationResult.VERIFIED,
+            verifyWith(signatureUsing(OWN_SECRET)),
+            "A callback signed with the secret of the configuration that started the session must verify",
+        )
+        assertEquals(
+            CallbackVerificationResult.INVALID_SIGNATURE,
+            verifyWith(signatureUsing(OTHER_SECRET)),
+            "A callback signed with another configuration's secret must not verify",
+        )
+
+        verify(pluginService, atLeastOnce())
+            .createInstance(eq(PluginConfigurationId.existingId(ownConfigurationId)))
+        verify(pluginService, never()).createInstance(eq(PluginConfigurationId.existingId(otherConfigurationId)))
+    }
+
+    /** The arbitrary-first-configuration lookup must be gone, not merely unused on the happy path. */
+    @Test
+    fun `should never resolve the plugin configuration by filtering over all configurations`() {
+        verifyWith(signatureUsing(OWN_SECRET))
+
+        verify(pluginService, never()).createInstance(eq(XentialPlugin::class.java), any<(JsonNode) -> Boolean>())
     }
 
     @Test
-    fun `should reject a callback without a signature when enforcing`() {
-        val service = service(CallbackVerificationMode.ENFORCE)
-
-        assertFalse(service.isCallbackAllowed(message(), null))
-        assertFalse(service.isCallbackAllowed(message(), ""))
+    fun `should not verify a session that does not record its plugin configuration`() {
+        assertEquals(
+            CallbackVerificationResult.UNKNOWN_PLUGIN_CONFIGURATION,
+            service.verify(message(), signatureUsing(OWN_SECRET), null),
+        )
+        verify(pluginService, never()).createInstance(any<PluginConfigurationId>())
     }
 
     @Test
-    fun `should reject a callback with a wrong signature when enforcing`() {
-        val service = service(CallbackVerificationMode.ENFORCE)
-        val wrongSignature = encodeHex(sign("another-secret", sessionId, payload))
+    fun `should not verify when the recorded plugin configuration cannot be resolved`() {
+        val removedConfigurationId = UUID.randomUUID()
+        whenever(pluginService.createInstance(eq(PluginConfigurationId.existingId(removedConfigurationId))))
+            .thenThrow(IllegalStateException("no such configuration"))
 
-        assertFalse(service.isCallbackAllowed(message(), wrongSignature))
+        assertEquals(
+            CallbackVerificationResult.PLUGIN_CONFIGURATION_UNRESOLVABLE,
+            service.verify(message(), signatureUsing(OWN_SECRET), removedConfigurationId),
+        )
     }
 
     @Test
-    fun `should reject a signature that is not valid hex when enforcing`() {
-        val service = service(CallbackVerificationMode.ENFORCE)
+    fun `should not verify when the recorded configuration is not a Xential configuration`() {
+        val foreignConfigurationId = UUID.randomUUID()
+        whenever(pluginService.createInstance(eq(PluginConfigurationId.existingId(foreignConfigurationId))))
+            .thenReturn("not a Xential plugin")
 
-        assertFalse(service.isCallbackAllowed(message(), "not-hex"))
-        assertFalse(service.isCallbackAllowed(message(), "abc"))
+        assertEquals(
+            CallbackVerificationResult.PLUGIN_CONFIGURATION_UNRESOLVABLE,
+            service.verify(message(), signatureUsing(OWN_SECRET), foreignConfigurationId),
+        )
+    }
+
+    @Test
+    fun `should not verify without a configured secret`() {
+        val secretlessConfigurationId = UUID.randomUUID()
+        givenConfiguration(secretlessConfigurationId, null)
+
+        assertEquals(
+            CallbackVerificationResult.NO_SECRET_CONFIGURED,
+            service.verify(message(), signatureUsing(OWN_SECRET), secretlessConfigurationId),
+        )
+    }
+
+    @Test
+    fun `should not verify with a blank configured secret`() {
+        val blankSecretConfigurationId = UUID.randomUUID()
+        givenConfiguration(blankSecretConfigurationId, "  ")
+
+        assertEquals(
+            CallbackVerificationResult.NO_SECRET_CONFIGURED,
+            service.verify(message(), signatureUsing(OWN_SECRET), blankSecretConfigurationId),
+        )
+    }
+
+    @Test
+    fun `should not verify a callback without a signature`() {
+        assertEquals(CallbackVerificationResult.INVALID_SIGNATURE, verifyWith(null))
+        assertEquals(CallbackVerificationResult.INVALID_SIGNATURE, verifyWith(""))
+    }
+
+    @Test
+    fun `should not verify a signature that is not valid hex`() {
+        assertEquals(CallbackVerificationResult.INVALID_SIGNATURE, verifyWith("not-hex"))
+        assertEquals(CallbackVerificationResult.INVALID_SIGNATURE, verifyWith("abc"))
     }
 
     @Test
     fun `should accept a signature regardless of hex casing`() {
-        val service = service(CallbackVerificationMode.ENFORCE)
-
-        assertTrue(service.isCallbackAllowed(message(), validSignature().uppercase()))
+        assertEquals(CallbackVerificationResult.VERIFIED, verifyWith(signatureUsing(OWN_SECRET).uppercase()))
     }
 
     @Test
-    fun `should reject a signature captured for a different session when enforcing`() {
-        val service = service(CallbackVerificationMode.ENFORCE)
-        val signatureForOtherSession = encodeHex(sign(SECRET, UUID.randomUUID().toString(), payload))
+    fun `should not verify a signature captured for a different session`() {
+        val signatureForOtherSession = encodeHex(sign(OWN_SECRET, UUID.randomUUID().toString(), payload))
 
-        assertFalse(service.isCallbackAllowed(message(), signatureForOtherSession))
+        assertEquals(CallbackVerificationResult.INVALID_SIGNATURE, verifyWith(signatureForOtherSession))
     }
 
     @Test
-    fun `should reject a signature captured for a different payload when enforcing`() {
-        val service = service(CallbackVerificationMode.ENFORCE)
-        val signatureForOtherPayload = encodeHex(sign(SECRET, sessionId, "b3RoZXI="))
+    fun `should not verify a signature captured for a different payload`() {
+        val signatureForOtherPayload = encodeHex(sign(OWN_SECRET, sessionId, "b3RoZXI="))
 
-        assertFalse(service.isCallbackAllowed(message(), signatureForOtherPayload))
-    }
-
-    @Test
-    fun `should reject every callback when enforcing without a configured secret`() {
-        configureSecret(null)
-        val service = service(CallbackVerificationMode.ENFORCE)
-
-        assertFalse(service.isCallbackAllowed(message(), validSignature()))
-    }
-
-    @Test
-    fun `should allow an unverifiable callback when only logging`() {
-        val service = service(CallbackVerificationMode.LOG_ONLY)
-
-        assertTrue(service.isCallbackAllowed(message(), null))
-        assertTrue(service.isCallbackAllowed(message(), "deadbeef"))
-    }
-
-    @Test
-    fun `should allow a callback when the plugin configuration cannot be resolved`() {
-        whenever(pluginService.createInstance(eq(XentialPlugin::class.java), any<(Any) -> Boolean>()))
-            .thenThrow(IllegalStateException("no configuration"))
-        val service = service(CallbackVerificationMode.LOG_ONLY)
-
-        assertTrue(service.isCallbackAllowed(message(), validSignature()))
+        assertEquals(CallbackVerificationResult.INVALID_SIGNATURE, verifyWith(signatureForOtherPayload))
     }
 
     /**
@@ -151,26 +209,26 @@ class XentialCallbackVerificationServiceTest : BaseTest() {
         )
     }
 
-    private fun service(mode: CallbackVerificationMode) =
-        XentialCallbackVerificationService(
-            pluginService,
-            XentialCallbackProperties(verificationMode = mode),
-        )
+    private fun verifyWith(signature: String?) = service.verify(message(), signature, ownConfigurationId)
 
-    private fun configureSecret(secret: String?) {
+    private fun signatureUsing(secret: String) = encodeHex(sign(secret, sessionId, payload))
+
+    private fun givenConfiguration(
+        pluginConfigurationId: UUID,
+        secret: String?,
+    ) {
         val plugin =
             XentialPlugin(
+                pluginConfigurationId = PluginConfigurationId.existingId(pluginConfigurationId),
                 documentGenerationService = mock(),
                 esbClient = mock(),
                 objectMapper = ObjectMapper(),
                 valueResolverService = mock<ValueResolverService>(),
                 xentialSjablonenService = mock(),
             ).apply { callbackSecret = secret }
-        whenever(pluginService.createInstance(eq(XentialPlugin::class.java), any<(Any) -> Boolean>()))
+        whenever(pluginService.createInstance(eq(PluginConfigurationId.existingId(pluginConfigurationId))))
             .thenReturn(plugin)
     }
-
-    private fun validSignature() = encodeHex(sign(SECRET, sessionId, payload))
 
     private fun message() =
         DocumentCreatedMessage(
@@ -183,7 +241,8 @@ class XentialCallbackVerificationServiceTest : BaseTest() {
         )
 
     private companion object {
-        const val SECRET = "a-shared-secret"
+        const val OWN_SECRET = "the-secret-of-the-configuration-that-started-the-session"
+        const val OTHER_SECRET = "the-secret-of-an-unrelated-configuration"
         const val SERVICE_CLASS_RESOURCE =
             "com/ritense/valtimoplugins/xential/service/XentialCallbackVerificationService.class"
     }

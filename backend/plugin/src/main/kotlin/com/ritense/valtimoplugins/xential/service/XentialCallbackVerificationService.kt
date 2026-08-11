@@ -16,14 +16,15 @@
 
 package com.ritense.valtimoplugins.xential.service
 
+import com.ritense.plugin.domain.PluginConfigurationId
 import com.ritense.plugin.service.PluginService
-import com.ritense.valtimoplugins.xential.autoconfiguration.XentialCallbackProperties
-import com.ritense.valtimoplugins.xential.domain.CallbackVerificationMode
+import com.ritense.valtimoplugins.xential.domain.CallbackVerificationResult
 import com.ritense.valtimoplugins.xential.domain.DocumentCreatedMessage
 import com.ritense.valtimoplugins.xential.plugin.XentialPlugin
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.util.UUID
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -35,70 +36,68 @@ import javax.crypto.spec.SecretKeySpec
  *
  * The expected signature is `HMAC-SHA256(callbackSecret, documentCreatieSessieId || data)`, hex encoded, sent in
  * the [SIGNATURE_HEADER] header.
+ *
+ * ### Which secret
+ *
+ * The secret is read from the plugin configuration recorded on the document creation session, never from a
+ * configuration picked out of the set that happens to exist. A deployment may legitimately hold several Xential
+ * plugin configurations - different ESB endpoints, different credentials - and each has its own
+ * `callbackSecret`. Choosing among them arbitrarily would compare the signature against the wrong secret, so
+ * verification would fail for genuine callbacks or, worse, succeed against a secret the sender never used.
+ *
+ * This service therefore only answers "does this signature match the secret of *that* configuration". What to do
+ * with a failure is decided by the verification mode, in [DocumentGenerationService].
  */
 class XentialCallbackVerificationService(
     private val pluginService: PluginService,
-    private val callbackProperties: XentialCallbackProperties,
 ) {
     /**
-     * Verifies [signature] against [message].
+     * Checks [signature] against [message], using the `callbackSecret` of the plugin configuration identified by
+     * [pluginConfigurationId].
      *
-     * @return `true` when the callback may be processed. In [CallbackVerificationMode.LOG_ONLY] this is always
-     * `true` - the outcome is only logged - which is what makes it safe to deploy ahead of the sending side.
+     * @param pluginConfigurationId the configuration that created the document creation session, or `null` for a
+     * session created before the plugin recorded it. A `null` value cannot be verified and yields
+     * [CallbackVerificationResult.UNKNOWN_PLUGIN_CONFIGURATION].
+     * @return why the callback did or did not verify. Never throws: this runs on an unauthenticated endpoint, so
+     * an unresolvable configuration is a failure result rather than an exception.
      */
-    fun isCallbackAllowed(
+    fun verify(
         message: DocumentCreatedMessage,
         signature: String?,
-    ): Boolean {
-        val verified = verify(message, signature)
-        if (verified) {
-            return true
+        pluginConfigurationId: UUID?,
+    ): CallbackVerificationResult {
+        if (pluginConfigurationId == null) {
+            return CallbackVerificationResult.UNKNOWN_PLUGIN_CONFIGURATION
         }
-        return when (callbackProperties.verificationMode) {
-            CallbackVerificationMode.LOG_ONLY -> {
-                logger.warn {
-                    "Xential callback signature could not be verified. The callback is still being processed " +
-                        "because valtimo.xential.callback.verification-mode is LOG_ONLY. Configure the sending " +
-                        "side to sign its callbacks and then switch to ENFORCE."
-                }
-                true
-            }
-
-            CallbackVerificationMode.ENFORCE -> {
-                logger.warn { "Rejected Xential callback: signature missing or invalid." }
-                false
-            }
-        }
-    }
-
-    private fun verify(
-        message: DocumentCreatedMessage,
-        signature: String?,
-    ): Boolean {
-        val secret = callbackSecret()
-        if (secret.isNullOrBlank()) {
-            logger.warn {
-                "No callbackSecret is configured on the Xential plugin, so incoming callbacks cannot be " +
-                    "verified. Configure it on the plugin configuration and on the sending side."
-            }
-            return false
-        }
-        if (signature.isNullOrBlank()) {
-            return false
-        }
-        val providedSignature = decodeHex(signature) ?: return false
+        val plugin =
+            resolvePlugin(pluginConfigurationId)
+                ?: return CallbackVerificationResult.PLUGIN_CONFIGURATION_UNRESOLVABLE
+        val secret =
+            plugin.callbackSecret?.takeIf { it.isNotBlank() }
+                ?: return CallbackVerificationResult.NO_SECRET_CONFIGURED
+        val providedSignature =
+            signature
+                ?.takeIf { it.isNotBlank() }
+                ?.let { decodeHex(it) }
+                ?: return CallbackVerificationResult.INVALID_SIGNATURE
         val expectedSignature = sign(secret, message.documentCreatieSessieId, message.data)
 
         // Constant-time comparison: a length- or content-dependent comparison would leak the expected
         // signature one byte at a time.
-        return MessageDigest.isEqual(expectedSignature, providedSignature)
+        return if (MessageDigest.isEqual(expectedSignature, providedSignature)) {
+            CallbackVerificationResult.VERIFIED
+        } else {
+            CallbackVerificationResult.INVALID_SIGNATURE
+        }
     }
 
-    private fun callbackSecret(): String? =
+    private fun resolvePlugin(pluginConfigurationId: UUID): XentialPlugin? =
         runCatching {
-            pluginService.createInstance(XentialPlugin::class.java) { true }?.callbackSecret
+            pluginService.createInstance(PluginConfigurationId.existingId(pluginConfigurationId)) as? XentialPlugin
         }.getOrElse { exception ->
-            logger.warn(exception) { "Could not resolve the Xential plugin configuration to verify a callback." }
+            logger.debug(exception) {
+                "Could not resolve the Xential plugin configuration recorded on a document creation session."
+            }
             null
         }
 

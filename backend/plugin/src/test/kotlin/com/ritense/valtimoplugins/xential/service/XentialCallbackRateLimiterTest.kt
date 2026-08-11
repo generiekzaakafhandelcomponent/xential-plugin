@@ -38,35 +38,35 @@ class XentialCallbackRateLimiterTest : BaseTest() {
         }
 
     @Test
-    fun `should allow calls up to the configured limit and reject the rest`() {
+    fun `should absorb unverified callbacks up to the configured budget and refuse the rest`() {
         val rateLimiter = rateLimiter(limit = 3)
 
-        assertTrue(rateLimiter.tryAcquire())
-        assertTrue(rateLimiter.tryAcquire())
-        assertTrue(rateLimiter.tryAcquire())
-        assertFalse(rateLimiter.tryAcquire())
-        assertFalse(rateLimiter.tryAcquire())
+        assertTrue(rateLimiter.recordUnverifiedCallback())
+        assertTrue(rateLimiter.recordUnverifiedCallback())
+        assertTrue(rateLimiter.recordUnverifiedCallback())
+        assertFalse(rateLimiter.recordUnverifiedCallback())
+        assertFalse(rateLimiter.recordUnverifiedCallback())
     }
 
     @Test
-    fun `should allow calls again once the window has passed`() {
+    fun `should replenish the budget once the window has passed`() {
         val rateLimiter = rateLimiter(limit = 2)
 
-        assertTrue(rateLimiter.tryAcquire())
-        assertTrue(rateLimiter.tryAcquire())
-        assertFalse(rateLimiter.tryAcquire())
+        assertTrue(rateLimiter.recordUnverifiedCallback())
+        assertTrue(rateLimiter.recordUnverifiedCallback())
+        assertFalse(rateLimiter.recordUnverifiedCallback())
 
         now = now.plusSeconds(61)
 
-        assertTrue(rateLimiter.tryAcquire())
+        assertTrue(rateLimiter.recordUnverifiedCallback())
     }
 
     @Test
-    fun `should not rate limit when the limit is disabled`() {
+    fun `should not limit anything when the budget is disabled`() {
         val rateLimiter = rateLimiter(limit = 0)
 
         repeat(100) {
-            assertTrue(rateLimiter.tryAcquire())
+            assertTrue(rateLimiter.recordUnverifiedCallback())
         }
     }
 

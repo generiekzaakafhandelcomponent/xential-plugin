@@ -38,7 +38,13 @@ data class XentialCallbackProperties(
      * leave a permanent replay window open.
      */
     val tokenTimeToLive: Duration = Duration.ofDays(DEFAULT_TOKEN_TIME_TO_LIVE_DAYS),
-    /** The number of callbacks accepted per [rateLimitWindow]. */
+    /**
+     * The number of *unverifiable* callbacks absorbed per [rateLimitWindow]. `0` disables the limit.
+     *
+     * Correctly signed callbacks are never counted and never blocked, so a flood of forged callbacks cannot stop
+     * a genuine one from being processed. See
+     * [com.ritense.valtimoplugins.xential.service.XentialCallbackRateLimiter].
+     */
     val rateLimit: Int = DEFAULT_RATE_LIMIT,
     /** The length of the window over which [rateLimit] is counted. */
     val rateLimitWindow: Duration = Duration.ofMinutes(1),

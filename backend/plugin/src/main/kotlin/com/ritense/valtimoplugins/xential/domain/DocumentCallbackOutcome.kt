@@ -19,20 +19,26 @@ package com.ritense.valtimoplugins.xential.domain
 /**
  * The result of handling an incoming Xential document callback.
  *
- * [INVALID_REQUEST] deliberately covers every way in which a callback can fail to identify a live document
- * creation session - a malformed id, an unknown id, an expired id and an undecodable payload all map onto it,
- * so that the endpoint cannot be used to probe which session ids exist.
+ * There is deliberately a single failure value. A malformed session id, an unknown session id, an expired
+ * session, an undecodable payload and a missing or wrong signature all map onto [REJECTED], so that the endpoint
+ * cannot be used to probe which document creation sessions exist.
+ *
+ * That single value matters more than it looks. Resolving the shared secret requires knowing which plugin
+ * configuration created the session, so the session has to be looked up *before* the signature can be checked.
+ * With separate values for "no such session" and "bad signature" that ordering would hand an unauthenticated
+ * caller a session-existence oracle. Keeping one value makes that impossible to reintroduce by accident at the
+ * web layer: there is nothing left to tell apart.
+ *
+ * [RATE_LIMITED] is reachable only for callbacks that already failed verification, and it is applied to every
+ * failure cause alike, so it cannot discriminate between them either.
  */
 enum class DocumentCallbackOutcome {
     /** The document was stored and the BPMN message was correlated. */
     PROCESSED,
 
-    /** The signature was missing or did not match, and verification is being enforced. */
-    INVALID_SIGNATURE,
+    /** The callback was not accepted. The real cause is logged, never returned. */
+    REJECTED,
 
-    /** The callback did not resolve to a live document creation session. */
-    INVALID_REQUEST,
-
-    /** The endpoint is receiving more callbacks than it is configured to accept. */
+    /** More unverifiable callbacks arrived than the endpoint is configured to absorb. */
     RATE_LIMITED,
 }

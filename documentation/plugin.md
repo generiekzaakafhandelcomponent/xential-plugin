@@ -16,6 +16,9 @@
     * [Plugin action: Generate document with building block](#plugin-action-generate-document-with-building-block)
     * [Endpoint: /xential/document](#endpoint-xentialdocument)
     * [Securing the document callback](#securing-the-document-callback)
+      * [More than one plugin configuration](#more-than-one-plugin-configuration)
+      * [Upgrading: sessions started before this version](#upgrading-sessions-started-before-this-version)
+      * [Rate limiting and denial of service](#rate-limiting-and-denial-of-service)
     * [Endpoint: /xential/sjablonen](#endpoint-xentialsjablonen)
   * [Running the example application](#running-the-example-application)
   * [Development](#development)
@@ -171,13 +174,49 @@ them. Roll it out in three steps.
 |---------------------------------------------------|-----------|--------------------------------------------------------------------------------------------------------------|
 | `valtimo.xential.callback.verification-mode`      | `LOG_ONLY` | `LOG_ONLY` logs an unverifiable callback and processes it anyway; `ENFORCE` rejects it.                      |
 | `valtimo.xential.callback.token-time-to-live`     | `P7D`     | How long a document creation session stays valid. Expired sessions are rejected and swept.                    |
-| `valtimo.xential.callback.rate-limit`             | `60`      | Callbacks accepted per window for the endpoint as a whole. `0` disables rate limiting.                        |
+| `valtimo.xential.callback.rate-limit`             | `60`      | Unverifiable callbacks absorbed per window. Signed callbacks are never counted. `0` disables the limit.        |
 | `valtimo.xential.callback.rate-limit-window`      | `PT1M`    | Length of the rate limiting window.                                                                           |
 | `valtimo.xential.callback.token-cleanup-cron`     | `0 0 * * * *` | Schedule on which expired document creation sessions are deleted.                                         |
 
-A document creation session is single use: it is deleted once its callback has been handled. The endpoint
-answers with an empty body and returns the same status for a malformed, unknown and expired session id, so it
-cannot be used to discover which session ids exist.
+A document creation session is single use: it is deleted once its callback has been handled. The endpoint answers
+with an empty body, and there is exactly one response for a rejected callback: a malformed, unknown or expired
+session id, an undecodable payload and a wrong or missing signature are all answered identically, down to the
+status code and the headers. It therefore cannot be used to discover which session ids exist.
+
+#### More than one plugin configuration
+
+Each Xential plugin configuration has its own `callbackSecret`; they do not have to share one. Valtimo records
+which configuration started a document creation session and verifies that session's callback against *that*
+configuration's secret. Configurations can therefore be rolled over independently, and a deployment with several
+Xential configurations does not have to keep their secrets in sync.
+
+#### Upgrading: sessions started before this version
+
+Document creation sessions that were already in flight when this version was deployed do not record which plugin
+configuration started them, so there is no secret to check their callbacks against. They can never be verified.
+
+* In `LOG_ONLY` they are processed, and logged with a warning that names this specific cause rather than the
+  generic "signature missing or invalid".
+* In `ENFORCE` they are rejected.
+
+So before switching to `ENFORCE`, let those sessions drain - they disappear no later than
+`valtimo.xential.callback.token-time-to-live` after the upgrade - or restart the processes waiting on them.
+Sessions started after the upgrade are unaffected.
+
+#### Rate limiting and denial of service
+
+The endpoint is unauthenticated, so a limit on *all* callbacks would be a denial-of-service tool: anyone could
+spend the whole budget in about a second and stall the processes waiting on genuine documents. Only callbacks that
+fail verification are counted. A correctly signed callback never consumes budget and can never be blocked, no
+matter how much forged traffic arrives alongside it.
+
+In `LOG_ONLY` unverifiable callbacks are counted but not blocked, because that mode promises not to change any
+outcome. The consequence is worth being explicit about: while `LOG_ONLY` is in force the limit does not stop
+anyone from grinding through session ids. Only `ENFORCE` does.
+
+The budget is per application instance and held in memory, so with several instances behind a load balancer the
+effective ceiling is a multiple of the configured one and it resets on restart. This is a local backstop, not a
+cluster-wide guarantee, and it does not replace rate limiting at the ingress.
 
 An alternative to the shared secret is to verify a client certificate on the callback at the ingress, reusing the
 mTLS trust anchor this plugin already relies on for outbound traffic. That avoids managing a second secret, but

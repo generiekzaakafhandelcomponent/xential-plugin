@@ -108,13 +108,8 @@ class XentialAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    fun xentialCallbackVerificationService(
-        pluginService: PluginService,
-        xentialCallbackProperties: XentialCallbackProperties,
-    ) = XentialCallbackVerificationService(
-        pluginService,
-        xentialCallbackProperties,
-    )
+    fun xentialCallbackVerificationService(pluginService: PluginService) =
+        XentialCallbackVerificationService(pluginService)
 
     @Bean
     @ConditionalOnMissingBean

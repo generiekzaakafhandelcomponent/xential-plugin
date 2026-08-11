@@ -20,6 +20,8 @@ import com.ritense.resource.domain.MetadataType
 import com.ritense.resource.service.TemporaryResourceStorageService
 import com.ritense.smartdocuments.domain.DocumentFormatOption
 import com.ritense.valtimoplugins.xential.autoconfiguration.XentialCallbackProperties
+import com.ritense.valtimoplugins.xential.domain.CallbackVerificationMode
+import com.ritense.valtimoplugins.xential.domain.CallbackVerificationResult
 import com.ritense.valtimoplugins.xential.domain.DocumentCallbackOutcome
 import com.ritense.valtimoplugins.xential.domain.DocumentCreatedMessage
 import com.ritense.valtimoplugins.xential.domain.FileFormat
@@ -46,9 +48,17 @@ class DocumentGenerationService(
     private val callbackProperties: XentialCallbackProperties,
     private val clock: Clock = Clock.systemDefaultZone(),
 ) {
+    /**
+     * Asks Xential to generate a document and records the resulting document creation session.
+     *
+     * @param pluginConfigurationId the Xential plugin configuration this request was made with. It is stored on
+     * the session so that the eventual callback is verified against that configuration's `callbackSecret` rather
+     * than against whichever Xential configuration happens to be found first.
+     */
     fun generateDocument(
         api: DefaultApi,
         processId: UUID,
+        pluginConfigurationId: UUID,
         xentialGebruikersId: String,
         sjabloonId: String,
         xentialDocumentProperties: XentialDocumentProperties,
@@ -86,6 +96,7 @@ class DocumentGenerationService(
                 resumeUrl = result.resumeUrl?.toString(),
                 createdOn = now,
                 expiresOn = now.plus(callbackProperties.tokenTimeToLive),
+                pluginConfigurationId = pluginConfigurationId,
             )
         xentialTokenRepository.save(xentialToken)
         logger.debug { "persisted document creation session for process ${xentialToken.processId}" }
@@ -112,37 +123,60 @@ class DocumentGenerationService(
      * Handles a callback from Xential carrying the content of a generated document.
      *
      * This endpoint cannot be authenticated at the HTTP level, so the checks below are what stand between a
-     * genuine callback and a forged one. They are deliberately ordered cheapest-first, and every way of failing
-     * to identify a live session collapses into a single [DocumentCallbackOutcome.INVALID_REQUEST] so that the
-     * endpoint does not reveal which session ids exist.
+     * genuine callback and a forged one.
+     *
+     * ### Why the session is looked up before the signature is checked
+     *
+     * The `callbackSecret` to check the signature against is the one belonging to the plugin configuration that
+     * created this document creation session, so the session has to be loaded first. That ordering would be a
+     * gift to an attacker if the two failures were reported differently: probing random session ids would return
+     * "unknown" for ones that do not exist and "bad signature" for ones that do, turning the endpoint into a
+     * session-existence oracle. Every failure here therefore returns the same
+     * [DocumentCallbackOutcome.REJECTED], with the real cause logged at DEBUG and never returned.
+     *
+     * ### Pre-upgrade sessions
+     *
+     * A session created before the plugin recorded its originating configuration has no secret to check against
+     * and can never be verified. In [CallbackVerificationMode.LOG_ONLY] it is processed with a warning that names
+     * this specific cause; in [CallbackVerificationMode.ENFORCE] it is rejected. Either drain those sessions
+     * before enforcing, or restart the affected processes.
      */
     fun onDocumentGenerated(
         message: DocumentCreatedMessage,
         signature: String? = null,
     ): DocumentCallbackOutcome {
-        if (!callbackRateLimiter.tryAcquire()) {
-            return DocumentCallbackOutcome.RATE_LIMITED
-        }
-        if (!callbackVerificationService.isCallbackAllowed(message, signature)) {
-            return DocumentCallbackOutcome.INVALID_SIGNATURE
-        }
-
         val sessionId =
             parseSessionId(message.documentCreatieSessieId)
-                ?: return rejectInvalidRequest("the document creation session id is not a valid UUID")
+                ?: return reject("the document creation session id is not a valid UUID")
         val bytes =
             decodePayload(message.data)
-                ?: return rejectInvalidRequest("the payload is not valid base64")
+                ?: return reject("the payload is not valid base64")
         val xentialToken =
             xentialTokenRepository
                 .findById(sessionId)
                 .orElse(null)
-                ?: return rejectInvalidRequest("no document creation session exists for the supplied id")
+                ?: return reject("no document creation session exists for the supplied id")
 
         if (xentialToken.isExpired(LocalDateTime.now(clock))) {
             // Terminal outcome: consume the session so that an expired id cannot be retried.
             xentialTokenRepository.delete(xentialToken)
-            return rejectInvalidRequest("the document creation session has expired")
+            return reject("the document creation session has expired")
+        }
+
+        val verification =
+            callbackVerificationService.verify(message, signature, xentialToken.pluginConfigurationId)
+        if (!verification.isVerified) {
+            // Counted in both modes - so that a flood is visible and the log can be capped - but only acted on
+            // when verification is enforced, because log-only mode promises not to change any outcome.
+            val withinBudget = callbackRateLimiter.recordUnverifiedCallback()
+            if (withinBudget) {
+                // Suppressed past the budget: the limiter logs that it has been reached, and a flood must not
+                // bury everything else in the log.
+                logger.warn { unverifiedCallbackWarning(verification) }
+            }
+            if (callbackProperties.verificationMode == CallbackVerificationMode.ENFORCE) {
+                return if (withinBudget) DocumentCallbackOutcome.REJECTED else DocumentCallbackOutcome.RATE_LIMITED
+            }
         }
 
         logger.info { "Retrieved content from Xential callback, type: ${message.formaat}" }
@@ -176,13 +210,35 @@ class DocumentGenerationService(
         return DocumentCallbackOutcome.PROCESSED
     }
 
+    /** Names the actual cause, and says whether it was acted on, without ever putting either on the wire. */
+    private fun unverifiedCallbackWarning(verification: CallbackVerificationResult): String =
+        when (callbackProperties.verificationMode) {
+            CallbackVerificationMode.ENFORCE -> {
+                "Rejected Xential callback: ${verification.explanation}."
+            }
+
+            CallbackVerificationMode.LOG_ONLY -> {
+                "Xential callback could not be verified: ${verification.explanation}. It is still being " +
+                    "processed because valtimo.xential.callback.verification-mode is LOG_ONLY. Configure the " +
+                    "sending side to sign its callbacks and then switch to ENFORCE."
+            }
+        }
+
     /**
-     * Logs the real reason at DEBUG and returns the single outcome shared by every invalid request, so that the
-     * caller cannot tell a malformed id from an unknown or expired one.
+     * Logs the real reason at DEBUG and returns the single outcome shared by every rejected callback, so that the
+     * caller cannot tell a malformed id from an unknown one, an expired one or a bad signature.
+     *
+     * A callback that never reached verification is counted against the same budget as one that failed it - both
+     * are callbacks this endpoint could not accept - because reporting rate limiting on only some of the failure
+     * causes would put the distinction between them back on the wire.
      */
-    private fun rejectInvalidRequest(reason: String): DocumentCallbackOutcome {
+    private fun reject(reason: String): DocumentCallbackOutcome {
         logger.debug { "Rejected Xential callback: $reason" }
-        return DocumentCallbackOutcome.INVALID_REQUEST
+        return if (callbackRateLimiter.recordUnverifiedCallback()) {
+            DocumentCallbackOutcome.REJECTED
+        } else {
+            DocumentCallbackOutcome.RATE_LIMITED
+        }
     }
 
     private fun parseSessionId(documentCreatieSessieId: String?): UUID? =
