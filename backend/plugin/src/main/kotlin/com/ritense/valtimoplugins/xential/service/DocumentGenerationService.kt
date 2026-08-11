@@ -137,18 +137,6 @@ class DocumentGenerationService(
         }
     }
 
-//    private fun resolveTemplateData(
-//        templateData: Array<TemplateDataEntry>,
-//        execution: DelegateExecution
-//    ): Map<String, Any?> {
-//        val placeHolderValueMap = valueResolverService.resolveValues(
-//            execution.processInstanceId,
-//            execution,
-//            templateData.map { it.value }.toList()
-//        )
-//        return templateData.associate { it.key to placeHolderValueMap.getOrDefault(it.value, null) }
-//    }
-//
     companion object {
         private val logger = KotlinLogging.logger {}
     }
