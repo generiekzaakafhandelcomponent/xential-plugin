@@ -5,6 +5,7 @@
         "properties": {
             "applicationName": "${XENTIAL_ACCOUNT_NAME}",
             "applicationPassword": "${XENTIAL_ACCOUNT_PASSWORD}",
+            "callbackSecret": "${XENTIAL_CALLBACK_SECRET}",
             "baseUrl": "${XENTIAL_BASEURL}",
             "mTlsSslContextAutoConfigurationId": "63b44b21-9bd2-42f2-a11e-a4f68837e076"
         },
