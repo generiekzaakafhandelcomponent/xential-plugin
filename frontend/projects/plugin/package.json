@@ -1,7 +1,7 @@
 {
   "name": "@valtimo-plugins/xential",
   "license": "EUPL-1.2",
-  "version": "2.4.2",
+  "version": "2.5.1",
   "peerDependencies": {
     "@angular/common": "^17.2.2",
     "@angular/core": "^17.2.2"
