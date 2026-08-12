@@ -2,6 +2,9 @@
 
 Overzicht van wijzigingen per versie van de Xential-plugin.
 
+## 2.5.2
+Het gedeelde geheim voor het controleren van document-callbacks kan nu in de beheerinterface worden ingevuld, als wachtwoordveld bij de pluginconfiguratie. Het veld is optioneel: laat het leeg en het bestaande geheim blijft staan.
+
 ## 2.4.2
 Casing aangepast van de plugin specificatie referentie.
 
