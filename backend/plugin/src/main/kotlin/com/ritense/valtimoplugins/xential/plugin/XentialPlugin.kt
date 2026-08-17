@@ -22,6 +22,7 @@ import com.ritense.plugin.annotation.Plugin
 import com.ritense.plugin.annotation.PluginAction
 import com.ritense.plugin.annotation.PluginActionProperty
 import com.ritense.plugin.annotation.PluginProperty
+import com.ritense.plugin.domain.PluginConfigurationId
 import com.ritense.processlink.domain.ActivityTypeWithEventName
 import com.ritense.valtimoplugins.mtlssslcontext.MTlsSslContext
 import com.ritense.valtimoplugins.xential.domain.FileFormat
@@ -47,6 +48,15 @@ import java.util.UUID
 )
 @Suppress("UNUSED")
 class XentialPlugin(
+    /**
+     * The configuration this instance was created from.
+     *
+     * Recorded on every document creation session this instance starts, so that the callback for that session is
+     * verified against *this* configuration's [callbackSecret]. A deployment may hold several Xential
+     * configurations with different secrets, and the callback has to be checked against the one that made the
+     * request.
+     */
+    private val pluginConfigurationId: PluginConfigurationId,
     private val documentGenerationService: DocumentGenerationService,
     private val esbClient: OpentunnelEsbClient,
     private val objectMapper: ObjectMapper,
@@ -64,6 +74,18 @@ class XentialPlugin(
 
     @PluginProperty(key = "mTlsSslContextAutoConfigurationId", secret = false, required = true)
     private lateinit var mTlsSslContextAutoConfigurationId: MTlsSslContext
+
+    /**
+     * Shared secret used to verify the signature on incoming document callbacks.
+     *
+     * Optional so that existing plugin configurations keep working after an upgrade. Until it is set, callbacks
+     * cannot be verified - see `valtimo.xential.callback.verification-mode`.
+     *
+     * Each Xential configuration has its own secret. A callback is checked against the secret of the
+     * configuration that started its document creation session, so configurations do not have to share one.
+     */
+    @PluginProperty(key = "callbackSecret", secret = true, required = false)
+    var callbackSecret: String? = null
 
     @PluginAction(
         key = "generate-document",
@@ -163,6 +185,7 @@ class XentialPlugin(
             .generateDocument(
                 api = esbClient.documentApi(restClient(mTlsSslContextAutoConfigurationId)),
                 processId = UUID.fromString(execution.processInstanceId),
+                pluginConfigurationId = pluginConfigurationId.id,
                 xentialGebruikersId = xentialGebruikersId,
                 sjabloonId = xentialSjabloonId,
                 xentialDocumentProperties = xentialDocumentProperties,

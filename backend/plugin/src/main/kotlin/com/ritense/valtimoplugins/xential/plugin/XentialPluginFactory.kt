@@ -32,8 +32,14 @@ class XentialPluginFactory(
     private val xentialSjablonenService: XentialSjablonenService,
     private val objectMapper: ObjectMapper,
 ) : PluginFactory<XentialPlugin>(pluginService) {
+    /**
+     * [PluginFactory.pluginConfigurationId] is assigned from the configuration being created before this is
+     * called, so handing it to the plugin here is what lets a document creation session record which
+     * configuration started it.
+     */
     override fun create() =
         XentialPlugin(
+            pluginConfigurationId,
             documentGenerationService,
             esbClient,
             objectMapper,
