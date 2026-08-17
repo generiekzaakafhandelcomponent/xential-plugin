@@ -128,6 +128,13 @@ a job to generate the document.
 * `xentialSjabloonId` - the UUID of the sjabloon (template) used to generate the document
 * `xentialGebruikersId` - the gebruikersId to validate access to the xential service
 
+> **Note on the document payload.** The value of `xentialData` - and of `textContent` in the building block
+> action below - is sent to Xential exactly as supplied, without escaping or validation. The plugin does not
+> build an XML structure around it; the payload *is* the value. This means a value expression that resolves to
+> content submitted by an end user, such as a form field or an uploaded value, reaches the Xential document
+> engine verbatim. Point `xentialData` at content the process controls, and do not wire it directly to untrusted
+> input. How such content is parsed is determined by the Xential backend, which is outside this plugin.
+
 ### Plugin action: Generate document with building block
 
 `generate-content-with-building-block` sends the request to Xential with the content to generate a document. When not all content is present
