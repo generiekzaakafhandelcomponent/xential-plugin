@@ -2,6 +2,10 @@
 
 Overzicht van wijzigingen per versie van de Xential-plugin.
 
+## 2.4.3
+
+Valtimo bijgewerkt naar versie 13.41.0.
+
 ## 2.4.2
 Casing aangepast van de plugin specificatie referentie.
 
