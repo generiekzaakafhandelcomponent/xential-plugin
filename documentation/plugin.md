@@ -81,7 +81,10 @@ Plugin actions can be linked to BPMN service tasks. Using the plugin comes down 
   * `applicationName` - Is the name for basic authentication at Xential.
   * `applicationPassword` - Is the password for basic authentication at Xential.
   * `callbackSecret` - Shared secret used to verify incoming document callbacks. Optional, but required before
-    callback verification can be enforced. See [Securing the document callback](#securing-the-document-callback).
+    callback verification can be enforced. Entered as a password field, and because secrets are never returned by
+    the backend the field is empty when an existing configuration is reopened: leaving it empty keeps the stored
+    secret, entering a value replaces it. See
+    [Securing the document callback](#securing-the-document-callback).
 * Create process link between a BPMN service task and the desired plugin action.
 
 ### Plugin action: Testing access tot Xential
