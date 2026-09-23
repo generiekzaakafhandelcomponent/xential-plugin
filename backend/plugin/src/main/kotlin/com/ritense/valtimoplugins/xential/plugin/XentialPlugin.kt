@@ -249,7 +249,6 @@ class XentialPlugin(
                     xentialSjablonenService
                         .getTemplateList(xentialGebruikersId, null)
                         .sjabloongroepen
-                        .onEach { logger.info { "Found sjabloongroep: id=${it.id}, naam=${it.naam}" } }
                         .firstOrNull { it.naam == rootMap }
                         ?.id
                 }
@@ -299,7 +298,6 @@ class XentialPlugin(
         xentialSjablonenService
             .getTemplateList(xentialGebruikersId, parentSjabloonGroepId)
             .sjabloongroepen
-            .onEach { logger.info { "Found sjabloongroep: id=${it.id}, naam=${it.naam}" } }
             .firstOrNull { it.naam == caseType }
             ?.id
 
