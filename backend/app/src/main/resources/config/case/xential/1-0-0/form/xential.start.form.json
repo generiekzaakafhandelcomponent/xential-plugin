@@ -20,7 +20,7 @@
         "data-testid": "start-form-voornaam"
       },
       "applyMaskOn": "change",
-      "defaultValue": "pietje"
+      "defaultValue": "Gerard"
     },
     {
       "key": "achternaam",
@@ -32,7 +32,7 @@
         "data-testid": "start-form-achternaam"
       },
       "applyMaskOn": "change",
-      "defaultValue": "Klaassen"
+      "defaultValue": "Bakker"
     },
     {
       "key": "submit",
