@@ -29,4 +29,5 @@ export interface XentialConfig extends PluginConfigurationData {
    * the backend, so it is absent when an existing configuration is loaded for editing.
    */
   callbackSecret?: string;
+  xentialRootMap?: string;
 }

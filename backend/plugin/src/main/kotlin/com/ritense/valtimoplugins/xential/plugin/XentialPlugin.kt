@@ -87,6 +87,9 @@ class XentialPlugin(
     @PluginProperty(key = "callbackSecret", secret = true, required = false)
     var callbackSecret: String? = null
 
+    @PluginProperty(key = "xentialRootMap", secret = false, required = false)
+    var xentialRootMap: String? = null
+
     @PluginAction(
         key = "generate-document",
         title = "Generate document",
@@ -241,8 +244,18 @@ class XentialPlugin(
             execution.processInstance.setVariable(toegangResultaatId, objectMapper.convertValue(result))
 
         try {
+            val parentSjabloonGroepId =
+                xentialRootMap?.let { rootMap ->
+                    xentialSjablonenService
+                        .getTemplateList(xentialGebruikersId, null)
+                        .sjabloongroepen
+                        .onEach { logger.info { "Found sjabloongroep: id=${it.id}, naam=${it.naam}" } }
+                        .firstOrNull { it.naam == rootMap }
+                        ?.id
+                }
+
             val sjabloonGroupId =
-                sjabloonGroepUuid(xentialGebruikersId, sjabloonGroepNaam)
+                sjabloonGroepUuid(xentialGebruikersId, sjabloonGroepNaam, parentSjabloonGroepId)
                     ?: run {
                         logger.debug {
                             "No sjabloongroep found with name: $sjabloonGroepNaam for user: $xentialGebruikersId"
@@ -281,10 +294,12 @@ class XentialPlugin(
     private fun sjabloonGroepUuid(
         xentialGebruikersId: String,
         caseType: String,
+        parentSjabloonGroepId: String? = null,
     ): String? =
         xentialSjablonenService
-            .getTemplateList(xentialGebruikersId, null)
+            .getTemplateList(xentialGebruikersId, parentSjabloonGroepId)
             .sjabloongroepen
+            .onEach { logger.info { "Found sjabloongroep: id=${it.id}, naam=${it.naam}" } }
             .firstOrNull { it.naam == caseType }
             ?.id
 

@@ -72,6 +72,15 @@
       [disabled]="obs.disabled"
       [required]="false"
     ></v-input>
+    <v-input
+      name="xentialRootMap"
+      [title]="'xentialRootMap' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [fullWidth]="true"
+      [defaultValue]="obs.prefill?.xentialRootMap"
+      [disabled]="obs.disabled"
+      [required]="false"
+    ></v-input>
     <hr/>
     @if ({authenticationPluginSelectItems: authenticationPluginSelectItems$ | async}; as authObs) {
       <v-select
