@@ -85,6 +85,7 @@ Plugin actions can be linked to BPMN service tasks. Using the plugin comes down 
     the backend the field is empty when an existing configuration is reopened: leaving it empty keeps the stored
     secret, entering a value replaces it. See
     [Securing the document callback](#securing-the-document-callback).
+  * `xentialRootMap` - Optional root map value for this configuration.
 * Create process link between a BPMN service task and the desired plugin action.
 
 ### Plugin action: Testing access tot Xential

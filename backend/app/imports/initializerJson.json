@@ -159,6 +159,7 @@
       "method": "GET",
       "path": "/sjablonenlijst",
       "queryStringParameters": {
+        "sjabloongroepId": [ "3f8a2c71-9b4e-4d2a-a6f1-7c05e9b3d812" ],
         "gebruikersId": [ "admin" ]
       }
     },
@@ -181,6 +182,34 @@
           {
             "id": "a9b8c7d6-e5f4-3210-fedc-ba9876543210",
             "naam": "Besluiten"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/sjablonenlijst",
+      "queryStringParameters": {
+        "gebruikersId": [ "admin" ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [ "application/json" ]
+      },
+      "body": {
+        "sjablonen": [],
+        "sjabloongroepen": [
+          {
+            "id": "3f8a2c71-9b4e-4d2a-a6f1-7c05e9b3d812",
+            "naam": "roza-root"
+          },
+          {
+            "id": "c14e7b09-52d6-4a8f-9e3b-0fa6218d4c57",
+            "naam": "een-ander-project"
           }
         ]
       }
