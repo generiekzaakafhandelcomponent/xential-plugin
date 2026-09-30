@@ -2,6 +2,10 @@
 
 Overzicht van wijzigingen per versie van de Xential-plugin.
 
+## 2.5.6
+
+Ondersteuning voor Valtimo 13.48.0.
+
 ## 2.5.3
 Valtimo bijgewerkt naar versie 13.41.0.
 
