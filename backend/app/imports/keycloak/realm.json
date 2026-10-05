@@ -648,6 +648,42 @@
             "groups": []
         },
         {
+            "id": "71386882-1fe6-48ac-808d-88c4c2a339d4",
+            "username": "applicatiegzac",
+            "firstName": "harrie",
+            "lastName": "boom",
+            "email": "harrie@example.com",
+            "emailVerified": true,
+            "createdTimestamp": 1628668592363,
+            "enabled": true,
+            "totp": false,
+            "credentials": [
+                {
+                    "id": "f2e4301f-0f9a-4593-8f1d-d5d28b4c9415",
+                    "type": "password",
+                    "createdDate": 1628668665101,
+                    "secretData": "{\"value\":\"KS++hmY0SuUg54rDZFeYUZnvDLUxsT6BWGolDUFZXwKLsAdn9MlyTZ0L3o/ZqbmuIMCbhHcQ0bmWKN/51VDYgQ==\",\"salt\":\"C8u6wkV06uwk4RlG4UoPHw==\",\"additionalParameters\":{}}",
+                    "credentialData": "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+                }
+            ],
+            "disableableCredentialTypes": [],
+            "requiredActions": [],
+            "realmRoles": [
+                "ROLE_ADMIN",
+                "ROLE_USER",
+                "default-roles-valtimo"
+            ],
+            "clientRoles": {
+                "iko": [
+                    "ROLE_ENDPOINT_BRPPERSONENENDPOINT",
+                    "ROLE_AGGREGATED_DATA_PROFILE_TEMP",
+                    "ROLE_AGGREGATED_DATA_PROFILE_BAGBEWONERS"
+                ]
+            },
+            "notBefore": 0,
+            "groups": []
+        },
+        {
             "id": "59d9f86b-8dfa-4f1f-990a-a65d379c88ed",
             "username": "admin-mfa",
             "firstName": "Rosa",
