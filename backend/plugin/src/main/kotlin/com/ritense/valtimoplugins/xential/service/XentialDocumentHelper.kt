@@ -43,27 +43,40 @@ class XentialDocumentHelper(
             requireNotNull(documentProperties.fileFormat) {
                 "fileFormat is required"
             }
-            zaakDocumentService
-                .getInformatieObjectenAsRelatedFilesPage(
-                    UUID.fromString(execution.processBusinessKey),
-                    DocumentSearchRequest(),
-                    PageRequest.of(0, 1000),
-                ).let { documents ->
-                    documents
-                        .count {
-                            it.bestandsnaam!!.startsWith(documentProperties.xentialTemplateName)
-                        }.let { totalExisting ->
-                            val extension =
-                                if (documentProperties.fileFormat == FileFormat.WORD) {
-                                    "docx"
-                                } else {
-                                    "pdf"
-                                }
-                            documentPropertiesMap["documentFilename"] =
-                                "${documentProperties.xentialTemplateName}-${totalExisting + 1}.$extension"
-                        }
-                }
+            documentPropertiesMap["documentFilename"] = generateFilename(execution, documentProperties.xentialTemplateName, documentProperties.fileFormat.name)
         }
+    }
+
+    fun nextDocumentWithoutXentialDocumentProperties(
+        execution: DelegateExecution,
+        xentialTemplateName: String,
+        fileFormat: String,
+    ) = generateFilename(execution, xentialTemplateName, fileFormat)
+
+    private fun generateFilename(
+        execution: DelegateExecution,
+        xentialTemplateName: String,
+        fileFormat: String
+    ): String {
+        zaakDocumentService
+            .getInformatieObjectenAsRelatedFilesPage(
+                UUID.fromString(execution.processBusinessKey),
+                DocumentSearchRequest(),
+                PageRequest.of(0, 1000),
+            ).let { documents ->
+                documents
+                    .count {
+                        it.bestandsnaam!!.startsWith(xentialTemplateName)
+                    }.let { totalExisting ->
+                        val extension =
+                            if (fileFormat == FileFormat.WORD.name) {
+                                "docx"
+                            } else {
+                                "pdf"
+                            }
+                        return "${xentialTemplateName}-${totalExisting + 1}.$extension"
+                    }
+            }
     }
 
     companion object {

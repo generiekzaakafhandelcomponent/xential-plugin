@@ -1,5 +1,9 @@
 [
   {
+    "key" : "BESTANDSNAAM",
+    "defaultSort" : null
+  },
+  {
     "key" : "TITEL",
     "defaultSort" : null
   },
