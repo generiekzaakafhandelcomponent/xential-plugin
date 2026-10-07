@@ -142,6 +142,9 @@ services:
     image: openzaak/open-zaak:1.25.0
     container_name:  xential-openzaak-celery
     platform: linux/amd64
+    profiles:
+      - zgw
+      - openzaak
     environment: *openzaak-env
     command: /celery_worker.sh
     healthcheck:
@@ -155,6 +158,9 @@ services:
     image: openzaak/open-zaak:1.25.0
     container_name:  xential-openzaak-import
     platform: linux/amd64
+    profiles:
+      - zgw
+      - openzaak
     environment: *openzaak-env
     command: sh /app/load_demodata.sh
     volumes:

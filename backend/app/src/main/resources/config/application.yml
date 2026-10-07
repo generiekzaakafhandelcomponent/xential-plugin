@@ -5,8 +5,6 @@ logging:
     root: INFO
     org.zalando.problem.spring.common.AdviceTraits: OFF
     com.ritense.valtimo.web.sse.web.rest.SseResource: OFF
-    com.ritense.valtimo.web.logging.LoggingRestClientCustomizer: DEBUG
-    com.ritense.valtimoplugins.xential: DEBUG
 spring:
   application:
     name: xential-plugin-application

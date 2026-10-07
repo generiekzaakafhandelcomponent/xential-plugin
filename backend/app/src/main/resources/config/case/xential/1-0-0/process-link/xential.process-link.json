@@ -44,10 +44,6 @@
         "target": "messageName"
       },
       {
-        "source": "pv:xentialGebruikersId",
-        "target": "xentialGebruikersId"
-      },
-      {
         "source": "pv:caseType",
         "target": "caseType"
       }
@@ -124,6 +120,22 @@
   },
   {
     "activityId" : "XentialSelectTemplateFolder",
+    "activityType" : "bpmn:ServiceTask:start",
+    "pluginConfigurationId" : "6e034748-8ed5-43de-a5f2-f80e1a4b60dd",
+    "pluginActionDefinitionKey" : "prepare-content",
+    "actionProperties" : {
+      "xentialDocumentPropertiesVariableName" : "xentialDocumentProperties",
+      "eventMessageName" : "XENTIAL_DOC_RECEIVED",
+      "firstTemplateGroupId" : "415cf276-2af0-4192-923d-4391c4d7b2a8",
+      "secondTemplateGroupId" : null,
+      "thirdTemplateGroupId" : null
+    },
+    "referenceType" : "FIXED",
+    "pluginDefinitionKey" : null,
+    "processLinkType" : "plugin"
+  },
+  {
+    "activityId" : "XentialSelectTemplateBesluitFolder",
     "activityType" : "bpmn:ServiceTask:start",
     "pluginConfigurationId" : "6e034748-8ed5-43de-a5f2-f80e1a4b60dd",
     "pluginActionDefinitionKey" : "prepare-content",

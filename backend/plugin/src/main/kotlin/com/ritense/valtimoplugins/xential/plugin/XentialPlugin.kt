@@ -39,7 +39,7 @@ import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
 import java.net.URI
-import java.util.UUID
+import java.util.*
 
 @Plugin(
     key = PLUGIN_KEY,
@@ -245,13 +245,18 @@ class XentialPlugin(
 
         try {
             val parentSjabloonGroepId =
-                xentialRootMap?.let { rootMap ->
+                xentialRootMap?.takeIf { it.isNotBlank() }?.let { rootMap ->
                     xentialSjablonenService
                         .getTemplateList(xentialGebruikersId, null)
                         .sjabloongroepen
                         .firstOrNull { it.naam == rootMap }
                         ?.id
                 }
+
+            logger.debug {
+                parentSjabloonGroepId?.let { "Using parentSjabloonGroepId matching xentialRootMap: $it" }
+                    ?: "No parentSjabloonGroepId found matching xentialRootMap: $xentialRootMap"
+            }
 
             val sjabloonGroupId =
                 sjabloonGroepUuid(xentialGebruikersId, sjabloonGroepNaam, parentSjabloonGroepId)
@@ -284,7 +289,7 @@ class XentialPlugin(
                     statusCode = (e as? RestClientResponseException)?.statusCode?.value()?.toString() ?: "503",
                     statusMessage =
                         (e as? RestClientResponseException)?.statusText ?: e.message
-                            ?: "Could not reach Xential",
+                        ?: "Could not reach Xential",
                 ),
             )
         }
@@ -351,7 +356,7 @@ class XentialPlugin(
                 value.startsWith("doc:") ||
                 value.startsWith("template:") ||
                 value.startsWith("pv:")
-        )
+            )
 
     private fun resolveValuesFor(
         execution: DelegateExecution,
