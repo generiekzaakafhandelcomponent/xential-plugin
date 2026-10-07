@@ -7,6 +7,10 @@ Het ophalen van de Xential-gebruikersnaam gebeurt nu binnen het bouwblok `xentia
 
 Bij het genereren van een document krijgt de bestandsnaam een oplopend volgnummer (bijvoorbeeld `sjabloonnaam-2.pdf`) zodra er al een document met dezelfde sjabloonnaam bestaat, zodat bestanden elkaar niet overschrijven. Deze nummering werkt nu ook voor documenten die zonder volledige `xentialDocumentProperties` worden gegenereerd.
 
+## 2.5.6
+
+Ondersteuning voor Valtimo 13.48.0.
+
 ## 2.5.3
 Valtimo bijgewerkt naar versie 13.41.0.
 
