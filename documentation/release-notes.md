@@ -2,6 +2,11 @@
 
 Overzicht van wijzigingen per versie van de Xential-plugin.
 
+## 2.5.7
+Het ophalen van de Xential-gebruikersnaam gebeurt nu binnen het bouwblok `xential-document-creatie` zelf, in plaats van dat deze als procesvariabele moet worden aangeleverd door het aanroepende proces. `xentialGebruikersId` is daarmee geen verplicht veld meer bij het starten van het bouwblok.
+
+Bij het genereren van een document krijgt de bestandsnaam een oplopend volgnummer (bijvoorbeeld `sjabloonnaam-2.pdf`) zodra er al een document met dezelfde sjabloonnaam bestaat, zodat bestanden elkaar niet overschrijven. Deze nummering werkt nu ook voor documenten die zonder volledige `xentialDocumentProperties` worden gegenereerd.
+
 ## 2.5.3
 Valtimo bijgewerkt naar versie 13.41.0.
 
